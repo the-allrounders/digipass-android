@@ -8,7 +8,7 @@ android {
         applicationId "com.digipass.android"
         minSdkVersion 19
         targetSdkVersion 23
-        versionCode 2
+        versionCode System.getenv("TRAVIS_BUILD_NUMBER") != null ? System.getenv("TRAVIS_BUILD_NUMBER") : 1
         versionName "1.0.1"
     }
 
