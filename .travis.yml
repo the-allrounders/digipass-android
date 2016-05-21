@@ -6,7 +6,7 @@ android:
     - build-tools-23.0.3
     - android-23
     - extra
-before_insatll:
+before_install:
   - gpg --batch --passphrase $GPG_DECRYPTION_KEY google-credentials.json.gpg
   - gpg --batch --passphrase $GPG_DECRYPTION_KEY keystore.jks.gpg
 before_script:
