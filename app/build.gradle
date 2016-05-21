@@ -11,16 +11,46 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+    signingConfigs {
+        release {
+            storeFile file("../keystore.jks")
+            storePassword System.getenv("DP_KEYSTORE_PASSWORD")
+            keyAlias System.getenv("DP_KEY_ALIAS")
+            keyPassword System.getenv("DBP_KEY_PASSWORD")
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
+    }
+}
+
+buildscript {
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        // ...
+        classpath 'com.github.triplet.gradle:play-publisher:1.1.4'
     }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    apply plugin: 'com.github.triplet.play'
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.4.0'
+}
+
+play {
+    serviceAccountEmail = '606050766430-compute@developer.gserviceaccount.com'
+    jsonFile = file('../google-credentials.json')
+    track = 'alpha'
 }
