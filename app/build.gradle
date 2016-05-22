@@ -53,4 +53,5 @@ play {
     serviceAccountEmail = '606050766430-compute@developer.gserviceaccount.com'
     jsonFile = file('../google-credentials.json')
     track = 'alpha'
+    uploadImages = true
 }
