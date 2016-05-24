@@ -5,27 +5,36 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.Toast;
 
+import java.util.List;
 import java.util.Random;
+
+import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat;
+import no.nordicsemi.android.support.v18.scanner.ScanCallback;
+import no.nordicsemi.android.support.v18.scanner.ScanResult;
 
 public class BackgroundService extends Service {
 
     // CONSTANTS
-    private int NOTIFICATION_ID = 1;
-    private int INTERVAL_MS = 5000;
+    private int NOTIFICATION_ID =   1;
+    private int SCAN_PERIOD_MS =    2000;
+    private int INTERVAL_MS =       30000;
 
     // INITIALIZED OBJECTS
     private Random random = new Random();
-    private NotificationManager nm;
+    private BluetoothLeScannerCompat scanner = BluetoothLeScannerCompat.getScanner();
 
     // GLOBAL OBJECTS
+    private NotificationManager nm;
     private Handler h;
     private Notification.Builder notification;
     private BluetoothAdapter mBluetoothAdapter;
@@ -57,10 +66,11 @@ public class BackgroundService extends Service {
 
         startForeground(NOTIFICATION_ID, notification.build());
 
+        h = new Handler();
         scan();
 
         // Execute scan() now and every DELAY ms.
-        h = new Handler();
+
         h.postDelayed(new Runnable() {
             public void run() {
                 scan();
@@ -71,21 +81,41 @@ public class BackgroundService extends Service {
 
     public void scan() {
         if(mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()){
-            notification.setContentText("Bluetooth disabled. Click here to enable.");
-            notification.setContentIntent(
+            notification
+                    .setContentText("Bluetooth disabled. Click here to enable.")
+                    .setContentIntent(
                     PendingIntent.getActivity(this, 0, new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), 0)
-            );
+            )
+                    .setNumber(0);
         }
         else {
-            notification.setContentText("Bluetooth enabled.");
-            notification.setContentIntent(
-                    pendingMainActivityIntent
-            );
-        }
+            notification.setContentText("Bluetooth enabled.")
+                    .setContentIntent(pendingMainActivityIntent);
 
-        notification.setNumber(random.nextInt(100));
+            h.postDelayed(new Runnable(){
+
+                @Override
+                public void run() {
+                    scanner.stopScan(scanCallback);
+                    Log.d("A", "SCANNING STOPPED.");
+                }
+            }, SCAN_PERIOD_MS);
+
+
+
+            Log.d("A", "START SCANNING...");
+
+            scanner.startScan(scanCallback);
+        }
         nm.notify(NOTIFICATION_ID, notification.build());
     }
+
+    private ScanCallback scanCallback = new ScanCallback() {
+        @Override
+        public void onScanResult(int callbackType, ScanResult result) {
+            Log.d("A", callbackType + "DEVICE FOUND! " + result.toString());
+        }
+    };
 
     @Override
     public void onDestroy() {
