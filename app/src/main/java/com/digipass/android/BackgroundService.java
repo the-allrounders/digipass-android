@@ -5,7 +5,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
@@ -15,7 +14,6 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.util.List;
 import java.util.Random;
 
 import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat;
@@ -25,9 +23,9 @@ import no.nordicsemi.android.support.v18.scanner.ScanResult;
 public class BackgroundService extends Service {
 
     // CONSTANTS
-    private int NOTIFICATION_ID =   1;
-    private int SCAN_PERIOD_MS =    2000;
-    private int INTERVAL_MS =       30000;
+    private int NOTIFICATION_ID = 1;
+    private int SCAN_PERIOD_MS = 2000;
+    private int INTERVAL_MS = 30000;
 
     // INITIALIZED OBJECTS
     private Random random = new Random();
@@ -66,11 +64,11 @@ public class BackgroundService extends Service {
 
         startForeground(NOTIFICATION_ID, notification.build());
 
+        // Create a new handler. Everything added to it will be queued.
         h = new Handler();
-        scan();
 
         // Execute scan() now and every DELAY ms.
-
+        scan();
         h.postDelayed(new Runnable() {
             public void run() {
                 scan();
@@ -80,19 +78,25 @@ public class BackgroundService extends Service {
     }
 
     public void scan() {
-        if(mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()){
+        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+            // If Bluetooth is off, ask to enable in the notification
             notification
                     .setContentText("Bluetooth disabled. Click here to enable.")
                     .setContentIntent(
-                    PendingIntent.getActivity(this, 0, new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), 0)
-            )
+                            PendingIntent.getActivity(this, 0, new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), 0)
+                    )
                     .setNumber(0);
-        }
-        else {
+        } else {
+            // If Bluetooth is on, show it is enabled in the notification
             notification.setContentText("Bluetooth enabled.")
                     .setContentIntent(pendingMainActivityIntent);
 
-            h.postDelayed(new Runnable(){
+            // Start scanning for devices
+            Log.d("SCAN", "Start scanning...");
+            scanner.startScan(scanCallback);
+
+            // Stop scanning after SCAN_PERIOD_MS
+            h.postDelayed(new Runnable() {
 
                 @Override
                 public void run() {
@@ -100,38 +104,39 @@ public class BackgroundService extends Service {
                     Log.d("A", "SCANNING STOPPED.");
                 }
             }, SCAN_PERIOD_MS);
-
-
-
-            Log.d("A", "START SCANNING...");
-
-            scanner.startScan(scanCallback);
         }
+
+        // Update notification
         nm.notify(NOTIFICATION_ID, notification.build());
     }
 
     private ScanCallback scanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
-            Log.d("A", callbackType + "DEVICE FOUND! " + result.toString());
+
+            // There is a device found! This is called multiple times per device.
+
+            Log.d("SCAN", "Device found: " + result.toString());
         }
     };
 
     @Override
     public void onDestroy() {
+        // If the service is destroyed, stop scanning and remove notification.
+        scanner.stopScan(scanCallback);
         nm.cancel(NOTIFICATION_ID);
     }
 
 
-    // Necessary functions for Android, but not used by us.
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        // If the service is killed, start it back up
         return START_STICKY;
     }
 
     @Override
     public IBinder onBind(Intent intent) {
+        // Not implemented yet
         return null;
     }
 }
