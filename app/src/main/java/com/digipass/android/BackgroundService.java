@@ -14,10 +14,14 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat;
 import no.nordicsemi.android.support.v18.scanner.ScanCallback;
+import no.nordicsemi.android.support.v18.scanner.ScanRecord;
 import no.nordicsemi.android.support.v18.scanner.ScanResult;
 
 public class BackgroundService extends Service {
@@ -35,8 +39,10 @@ public class BackgroundService extends Service {
     private NotificationManager nm;
     private Handler h;
     private Notification.Builder notification;
+    private Notification.BigTextStyle notificationStyle = new Notification.BigTextStyle();
     private BluetoothAdapter mBluetoothAdapter;
     private PendingIntent pendingMainActivityIntent;
+    private ConcurrentHashMap<String, ScanResult> scanResults = new ConcurrentHashMap<String, ScanResult>();
 
 
     @Override
@@ -60,7 +66,8 @@ public class BackgroundService extends Service {
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("DigiPass")
                 .setContentText("DigiPass is loading...")
-                .setContentIntent(pendingMainActivityIntent);
+                .setContentIntent(pendingMainActivityIntent)
+                .setStyle(notificationStyle);
 
         startForeground(NOTIFICATION_ID, notification.build());
 
@@ -78,19 +85,7 @@ public class BackgroundService extends Service {
     }
 
     public void scan() {
-        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
-            // If Bluetooth is off, ask to enable in the notification
-            notification
-                    .setContentText("Bluetooth disabled. Click here to enable.")
-                    .setContentIntent(
-                            PendingIntent.getActivity(this, 0, new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), 0)
-                    )
-                    .setNumber(0);
-        } else {
-            // If Bluetooth is on, show it is enabled in the notification
-            notification.setContentText("Bluetooth enabled.")
-                    .setContentIntent(pendingMainActivityIntent);
-
+        if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
             // Start scanning for devices
             Log.d("SCAN", "Start scanning...");
             scanner.startScan(scanCallback);
@@ -102,23 +97,80 @@ public class BackgroundService extends Service {
                 public void run() {
                     scanner.stopScan(scanCallback);
                     Log.d("A", "SCANNING STOPPED.");
+                    updateNotification();
                 }
             }, SCAN_PERIOD_MS);
+        }
+        updateNotification();
+    }
+
+    private ScanCallback scanCallback = new ScanCallback() {
+        @Override
+        public void onScanResult(int callbackType, ScanResult result) {
+            // There is a device found! This is called multiple times per device.
+            scanResults.putIfAbsent(result.getDevice().toString(), result);
+
+            Log.d("SCAN", "Device found: " + scanResults.toString());
+
+            updateNotification();
+        }
+    };
+
+    private void updateNotification(){
+        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+            // If Bluetooth is off, ask to enable
+            notification
+                    .setContentText("Bluetooth disabled. Click here to enable.")
+                    .setContentIntent(
+                            PendingIntent.getActivity(this, 0, new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), 0)
+                    )
+                    .setNumber(0);
+
+            // And remove all scanResults
+            scanResults.clear();
+        } else {
+            removeOldDevices();
+
+            // Generate contentText (small text)
+            String contentText = "Bluetooth is on, no devices found.";
+            if(scanResults.size() == 1){
+                ScanRecord scanRecord = scanResults.values().iterator().next().getScanRecord();
+
+                contentText = "Click to connect with " + (scanRecord != null ? scanRecord.getDeviceName() : "the device");
+            }
+            else if(scanResults.size() > 1){
+                contentText = "Click to connect with a Bluetooth device.";
+            }
+
+            // Generate bigText (when notification is expanded)
+            if(scanResults.size() > 0){
+                String bigText = "Devices found:";
+                for(Map.Entry<String, ScanResult> scanResult : scanResults.entrySet()) {
+                    if(scanResult.getValue().getScanRecord() != null)
+                        bigText += "\n- " + scanResult.getValue().getScanRecord().getDeviceName();
+                }
+
+                notificationStyle.bigText(bigText);
+            }
+
+            // Put all info in the notification
+            notification.setContentText(contentText)
+                    .setContentIntent(pendingMainActivityIntent)
+                    .setNumber(scanResults.size());
         }
 
         // Update notification
         nm.notify(NOTIFICATION_ID, notification.build());
     }
 
-    private ScanCallback scanCallback = new ScanCallback() {
-        @Override
-        public void onScanResult(int callbackType, ScanResult result) {
-
-            // There is a device found! This is called multiple times per device.
-
-            Log.d("SCAN", "Device found: " + result.toString());
+    private void removeOldDevices(){
+        for(Map.Entry<String, ScanResult> scanResult : scanResults.entrySet()) {
+            // TODO: Remove devices that aren't seen for 60 seconds.
+//            Log.d("REMOVER", String.valueOf(scanResult.getValue().getTimestampNanos()));
+//            Log.d("REMOVER", String.valueOf(System.nanoTime()));
+//            scanResults.remove(scanResult.getKey());
         }
-    };
+    }
 
     @Override
     public void onDestroy() {
