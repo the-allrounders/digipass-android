@@ -4,6 +4,8 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -21,11 +23,12 @@ public class BackgroundService extends Service {
 
     // INITIALIZED OBJECTS
     private Random random = new Random();
-    private NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+    private NotificationManager nm;
 
     // GLOBAL OBJECTS
     private Handler h;
-    private Notification notification;
+    private Notification.Builder notification;
+    private BluetoothAdapter mBluetoothAdapter;
 
 
     @Override
@@ -38,6 +41,10 @@ public class BackgroundService extends Service {
             return;
         }
 
+        // Initialize variables
+        nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mBluetoothAdapter = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
+
         // Create notification
         Intent mainActivityIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingMainActivityIntent = PendingIntent.getActivity(this, 0, mainActivityIntent, 0);
@@ -45,11 +52,12 @@ public class BackgroundService extends Service {
         notification = new Notification.Builder(this)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("DigiPass")
-                .setContentText("No bluetooth devices found.")
-                .setContentIntent(pendingMainActivityIntent)
-                .build();
+                .setContentText("DigiPass is loading...")
+                .setContentIntent(pendingMainActivityIntent);
 
-        startForeground(NOTIFICATION_ID, notification);
+        startForeground(NOTIFICATION_ID, notification.build());
+
+        scan();
 
         // Execute scan() now and every DELAY ms.
         h = new Handler();
@@ -59,12 +67,18 @@ public class BackgroundService extends Service {
                 h.postDelayed(this, INTERVAL_MS);
             }
         }, INTERVAL_MS);
-        scan();
     }
 
     public void scan() {
-        notification.number = random.nextInt(100);
-        nm.notify(NOTIFICATION_ID, notification);
+        if(mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()){
+            notification.setContentText("Bluetooth disabled.");
+        }
+        else {
+            notification.setContentText("Bluetooth enabled.");
+        }
+
+        notification.setNumber(random.nextInt(100));
+        nm.notify(NOTIFICATION_ID, notification.build());
     }
 
     @Override
