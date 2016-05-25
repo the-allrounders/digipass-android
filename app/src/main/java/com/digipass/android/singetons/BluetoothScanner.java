@@ -61,6 +61,8 @@ public class BluetoothScanner extends ContextWrapper {
      * Detects and sets the state of the scanner.
      */
     private void detectState(){
+        int prevState = STATE;
+
         BluetoothAdapter bluetoothAdapter = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
             scanner.stopScan(scanCallback);
@@ -73,7 +75,8 @@ public class BluetoothScanner extends ContextWrapper {
         else{
             STATE = STATE_AVAILABLE;
         }
-        Log.d("BluetoothScanner", "STATE = " + STATE);
+
+        if(prevState != STATE) callListners();
     }
 
 
@@ -105,22 +108,29 @@ public class BluetoothScanner extends ContextWrapper {
     private ScanCallback scanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
-
             Log.d("BluetoothScanner", "Device found: " + result);
-            if(!devices.containsKey(result.getDevice().toString())){
-                devices.put(result.getDevice().toString(), result);
-                callListners();
-            }
 
+            boolean isNew = devices.containsKey(result.getDevice().toString());
+
+            devices.put(result.getDevice().toString(), result);
+
+            if(isNew) callListners();
         }
     };
 
     private ArrayList<Runnable> listners = new ArrayList<>();
 
+    /**
+     * Adds a listner to the scanner.
+     * @param runnable Is called everty time the state or the device list changes.
+     */
     public void addListner(Runnable runnable){
         listners.add(runnable);
     }
 
+    /**
+     * Calls all registred listners.
+     */
     private void callListners(){
         for(Runnable listner: listners){
             listner.run();

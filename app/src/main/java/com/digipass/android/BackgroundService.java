@@ -79,6 +79,8 @@ public class BackgroundService extends Service {
                 onScannerChange();
             }
         });
+
+        onScannerChange();
     }
 
     private void onScannerChange(){
