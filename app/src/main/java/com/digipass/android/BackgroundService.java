@@ -7,6 +7,7 @@ import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.widget.Toast;
@@ -21,6 +22,9 @@ import no.nordicsemi.android.support.v18.scanner.ScanResult;
 public class BackgroundService extends Service {
 
     private BluetoothScanner BTScanner;
+    public BluetoothScanner getBTScanner(){
+        return BTScanner;
+    }
 
     // CONSTANTS
     private static final int INTERVAL_MS = 30000;
@@ -142,9 +146,15 @@ public class BackgroundService extends Service {
         return START_STICKY;
     }
 
+    // Enable activities to bind to this Service
+    public class LocalBinder extends Binder {
+        BackgroundService getService() {
+            return BackgroundService.this;
+        }
+    }
+    private final IBinder mBinder = new LocalBinder();
     @Override
     public IBinder onBind(Intent intent) {
-        // Not implemented yet
-        return null;
+        return mBinder;
     }
 }
