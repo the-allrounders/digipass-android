@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.digipass.android.singetons.BluetoothScanner;
@@ -89,6 +88,13 @@ public class BackgroundService extends Service {
                     .setContentText("Bluetooth disabled. Click here to enable.")
                     .setContentIntent(
                             PendingIntent.getActivity(this, 0, new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), 0)
+                    )
+                    .setNumber(0);
+        } else if(BTScanner.getState() == BluetoothScanner.STATE_NO_PERMISSION_LOC) {
+            notification
+                    .setContentText("We have no permission to scan for Bluetooth devices. Click here to grant permission.")
+                    .setContentIntent(
+                            pendingMainActivityIntent
                     )
                     .setNumber(0);
         } else {

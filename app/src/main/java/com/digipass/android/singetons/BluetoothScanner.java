@@ -1,17 +1,16 @@
 package com.digipass.android.singetons;
 
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.pm.PackageManager;
 import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
-import com.digipass.android.BackgroundService;
-
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat;
@@ -67,6 +66,9 @@ public class BluetoothScanner extends ContextWrapper {
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
             scanner.stopScan(scanCallback);
             STATE = STATE_UNAVAILABLE;
+        }
+        else if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            STATE = STATE_NO_PERMISSION_LOC;
         }
         else if(bluetoothAdapter == null || !bluetoothAdapter.isEnabled()){
             scanner.stopScan(scanCallback);
