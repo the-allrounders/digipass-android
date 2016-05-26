@@ -44,7 +44,6 @@ public class BluetoothScanner extends ContextWrapper {
     public BluetoothScanner(Context context) {
         super(context);
         detectState();
-        Log.d("TEST", this.toString());
     }
 
     /**
@@ -78,7 +77,10 @@ public class BluetoothScanner extends ContextWrapper {
             STATE = STATE_AVAILABLE;
         }
 
-        if(prevState != STATE) callListners();
+        if(prevState != STATE) {
+            Log.d("BluetoothScanner", "State changed from " + String.valueOf(prevState) + " to " + String.valueOf(STATE));
+            callListners();
+        }
     }
 
 
@@ -110,9 +112,9 @@ public class BluetoothScanner extends ContextWrapper {
     private ScanCallback scanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
-            Log.d("BluetoothScanner", "Device found: " + result);
+            Log.d("BluetoothScanner", "Device found: " + result.getDevice().toString());
 
-            boolean isNew = devices.containsKey(result.getDevice().toString());
+            boolean isNew = !devices.containsKey(result.getDevice().toString());
 
             devices.put(result.getDevice().toString(), result);
 
@@ -120,6 +122,10 @@ public class BluetoothScanner extends ContextWrapper {
         }
     };
 
+    /**
+     * Holds a list of Runnables, that are called everytime callListners is run.
+     * Also has an adder and remover.
+     */
     private ArrayList<Runnable> listners = new ArrayList<>();
 
     /**
@@ -131,9 +137,18 @@ public class BluetoothScanner extends ContextWrapper {
     }
 
     /**
+     * Removes a listner from the scanner.
+     * @param runnable Was added before with addListner
+     */
+    public void removeListner(Runnable runnable){
+        listners.add(runnable);
+    }
+
+    /**
      * Calls all registred listners.
      */
     private void callListners(){
+        Log.d("BluetoothScanner", "Calling all listners..");
         for(Runnable listner: listners){
             listner.run();
         }
