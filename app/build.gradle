@@ -44,3 +44,19 @@ buildscript {
         classpath 'com.dicedmelon.gradle:jacoco-android:0.1.1'
     }
 }
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    apply plugin: 'com.github.triplet.play'
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'no.nordicsemi.android.support.v18:scanner:0.1.2'
+    //compile project(':bluenet')
+}
+
+play {
+    serviceAccountEmail = '606050766430-compute@developer.gserviceaccount.com'
+    jsonFile = file('../google-credentials.json')
+    track = 'alpha'
+    uploadImages = true
+}
