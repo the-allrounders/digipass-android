@@ -13,6 +13,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.digipass.android.singetons.API;
+
 public class MainActivity extends AppCompatActivity {
     BackgroundService backgroundService;
     boolean boundWithService = false;
@@ -45,6 +47,15 @@ public class MainActivity extends AppCompatActivity {
         // Start the background service
         Intent intent = new Intent(this, BackgroundService.class);
         bindService(intent, backgroundServiceConnection, Context.BIND_AUTO_CREATE);
+
+        API api = new API(this);
+        if(api.username == null){
+            Log.d("MainActivity", "Not logged in!");
+            // TODO: Open login activity
+        }
+        else{
+            Log.d("MainActivity", "Logged in as " + api.username);
+        }
     }
 
     @Override
