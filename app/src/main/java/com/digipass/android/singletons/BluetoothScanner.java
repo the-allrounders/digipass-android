@@ -1,4 +1,4 @@
-package com.digipass.android.singetons;
+package com.digipass.android.singletons;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;

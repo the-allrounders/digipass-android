@@ -12,7 +12,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.widget.Toast;
 
-import com.digipass.android.singetons.BluetoothScanner;
+import com.digipass.android.singletons.BluetoothScanner;
 
 import java.util.Map;
 

@@ -13,9 +13,10 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import com.digipass.android.singetons.API;
+import com.digipass.android.singletons.API;
 
 public class MainActivity extends AppCompatActivity {
+    public static final String LOG_TAG = "Digipass";
     BackgroundService backgroundService;
     boolean boundWithService = false;
 

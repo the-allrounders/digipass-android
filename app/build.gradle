@@ -53,6 +53,7 @@ dependencies {
     compile 'com.android.support:design:23.4.0'
     compile 'no.nordicsemi.android.support.v18:scanner:0.1.2'
     compile 'com.android.volley:volley:1.0.0'
+    compile 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2';
     //compile project(':bluenet')
 }
 

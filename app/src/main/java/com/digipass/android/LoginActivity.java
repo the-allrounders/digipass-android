@@ -29,7 +29,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.digipass.android.singetons.API;
+import com.digipass.android.singletons.API;
 
 import java.util.ArrayList;
 import java.util.List;

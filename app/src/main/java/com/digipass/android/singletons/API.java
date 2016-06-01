@@ -1,4 +1,4 @@
-package com.digipass.android.singetons;
+package com.digipass.android.singletons;
 
 import android.content.Context;
 import android.content.ContextWrapper;
