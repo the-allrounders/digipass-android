@@ -38,13 +38,10 @@ public class BackgroundService extends Service {
     private Notification.BigTextStyle notificationStyle = new Notification.BigTextStyle();
     private PendingIntent pendingMainActivityIntent;
 
-    private API api;
-
 
     @Override
     public void onCreate() {
         BTScanner = new BluetoothScanner(getApplicationContext());
-        api = new API(this);
 
         // Make sure BLE is available
         if (BTScanner.getState() == BluetoothScanner.STATE_UNAVAILABLE) {
@@ -91,7 +88,8 @@ public class BackgroundService extends Service {
     }
 
     private void onScannerChange(){
-        String firstname = api.firstname != null ? api.firstname : "";
+        String fn = new API(this).firstname;
+        String firstname = fn != null ? fn : "";
         if (BTScanner.getState() == BluetoothScanner.STATE_BT_OFF) {
             notification
                     .setContentText("Hi "+firstname+", your Bluetooth is disabled. Click here to enable.")
