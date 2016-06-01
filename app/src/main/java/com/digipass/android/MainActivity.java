@@ -49,14 +49,16 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, BackgroundService.class);
         bindService(intent, backgroundServiceConnection, Context.BIND_AUTO_CREATE);
 
-        API api = new API(this);
-        if(api.username == null){
-            Log.d("MainActivity", "Not logged in!");
-            startActivity(new Intent(this, LoginActivity.class));
-        }
-        else{
-            Log.d("MainActivity", "Logged in as " + api.username);
-        }
+        finish();
+
+//        API api = new API(this);
+//        if(api.username == null){
+//            Log.d("MainActivity", "Not logged in!");
+//            startActivity(new Intent(this, LoginActivity.class));
+//        }
+//        else{
+//            Log.d("MainActivity", "Logged in as " + api.username);
+//        }
     }
 
     @Override
