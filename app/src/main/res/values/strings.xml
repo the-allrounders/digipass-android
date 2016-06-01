@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">DigiPass</string>
+    <string name="activity_log">Activity log</string>
+    <string name="pending_requests">Pending requests</string>
 </resources>

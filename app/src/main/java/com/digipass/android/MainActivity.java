@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 public class MainActivity extends AppCompatActivity {
+    public static final String LOG_TAG = "Digipass";
     BackgroundService backgroundService;
     boolean boundWithService = false;
 
