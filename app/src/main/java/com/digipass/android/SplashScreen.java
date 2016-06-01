@@ -24,6 +24,7 @@ public class SplashScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         final Context c = this;
+        new PreferenceTask(c).execute(); // TODO: TEMP!
         new Handler().postDelayed(new Runnable() {
 
             /*
@@ -37,7 +38,6 @@ public class SplashScreen extends AppCompatActivity {
                 // Start your app main activity
 //                Intent i = new Intent(SplashScreen.this, LoginActivity.class);
 //                startActivity(i);
-                new PreferenceTask(c).execute(); // TODO: TEMP!
                 Preference.ShowPreferenceList(c.getApplicationContext());
 
                 // close this activity

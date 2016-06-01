@@ -49,14 +49,14 @@ public class Data {
                 JSONObject term = (JSONObject) tree.get(n);
                 Log.d("term", term.toString());
                 if (Objects.equals(term.getString("parent"), key)) {
-                    preferences_list.add(new Preference(Integer.valueOf(term.getString("tid")), term.getString("name"), "", new JSONArray()));
+                    preferences_list.add(new Preference(Integer.valueOf(term.getString("tid")), term.getString("name"), "", new JSONArray(), "group"));
                 }
             }
             for(int i = 0; i < preferences.length(); i++)
             {
                 JSONObject preference = (JSONObject)preferences.get(i);
                 if (preference.getJSONArray("field_category").toString().contains("\""+ key +"\"")) {
-                    preferences_list.add(new Preference(preference.getInt("id"), preference.getString("title"), preference.getString("description"), preference.getJSONArray("field_values")));
+                    preferences_list.add(new Preference(preference.getInt("id"), preference.getString("title"), preference.getString("description"), preference.getJSONArray("field_values"), "preference"));
                 }
             }
 

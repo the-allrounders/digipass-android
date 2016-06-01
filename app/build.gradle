@@ -49,12 +49,13 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     apply plugin: 'com.github.triplet.play'
     testCompile 'junit:junit:4.12'
+    //compile project(':bluenet')
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:design:23.4.0'
     compile 'no.nordicsemi.android.support.v18:scanner:0.1.2'
     compile 'com.android.volley:volley:1.0.0'
-    compile 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2';
-    //compile project(':bluenet')
+    compile 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
+    compile 'com.android.support:support-v4:23.4.0'
 }
 
 play {

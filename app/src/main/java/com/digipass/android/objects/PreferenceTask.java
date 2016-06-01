@@ -80,9 +80,7 @@ public class PreferenceTask extends AsyncTask<Void, Void, ArrayList<Preference>>
             prefEditor.putString(pref_key, arr.toString());
             prefEditor.apply();
             httpclient.getConnectionManager().shutdown();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
     }

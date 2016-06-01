@@ -30,13 +30,15 @@ public class Preference implements Parcelable {
     private String _name;
     private String _description;
     private String _values;
+    private String _row_type;
 
-    public Preference(int k, String name, String description, JSONArray values)
+    public Preference(int k, String name, String description, JSONArray values, String row_type)
     {
         _key = k;
         _name = name;
         _description = description;
         _values = values.toString();
+        _row_type = row_type;
     }
 
     protected Preference(Parcel in) {
@@ -44,6 +46,7 @@ public class Preference implements Parcelable {
         _name = in.readString();
         _description = in.readString();
         _values = in.readString();
+        _row_type = in.readString();
     }
 
     public static final Creator<Preference> CREATOR = new Creator<Preference>() {
@@ -80,6 +83,11 @@ public class Preference implements Parcelable {
     public String get_name()
     {
         return _name;
+    }
+
+    public String get_row_type()
+    {
+        return _row_type;
     }
 
     public JSONArray get_values() {
@@ -125,5 +133,6 @@ public class Preference implements Parcelable {
         dest.writeString(_name);
         dest.writeString(_description);
         dest.writeString(_values);
+        dest.writeString(_row_type);
     }
 }
