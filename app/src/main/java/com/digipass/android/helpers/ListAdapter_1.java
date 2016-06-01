@@ -31,10 +31,10 @@ public class ListAdapter_1 extends ArrayAdapter<Preference> {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = inflater.inflate(rowlayout, parent, false);
         TextView name = (TextView) rowView.findViewById(R.id.name);
-        TextView description = (TextView) rowView.findViewById(R.id.description);
+       // TextView description = (TextView) rowView.findViewById(R.id.description);
         TextView values = (TextView) rowView.findViewById(R.id.values);
         name.setText(pref.get(position).get_name());
-        description.setText(String.valueOf(pref.get(position).get_description()));
+      //  description.setText(String.valueOf(pref.get(position).get_description()));
         values.setText(String.valueOf(pref.get(position).get_values_as_string()));
         return rowView;
     }
