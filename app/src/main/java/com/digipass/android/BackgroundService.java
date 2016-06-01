@@ -141,7 +141,8 @@ public class BackgroundService extends Service {
 
     @Override
     public void onDestroy() {
-        nm.cancel(NOTIFICATION_ID);
+        if (nm != null)
+            nm.cancel(NOTIFICATION_ID);
     }
 
 
