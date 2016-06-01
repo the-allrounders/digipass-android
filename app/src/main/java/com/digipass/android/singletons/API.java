@@ -22,6 +22,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class API extends ContextWrapper {
 
@@ -39,6 +40,11 @@ public class API extends ContextWrapper {
      * The username of the logged in user, or null if not logged in
      */
     public String username;
+
+    /**
+     * The display name of the user currently logged in
+     */
+    public String firstname;
 
     /**
      * The password of the logged in user, or null if not logged in
@@ -69,6 +75,7 @@ public class API extends ContextWrapper {
         preferences = getSharedPreferences("User", 0);
         username = preferences.getString("username", null);
         password = preferences.getString("password", null);
+        firstname = preferences.getString("firstname", null);
 
         Log.d("API", "Done initializing");
     }
@@ -89,6 +96,7 @@ public class API extends ContextWrapper {
         editor.remove("password");
         username = null;
         password = null;
+        firstname = null;
 
         // Creating the request
         StringRequest request = new StringRequest(
@@ -110,11 +118,13 @@ public class API extends ContextWrapper {
                             // Save in class
                             username = name;
                             password = pass;
+                            firstname = Objects.equals(username.toLowerCase(), "schcj@hr.nl") ? "Stan" : username;
 
                             // Save in preferences
                             SharedPreferences.Editor editor = preferences.edit();
                             editor.putString("username", name);
                             editor.putString("password", pass);
+                            editor.putString("firstname", firstname);
                             editor.apply();
                         }
                         else{
