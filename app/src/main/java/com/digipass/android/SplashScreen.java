@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 
 import com.digipass.android.objects.Preference;
+import com.digipass.android.objects.PreferenceTask;
 
 public class SplashScreen extends AppCompatActivity {
 
@@ -36,7 +37,7 @@ public class SplashScreen extends AppCompatActivity {
                 // Start your app main activity
 //                Intent i = new Intent(SplashScreen.this, LoginActivity.class);
 //                startActivity(i);
-
+                new PreferenceTask(c).execute(); // TODO: TEMP!
                 Preference.ShowPreferenceList(c.getApplicationContext());
 
                 // close this activity

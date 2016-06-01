@@ -59,7 +59,6 @@ public class Preference implements Parcelable {
     };
 
     public static void ShowPreferenceList(Context c) {
-        new PreferenceTask(c).execute(); // TODO: TEMP!
         Intent i = new Intent(c, GenericListActivity.class);
         ArrayList<Preference> data = Data.GetInstance(c).GetPreferences("0");
         i.putExtra("data", data);
