@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         API api = new API(this);
         if(api.username == null){
             Log.d("MainActivity", "Not logged in!");
-            // TODO: Open login activity
+            startActivity(new Intent(this, LoginActivity.class));
         }
         else{
             Log.d("MainActivity", "Logged in as " + api.username);
@@ -61,7 +61,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        backgroundService.getBTScanner().removeListner(onScannerChange);
+        if(backgroundService != null)
+            backgroundService.getBTScanner().removeListner(onScannerChange);
         // Unbind from the service
         if (boundWithService) {
             unbindService(backgroundServiceConnection);

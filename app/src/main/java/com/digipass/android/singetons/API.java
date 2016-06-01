@@ -87,6 +87,8 @@ public class API extends ContextWrapper {
         SharedPreferences.Editor editor = preferences.edit();
         editor.remove("username");
         editor.remove("password");
+        username = null;
+        password = null;
 
         // Creating the request
         StringRequest request = new StringRequest(
