@@ -1,12 +1,16 @@
 package com.digipass.android;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.FragmentManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -27,16 +31,23 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class GenericListActivity extends android.app.ListActivity {
+public class GenericListActivity extends AppCompatActivity {
 
     private ArrayList data = new ArrayList<>();
     Intent intent;
     public int row_type = 0;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list_activity);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            toolbar.setTitleTextColor(Color.WHITE);
+            toolbar.setTitle(getResources().getString(R.string.preferences));
+            setSupportActionBar(toolbar);
+        }
     }
 
     @Override
@@ -52,6 +63,11 @@ public class GenericListActivity extends android.app.ListActivity {
         Bundle b = getIntent().getExtras();
         data = b.getParcelableArrayList("data");
         row_type = intent.getIntExtra("row_type", 0);
+        String group_title = intent.getStringExtra("group_title");
+        if (!Objects.equals(group_title, "")) {
+            toolbar.setTitle(getResources().getString(R.string.preferences) + " - " + group_title);
+            setSupportActionBar(toolbar);
+        }
         printList();
     }
 
@@ -60,7 +76,7 @@ public class GenericListActivity extends android.app.ListActivity {
     private void printList() {
         AdapterView.OnItemClickListener onClick;
         ListView lv =
-                ((ListView) findViewById(android.R.id.list));
+                ((ListView) findViewById(R.id.list));
         switch (getIntent().getStringExtra("list_type")) {
             case "preferences":
                 final ArrayList<Preference> _data = new ArrayList<>();
@@ -98,6 +114,8 @@ public class GenericListActivity extends android.app.ListActivity {
                             i.putExtra("data", data);
                             i.putExtra("list_type", "preferences");
                             i.putExtra("row_type", row_type);
+                            i.putExtra("group_title", preference.get_name());
+                            Log.d("qwerrt", preference.get_name());
                             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             v.getContext().startActivity(i);
                         }

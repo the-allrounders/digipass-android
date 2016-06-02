@@ -67,6 +67,7 @@ public class Preference implements Parcelable {
         i.putExtra("data", data);
         i.putExtra("list_type", "preferences");
         i.putExtra("row_type", R.layout.list_row_1);
+        i.putExtra("group_title", "");
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         c.startActivity(i);
     }
