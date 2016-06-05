@@ -1,18 +1,12 @@
 package com.digipass.android;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.AdapterView;
 
-import com.digipass.android.objects.Preference;
 import com.digipass.android.objects.PreferenceTask;
 import com.digipass.android.singletons.API;
 
@@ -25,7 +19,6 @@ public class SplashScreen extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         final Context c = this;
 
     }
@@ -57,8 +50,8 @@ public class SplashScreen extends AppCompatActivity {
 
                 @Override
                 public void run() {
-                    Preference.ShowPreferenceList(c.getApplicationContext());
-                    finish();
+//                    Preference.ShowPreferenceList(c.getApplicationContext());
+//                    finish();
                 }
             }, SPLASH_TIME_OUT);
         }

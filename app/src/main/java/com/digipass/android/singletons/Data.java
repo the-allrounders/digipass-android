@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.digipass.android.MainActivity;
 import com.digipass.android.objects.Preference;
 
 import org.json.JSONArray;
