@@ -1,10 +1,6 @@
 package com.digipass.android;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.FragmentManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -16,11 +12,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.digipass.android.helpers.ListAdapter_1;
-import com.digipass.android.helpers.PreferenceFragment;
-import com.digipass.android.objects.ParcelableListObject;
+import com.digipass.android.helpers.EditPreferenceDialog;
 import com.digipass.android.objects.Preference;
 import com.digipass.android.singletons.Data;
 
@@ -89,7 +83,7 @@ public class GenericListActivity extends AppCompatActivity {
                     public void onItemClick(AdapterView<?> a, View v, int position, long id) {
                         Preference preference = _data.get(position);
                         if (Objects.equals(preference.get_row_type(), "preference")) {
-                            PreferenceFragment dialog = new PreferenceFragment();
+                            EditPreferenceDialog dialog = new EditPreferenceDialog();
                             FragmentManager fragmentManager = getFragmentManager();
                             JSONArray _data = preference.get_values();
 

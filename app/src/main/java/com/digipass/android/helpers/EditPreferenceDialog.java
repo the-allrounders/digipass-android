@@ -17,7 +17,7 @@ import com.digipass.android.R;
 
 import java.util.ArrayList;
 
-public class PreferenceFragment extends DialogFragment {
+public class EditPreferenceDialog extends DialogFragment {
     ArrayList<Integer> mSelectedItems;
 
     String[] options = {};
