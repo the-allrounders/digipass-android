@@ -1,6 +1,8 @@
 package com.digipass.android;
 
 import android.Manifest;
+import android.net.Uri;
+import android.support.v4.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +13,7 @@ import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
@@ -23,15 +26,20 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.digipass.android.helpers.EditPreferenceDialog;
+
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener, PreferencesFragment.OnFragmentInteractionListener {
 
     public static final String LOG_TAG = "Digipass";
     BackgroundService backgroundService;
     boolean boundWithService = false;
 
+    DrawerLayout mDrawer;
+    NavigationView navigationView;
 
-        @Override
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -39,24 +47,29 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        if (fab != null) {
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+            });
+        }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+                this, mDrawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        if (navigationView != null) {
+            navigationView.setNavigationItemSelectedListener(this);
+            onNavigationItemSelected(navigationView.getMenu().getItem(0));
+        }
 
-        // Start the background service
+            // Start the background service
         Intent intent = new Intent(this, BackgroundService.class);
         startService(intent);
 
@@ -68,6 +81,18 @@ public class MainActivity extends AppCompatActivity
                     new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                     1);
         }
+
+//        Intent service_intent = new Intent(this, BackgroundService.class);
+//        bindService(service_intent, backgroundServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_content);
+        if (f == null) {
+            onNavigationItemSelected(navigationView.getMenu().getItem(0));
+        }
     }
 
     @Override
@@ -75,8 +100,8 @@ public class MainActivity extends AppCompatActivity
         super.onStart();
 
         // Start the background service
-        Intent intent = new Intent(this, BackgroundService.class);
-        bindService(intent, backgroundServiceConnection, Context.BIND_AUTO_CREATE);
+//        Intent intent = new Intent(this, BackgroundService.class);
+//        bindService(intent, backgroundServiceConnection, Context.BIND_AUTO_CREATE);
 
 //        finish();
 
@@ -116,9 +141,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        if (mDrawer.isDrawerOpen(GravityCompat.START)) {
+            mDrawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
@@ -127,7 +151,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main2, menu);
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -151,23 +175,58 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        Fragment fragment = null;
+        Class fragmentClass;
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        switch(id) {
+            case R.id.nav_home:
+                fragmentClass = HomeFragment.class;
+                break;
+            case R.id.nav_preferences:
+                fragmentClass = PreferencesFragment.class;
+                break;
+            case R.id.nav_permissions:
+                fragmentClass = HomeFragment.class;
+                break;
+            case R.id.nav_activity_log:
+                fragmentClass = HomeFragment.class;
+                break;
+            case R.id.nav_contacts:
+                fragmentClass = HomeFragment.class;
+                break;
+            case R.id.nav_settings:
+                fragmentClass = HomeFragment.class;
+                break;
+            case R.id.nav_help_feedback:
+                fragmentClass = HomeFragment.class;
+                break;
+            default:
+                fragmentClass = HomeFragment.class;
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        mDrawer.closeDrawer(GravityCompat.START);
+
+        try {
+            fragment = (Fragment) fragmentClass.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Insert the fragment by replacing any existing fragment
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.main_content, fragment).commit();
+
+        // Highlight the selected item has been done by NavigationView
+        item.setChecked(true);
+        // Set action bar title
+        setTitle(item.getTitle());
+        // Close the navigation drawer
+        mDrawer.closeDrawers();
         return true;
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }
