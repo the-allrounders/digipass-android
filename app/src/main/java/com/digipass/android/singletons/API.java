@@ -159,6 +159,68 @@ public class API extends ContextWrapper {
 
         // Request!
         queue.add(request);
+    }
+
+    /**
+     * Gets the preferences from the database
+     * @param callback Is called when the request was successful or unsuccessful
+     */
+    public void getPreferences(final Runnable callback) {
+        getPreferences(-1, callback);
+    }
+
+    /**
+     * Gets the preferences from the database
+     * @param categoryId Only preferences with that category will be returned
+     * @param callback Is called when the request was successful or unsuccessful
+     */
+    public void getPreferences(int categoryId, final Runnable callback){
+
+        Log.d("API", "Getting preferences with categoryId "+categoryId);
+
+        // Creating the request
+        StringRequest request = new StringRequest(
+                Request.Method.GET,
+                BaseUrl + "/preferences/" + (categoryId > -1 ? categoryId : ""),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        callback.run();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if(error.networkResponse.statusCode == 404) {
+                           Log.d("API", "CategoryId invalid");
+                        }
+                        else {
+                            Log.d("API", "Unexpected API error: " + error.toString());
+                        }
+                        callback.run();
+                    }
+                }
+        ){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String, String> params = new HashMap<>();
+                return params;
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/x-www-form-urlencoded; charset=UTF-8";
+            }
+        };
+
+        // Add timeout of 30 seconds
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                30000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        // Request!
+        queue.add(request);
 
     }
 }
