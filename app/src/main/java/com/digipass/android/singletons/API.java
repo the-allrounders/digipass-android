@@ -239,4 +239,16 @@ public class API extends ContextWrapper {
         }
 
     }
+
+    // POST task komt hier
+//    public class PostPreferenceTask extends AsyncTask<Void, Void, String> {
+//
+//    }
+
+    public static void PostPreference(String data) {
+        Log.d("API", data);
+//        new PostPreferenceTask().execute();
+    }
+
+
 }

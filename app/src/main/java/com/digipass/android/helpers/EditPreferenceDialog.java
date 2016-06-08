@@ -8,6 +8,7 @@ import android.support.v4.app.DialogFragment;
 import android.util.Log;
 
 import com.digipass.android.R;
+import com.digipass.android.singletons.API;
 
 import java.util.ArrayList;
 
@@ -57,6 +58,7 @@ public class EditPreferenceDialog extends DialogFragment {
                         // User clicked OK, so save the mSelectedItems results somewhere
                         // or return them to the component that opened the dialog
                         Log.d("dialog", "ok");
+                        API.PostPreference("hoi");
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

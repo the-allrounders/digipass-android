@@ -26,6 +26,8 @@ import android.view.View;
 
 import com.digipass.android.singletons.Data;
 
+import java.io.Serializable;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener, PreferencesFragment.OnFragmentInteractionListener {
 
@@ -164,7 +166,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_preferences:
                 fragmentClass = PreferencesFragment.class;
-                bundle.putParcelableArrayList("data", Data.GetInstance(this).GetPreferences("0"));
+                bundle.putSerializable("data", (Serializable)Data.GetInstance(this).GetPreferences("0"));
                 break;
             case R.id.nav_permissions:
                 fragmentClass = HomeFragment.class;

@@ -14,9 +14,11 @@
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:minHeight="64dp"
+        android:minHeight="48dp"
         android:fontFamily="sans-serif-light"
-        android:padding="16dp">
+        android:padding="12dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp">
 
         <ImageView
             android:id="@+id/row_1_thumb_icon"
@@ -25,12 +27,14 @@
             android:contentDescription="@string/thumb_description"
             android:layout_marginStart="0dp"
             android:layout_marginEnd="24dp"
+            android:layout_gravity="center_vertical"
             />
 
         <LinearLayout
             android:id="@+id/row_1_content"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
             <TextView
                 android:id="@+id/row_1_title"
                 android:layout_width="wrap_content"
