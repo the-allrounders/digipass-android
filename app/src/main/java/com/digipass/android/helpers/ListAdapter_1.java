@@ -65,7 +65,7 @@ public class ListAdapter_1 extends ArrayAdapter<Preference> {
         holder.subtitle.setText(preference.get_values_as_string());
 
         Animation animation = AnimationUtils.loadAnimation(context, R.anim.fade_in);
-        animation.setStartOffset(50 * position);
+        animation.setStartOffset(50 * (position + 1));
 
         convertView.startAnimation(animation);
 
