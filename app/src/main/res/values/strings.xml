@@ -17,9 +17,10 @@
     <string name="activity_log">Activity log</string>
     <string name="pending_requests">Pending requests</string>
 
-    <string name="ok">ok</string>
-    <string name="cancel">cancel</string>
-    <string name="preferences">Preferences</string>
+    <string name="ok">@android:string/ok</string>
+    <string name="cancel">@android:string/cancel</string>
+    <string name="title_preferences">Preferences</string>
+    <string name="title_home">Digipass</string>
     <string name="title_activity_main2">Digipass</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>

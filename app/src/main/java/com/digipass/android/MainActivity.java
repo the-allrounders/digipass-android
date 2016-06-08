@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -15,15 +16,15 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.digipass.android.singletons.Data;
-
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener, PreferencesFragment.OnFragmentInteractionListener {
@@ -37,6 +38,10 @@ public class MainActivity extends AppCompatActivity
 
     Fragment fragment;
 
+    ActionBar actionBar;
+    ActionBarDrawerToggle toggle;
+
+    public Boolean showHomeAsUp = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,11 +49,25 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        actionBar = getSupportActionBar();
 
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, mDrawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        toggle = new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawer.setDrawerListener(toggle);
+
+        if (toolbar != null) {
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (showHomeAsUp) {
+                        onBackPressed();
+                    } else {
+                        mDrawer.openDrawer(GravityCompat.START);
+                    }
+                }
+            });
+        }
+
         toggle.syncState();
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -57,39 +76,32 @@ public class MainActivity extends AppCompatActivity
             initMainFragment();
         }
 
-            // Start the background service
+        // Start the background service
         Intent intent = new Intent(this, BackgroundService.class);
         startService(intent);
 
         // Check if we have permission to access location
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
             // If not, ask
-            ActivityCompat.requestPermissions(
-                    this,
-                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                    1);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
         }
 
-//        Intent service_intent = new Intent(this, BackgroundService.class);
-//        bindService(service_intent, backgroundServiceConnection, Context.BIND_AUTO_CREATE);
+        getSupportFragmentManager().addOnBackStackChangedListener(
+            new FragmentManager.OnBackStackChangedListener() {
+                public void onBackStackChanged() {
+                    actionBar.setDisplayHomeAsUpEnabled(showHomeAsUp);
+                    if (!showHomeAsUp) {
+                        toggle.syncState();
+                    }
+                }
+            });
     }
 
     public void initMainFragment() {
         onNavigationItemSelected(navigationView.getMenu().getItem(1));
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
     private ServiceConnection backgroundServiceConnection = new ServiceConnection() {
-
         @Override
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
@@ -97,7 +109,11 @@ public class MainActivity extends AppCompatActivity
             BackgroundService.LocalBinder binder = (BackgroundService.LocalBinder) service;
             backgroundService = binder.getService();
             boundWithService = true;
-            backgroundService.getBTScanner().addListner(onScannerChange);
+            backgroundService.getBTScanner().addListner(new Runnable(){
+                public void run() {
+                    Log.d("MainActivity", "Scanner callback recieved.");
+                }
+            });
         }
 
         @Override
@@ -106,43 +122,34 @@ public class MainActivity extends AppCompatActivity
         }
     };
 
-    private Runnable onScannerChange = new Runnable(){
-        public void run() {
-            Log.d("MainActivity", "Scanner callback recieved.");
-        }
-    };
-
     @Override
     public void onBackPressed() {
         if (mDrawer.isDrawerOpen(GravityCompat.START)) {
             mDrawer.closeDrawer(GravityCompat.START);
         } else {
-            int count = getSupportFragmentManager().getBackStackEntryCount();
-
-            if (count == 0) {
-                super.onBackPressed();
-            } else {
-                getSupportFragmentManager().popBackStack();
-            }
+            showHomeAsUp = false;
+            toggle.setDrawerIndicatorEnabled(true);
+            super.onBackPressed();
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case android.R.id.home:
+                if (showHomeAsUp) {
+                    super.onBackPressed();
+                } else {
+                    mDrawer.openDrawer(GravityCompat.START);
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -178,36 +185,18 @@ public class MainActivity extends AppCompatActivity
                 fragmentClass = HomeFragment.class;
         }
 
-        mDrawer.closeDrawer(GravityCompat.START);
-
-        try {
-            fragment = (Fragment) fragmentClass.newInstance();
-            fragment.setArguments(bundle);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // Insert the fragment by replacing any existing fragment
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.main_content, fragment).addToBackStack(null).commit();
-
-        // Highlight the selected item has been done by NavigationView
         item.setChecked(true);
-        // Set action bar title
-        setTitle(item.getTitle());
-        // Close the navigation drawer
-        mDrawer.closeDrawers();
+        showHomeAsUp = false;
+
+        StartFragment(fragmentClass, bundle);
         return true;
     }
 
-    public void StartFragment(Class fragmentClass, ArrayList data) {
+    public void StartFragment(Class fragmentClass, Bundle data) {
         try {
-            Bundle bundle = new Bundle();
-            bundle.putParcelableArrayList("data", data);
             fragment = (Fragment) fragmentClass.newInstance();
-            fragment.setArguments(bundle);
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.main_content, fragment).addToBackStack(null).commit();
+            fragment.setArguments(data);
+            getSupportFragmentManager().beginTransaction().replace(R.id.main_content, fragment).addToBackStack(null).commit();
 
             mDrawer.closeDrawers();
         } catch (Exception e) {
@@ -218,5 +207,19 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        toggle.setDrawerIndicatorEnabled(true);
+        toggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        toggle.onConfigurationChanged(newConfig);
     }
 }

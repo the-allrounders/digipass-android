@@ -1,7 +1,6 @@
 package com.digipass.android.helpers;
 
 import android.content.Context;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,15 +20,13 @@ public class ListAdapter_1 extends ArrayAdapter<Preference> {
     private Context context;
     private ArrayList<Preference> data;
     private int rowlayout;
-    private DisplayMetrics metrics_;
     private LayoutInflater mInflater;
 
-    public ListAdapter_1(Context context, int textViewResourceId, ArrayList<Preference> data, DisplayMetrics metrics) {
+    public ListAdapter_1(Context context, int textViewResourceId, ArrayList<Preference> data) {
         super(context, textViewResourceId, data);
         this.context = context;
         this.mInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.data = data;
-        this.metrics_ = metrics;
         this.rowlayout = textViewResourceId;
     }
 
