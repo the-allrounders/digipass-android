@@ -343,7 +343,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             // TODO: Add account registering
             try {
-                API api = new API(getBaseContext());
+                API api = API.getInstance(getBaseContext());
 
                 WaitForCallback callback = new WaitForCallback();
                 api.login(mEmail, mPassword, callback);

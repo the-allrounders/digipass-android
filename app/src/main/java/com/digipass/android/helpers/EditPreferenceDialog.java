@@ -58,7 +58,7 @@ public class EditPreferenceDialog extends DialogFragment {
                         // User clicked OK, so save the mSelectedItems results somewhere
                         // or return them to the component that opened the dialog
                         Log.d("dialog", "ok");
-                        API.PostPreference("hoi");
+                    //    API.getInstance(getActivity().getApplicationContext()).PostPreferenceTask();
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

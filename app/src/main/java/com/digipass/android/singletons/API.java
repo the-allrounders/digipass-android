@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Looper;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
@@ -18,10 +19,17 @@ import com.android.volley.toolbox.Volley;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.protocol.HTTP;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -71,6 +79,8 @@ public class API extends ContextWrapper {
      */
     RequestQueue queue;
 
+    private static API instance;
+
     /**
      * Context of the activity where the API is created
      */
@@ -80,7 +90,7 @@ public class API extends ContextWrapper {
      * Initializes all variables
      * @param base The context that is used to get the sharedPreferences
      */
-    public API(Context base) {
+    private API(Context base) {
 
         super(base);
 
@@ -100,6 +110,16 @@ public class API extends ContextWrapper {
         c = base;
 
         Log.d("API", "Done initializing");
+    }
+
+    public static API getInstance(Context c)
+    {
+        if(instance == null) {
+            instance = new API(c);
+        }
+
+        return instance;
+
     }
 
     /**
@@ -240,15 +260,46 @@ public class API extends ContextWrapper {
 
     }
 
-    // POST task komt hier
-//    public class PostPreferenceTask extends AsyncTask<Void, Void, String> {
-//
-//    }
 
-    public static void PostPreference(String data) {
-        Log.d("API", data);
-//        new PostPreferenceTask().execute();
+    public void PostPreferenceTask(final Boolean[] values, final String id) {
+        Thread t = new Thread() {
+
+            public void run() {
+                Looper.prepare(); //For Preparing Message Pool for the child Thread
+                HttpClient client = new DefaultHttpClient();
+                HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000); //Timeout Limit
+                HttpResponse response;
+                JSONObject json = new JSONObject();
+
+                try {
+                    HttpPut post = new HttpPut(BaseUrl + "/users/" + userid + "/preferences");
+                    json.put("values", values);
+                    json.put("preference_id", id);
+                    StringEntity se = new StringEntity(json.toString());
+                    se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+                    post.setEntity(se);
+                    response = client.execute(post);
+
+
+                    if (response != null) {
+                        InputStream in = response.getEntity().getContent();
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    createDialog("Error", "Cannot Estabilish Connection");
+                }
+
+                Looper.loop(); //Loop in the message queue
+            }
+
+            private void createDialog(String error, String s) {
+            }
+        };
+
+        t.start();
     }
+
 
 
 }
