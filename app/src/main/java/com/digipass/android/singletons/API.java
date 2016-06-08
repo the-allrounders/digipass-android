@@ -3,8 +3,7 @@ package com.digipass.android.singletons;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.SharedPreferences;
-import android.os.Handler;
-import android.os.Message;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
@@ -17,7 +16,18 @@ import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
@@ -29,12 +39,17 @@ public class API extends ContextWrapper {
     /**
      * Will be prefixed on all API requests
      */
-    private String BaseUrl = "http://toinfinity.nl/digipass-api";
+    private String BaseUrl = "http://digipass-api.herokuapp.com/api";
 
     /**
      * Stores all saved settings
      */
     private SharedPreferences preferences;
+
+    /**
+     *
+     */
+    public String userid;
 
     /**
      * The username of the logged in user, or null if not logged in
@@ -57,6 +72,11 @@ public class API extends ContextWrapper {
     RequestQueue queue;
 
     /**
+     * Context of the activity where the API is created
+     */
+    Context c;
+
+    /**
      * Initializes all variables
      * @param base The context that is used to get the sharedPreferences
      */
@@ -76,6 +96,8 @@ public class API extends ContextWrapper {
         username = preferences.getString("username", null);
         password = preferences.getString("password", null);
         firstname = preferences.getString("firstname", null);
+
+        c = base;
 
         Log.d("API", "Done initializing");
     }
@@ -161,66 +183,60 @@ public class API extends ContextWrapper {
         queue.add(request);
     }
 
-    /**
-     * Gets the preferences from the database
-     * @param callback Is called when the request was successful or unsuccessful
-     */
-    public void getPreferences(final Runnable callback) {
-        getPreferences(-1, callback);
+    public void GetJSONResult() {
+        new GetJSONTask(c).execute();
     }
 
-    /**
-     * Gets the preferences from the database
-     * @param categoryId Only preferences with that category will be returned
-     * @param callback Is called when the request was successful or unsuccessful
-     */
-    public void getPreferences(int categoryId, final Runnable callback){
+    public class GetJSONTask extends AsyncTask<Void, Void, String> {
 
-        Log.d("API", "Getting preferences with categoryId "+categoryId);
+        private Context c;
 
-        // Creating the request
-        StringRequest request = new StringRequest(
-                Request.Method.GET,
-                BaseUrl + "/preferences/" + (categoryId > -1 ? categoryId : ""),
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        callback.run();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if(error.networkResponse.statusCode == 404) {
-                           Log.d("API", "CategoryId invalid");
-                        }
-                        else {
-                            Log.d("API", "Unexpected API error: " + error.toString());
-                        }
-                        callback.run();
-                    }
+        public GetJSONTask(Context c) {
+            this.c = c;
+        }
+
+        private void SaveResult(String url, String pref_key) {
+            DefaultHttpClient httpclient = new DefaultHttpClient();
+
+
+            HttpGet httpget_pref = new HttpGet(url);
+            HttpResponse response = null;
+            try {
+                response = httpclient.execute(httpget_pref);
+                HttpEntity entity = response.getEntity();
+                String str = readIt(entity.getContent());
+                JSONArray arr = new JSONArray(str);
+                SharedPreferences.Editor prefEditor = c.getSharedPreferences(pref_key, Context.MODE_PRIVATE).edit();
+                prefEditor.putString(pref_key, arr.toString());
+                prefEditor.apply();
+                httpclient.getConnectionManager().shutdown();
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            SaveResult(BaseUrl + "/preferences", "preferences_data");
+            SaveResult(BaseUrl + "/categories", "preference_category_data");
+            return "";
+        }
+
+        public String readIt(InputStream stream) throws IOException, UnsupportedEncodingException {
+
+            if (stream != null) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "utf-8"), 8);
+
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line).append("\n");
                 }
-        ){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                HashMap<String, String> params = new HashMap<>();
-                return params;
+                stream.close();
+                return sb.toString();
             }
-
-            @Override
-            public String getBodyContentType() {
-                return "application/x-www-form-urlencoded; charset=UTF-8";
-            }
-        };
-
-        // Add timeout of 30 seconds
-        request.setRetryPolicy(new DefaultRetryPolicy(
-                30000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-        // Request!
-        queue.add(request);
+            return "error: ";
+        }
 
     }
 }

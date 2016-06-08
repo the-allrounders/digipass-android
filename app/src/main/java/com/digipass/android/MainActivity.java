@@ -1,32 +1,29 @@
 package com.digipass.android;
 
 import android.Manifest;
-import android.net.Uri;
-import android.support.v4.app.Fragment;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
-import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
+import android.util.Log;
 import android.view.MenuItem;
 
-import com.digipass.android.helpers.EditPreferenceDialog;
+import com.digipass.android.singletons.Data;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener, PreferencesFragment.OnFragmentInteractionListener {
@@ -38,6 +35,8 @@ public class MainActivity extends AppCompatActivity
     DrawerLayout mDrawer;
     NavigationView navigationView;
 
+    Fragment fragment;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,17 +44,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        if (fab != null) {
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                }
-            });
-        }
 
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -66,7 +54,7 @@ public class MainActivity extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         if (navigationView != null) {
             navigationView.setNavigationItemSelectedListener(this);
-            onNavigationItemSelected(navigationView.getMenu().getItem(0));
+            initMainFragment();
         }
 
             // Start the background service
@@ -86,33 +74,18 @@ public class MainActivity extends AppCompatActivity
 //        bindService(service_intent, backgroundServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
+    public void initMainFragment() {
+        onNavigationItemSelected(navigationView.getMenu().getItem(1));
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
-        Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_content);
-        if (f == null) {
-            onNavigationItemSelected(navigationView.getMenu().getItem(0));
-        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
-        // Start the background service
-//        Intent intent = new Intent(this, BackgroundService.class);
-//        bindService(intent, backgroundServiceConnection, Context.BIND_AUTO_CREATE);
-
-//        finish();
-
-//        API api = new API(this);
-//        if(api.username == null){
-//            Log.d("MainActivity", "Not logged in!");
-//            startActivity(new Intent(this, LoginActivity.class));
-//        }
-//        else{
-//            Log.d("MainActivity", "Logged in as " + api.username);
-//        }
     }
 
     private ServiceConnection backgroundServiceConnection = new ServiceConnection() {
@@ -144,15 +117,14 @@ public class MainActivity extends AppCompatActivity
         if (mDrawer.isDrawerOpen(GravityCompat.START)) {
             mDrawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
-        }
-    }
+            int count = getSupportFragmentManager().getBackStackEntryCount();
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
+            if (count == 0) {
+                super.onBackPressed();
+            } else {
+                getSupportFragmentManager().popBackStack();
+            }
+        }
     }
 
     @Override
@@ -175,8 +147,9 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        Fragment fragment = null;
         Class fragmentClass;
+
+        Bundle bundle = new Bundle();
 
         switch(id) {
             case R.id.nav_home:
@@ -184,6 +157,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_preferences:
                 fragmentClass = PreferencesFragment.class;
+                bundle.putParcelableArrayList("data", Data.GetInstance(this).GetPreferences("0"));
                 break;
             case R.id.nav_permissions:
                 fragmentClass = HomeFragment.class;
@@ -208,13 +182,14 @@ public class MainActivity extends AppCompatActivity
 
         try {
             fragment = (Fragment) fragmentClass.newInstance();
+            fragment.setArguments(bundle);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         // Insert the fragment by replacing any existing fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.main_content, fragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.main_content, fragment).addToBackStack(null).commit();
 
         // Highlight the selected item has been done by NavigationView
         item.setChecked(true);
@@ -223,6 +198,21 @@ public class MainActivity extends AppCompatActivity
         // Close the navigation drawer
         mDrawer.closeDrawers();
         return true;
+    }
+
+    public void StartFragment(Class fragmentClass, ArrayList data) {
+        try {
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList("data", data);
+            fragment = (Fragment) fragmentClass.newInstance();
+            fragment.setArguments(bundle);
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.main_content, fragment).addToBackStack(null).commit();
+
+            mDrawer.closeDrawers();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

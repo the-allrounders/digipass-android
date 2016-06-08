@@ -2,12 +2,11 @@ package com.digipass.android;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 
-import com.digipass.android.objects.PreferenceTask;
 import com.digipass.android.singletons.API;
 
 public class SplashScreen extends AppCompatActivity {
@@ -27,11 +26,11 @@ public class SplashScreen extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        new PreferenceTask(this).execute();
-
         startActivity(new Intent(this, MainActivity.class));
 
         API api = new API(this);
+        api.GetJSONResult();
+
         final Context c = this;
 
         if(api.username == null){
