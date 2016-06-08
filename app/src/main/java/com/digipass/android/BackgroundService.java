@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.widget.Toast;
 
+import com.digipass.android.singletons.API;
 import com.digipass.android.singletons.BluetoothScanner;
 
 import java.util.Map;
@@ -87,30 +88,32 @@ public class BackgroundService extends Service {
     }
 
     private void onScannerChange(){
+        String fn = new API(this).firstname;
+        String firstname = fn != null ? fn : "";
         if (BTScanner.getState() == BluetoothScanner.STATE_BT_OFF) {
             notification
-                    .setContentText("Bluetooth disabled. Click here to enable.")
+                    .setContentText("Hi "+firstname+", your Bluetooth is disabled. Click here to enable.")
                     .setContentIntent(
                             PendingIntent.getActivity(this, 0, new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), 0)
                     )
                     .setNumber(0);
         } else if(BTScanner.getState() == BluetoothScanner.STATE_NO_PERMISSION_LOC) {
             notification
-                    .setContentText("We have no permission to scan for Bluetooth devices. Click here to grant permission.")
+                    .setContentText("Hi "+firstname+", we have no permission to scan for Bluetooth devices. Click here to grant permission.")
                     .setContentIntent(
                             pendingMainActivityIntent
                     )
                     .setNumber(0);
         } else {
             // Generate contentText (small text)
-            String contentText = "Bluetooth is on, no devices found.";
+            String contentText = "Hi "+firstname+", your Bluetooth is on but there are no devices found.";
             if(BTScanner.getDevices().size() == 1){
                 ScanRecord scanRecord = BTScanner.getDevices().values().iterator().next().getScanRecord();
 
-                contentText = "Click to connect with " + (scanRecord != null ? scanRecord.getDeviceName() : "the device");
+                contentText = "Hi "+firstname+", click here to connect with " + (scanRecord != null ? scanRecord.getDeviceName() : "the device");
             }
             else if(BTScanner.getDevices().size() > 1){
-                contentText = "Click to connect with a Bluetooth device.";
+                contentText = "Hi "+firstname+", click to connect with a Bluetooth device.";
             }
 
             // Generate bigText (when notification is expanded)
@@ -136,7 +139,8 @@ public class BackgroundService extends Service {
 
     @Override
     public void onDestroy() {
-        nm.cancel(NOTIFICATION_ID);
+        if (nm != null)
+            nm.cancel(NOTIFICATION_ID);
     }
 
 

@@ -42,8 +42,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.digipass.android.MainActivity" />
         </activity>
-        <activity android:name=".MainActivity" />
-        <activity android:name=".GenericListActivity"/>
+        <activity android:name=".GenericListActivity" />
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/title_activity_main2"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

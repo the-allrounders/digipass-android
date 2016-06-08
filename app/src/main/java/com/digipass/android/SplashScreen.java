@@ -2,16 +2,12 @@ package com.digipass.android;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
-import android.os.Parcelable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.AdapterView;
+import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
-import com.digipass.android.objects.Preference;
-import com.digipass.android.objects.PreferenceTask;
+import com.digipass.android.singletons.API;
 
 public class SplashScreen extends AppCompatActivity {
 
@@ -22,27 +18,43 @@ public class SplashScreen extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         final Context c = this;
-        new Handler().postDelayed(new Runnable() {
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        startActivity(new Intent(this, MainActivity.class));
+
+        API api = new API(this);
+        api.GetJSONResult();
+
+        final Context c = this;
+
+        if(api.username == null){
+            Log.d("SplashScreen ", "Not logged in!");
+            startActivity(new Intent(this, LoginActivity.class));
+        }
+        else{
+            Log.d("SplashScreen", "Logged in as " + api.username);
+
+            new Handler().postDelayed(new Runnable() {
 
             /*
              * Showing splash screen with a timer. This will be useful when you
              * want to show case your app logo / company
              */
 
-            @Override
-            public void run() {
-                // This method will be executed once the timer is over
-                // Start your app main activity
-//                Intent i = new Intent(SplashScreen.this, LoginActivity.class);
-//                startActivity(i);
-                new PreferenceTask(c).execute(); // TODO: TEMP!
-                Preference.ShowPreferenceList(c.getApplicationContext());
+                @Override
+                public void run() {
+//                    Preference.ShowPreferenceList(c.getApplicationContext());
+//                    finish();
+                }
+            }, SPLASH_TIME_OUT);
+        }
 
-                // close this activity
-                finish();
-            }
-        }, SPLASH_TIME_OUT);
+
     }
 }
