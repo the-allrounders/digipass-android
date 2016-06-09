@@ -3,47 +3,59 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.digipass.android.PreferencesFragment">
-    <LinearLayout
-        android:layout_width="match_parent"
+    <ScrollView
+        android:layout_width="fill_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="#eeeeee">
-        <ListView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/list_full_list"
-            android:background="@android:color/white"/>
+        android:fillViewport="true">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/pref_list"
-            android:orientation="vertical">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/preferences"
-                style="@style/list_title_style"/>
-            <ListView
+            android:orientation="vertical"
+            android:background="#eeeeee">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/full_list"
+                android:background="#ffffff"
+                android:fillViewport="true">
+                <ListView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/list_full_list"
+                    android:background="#ffffff"/>
+            </LinearLayout>
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/list_pref_list"
-                android:background="@android:color/white"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/cat_list"
-            android:orientation="vertical">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/categories"
-                style="@style/list_title_style"/>
-            <ListView
+                android:id="@+id/pref_list"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/preferences"
+                    style="@style/list_title_style"/>
+                <ListView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/list_pref_list"
+                    android:background="@android:color/white"/>
+            </LinearLayout>
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/list_cat_list"
-                android:background="@android:color/white"/>
+                android:id="@+id/cat_list"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/categories"
+                    style="@style/list_title_style"/>
+                <ListView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/list_cat_list"
+                    android:background="@android:color/white"/>
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </ScrollView>
 </FrameLayout>

@@ -15,6 +15,7 @@ import android.widget.ListView;
 
 import com.digipass.android.helpers.EditPreferenceDialog;
 import com.digipass.android.helpers.ListAdapter_1;
+import com.digipass.android.helpers.ListUtils;
 import com.digipass.android.objects.Preference;
 import com.digipass.android.singletons.Data;
 
@@ -75,27 +76,27 @@ public class PreferencesFragment extends Fragment {
                     }
                     else {
                         printList(R.id.list_pref_list, data.get("preferences"));
-                        printList(R.id.list_cat_list, data.get("categories"));
+                        printList(R.id.list_cat_list, data.get("categories"), data.get("preferences").size());
+                        getActivity().findViewById(R.id.full_list).setVisibility(View.GONE);
                     }
                 }
             } catch (Exception ignored) {}
         }
     }
 
-    private void printList(int list_id, ArrayList<Preference> d) {
-        AdapterView.OnItemClickListener onClick;
+    private void printList(int list_id, final ArrayList<Preference> _data) {
+        printList(list_id, _data, 0);
+    }
+
+    private void printList(int list_id, final ArrayList<Preference> _data, int delay) {
         View v = getView();
         ListView lv;
         if (v != null) {
             lv = (ListView) v.findViewById(list_id);
             lv.setFadingEdgeLength(0);
             lv.setDividerHeight(0);
-            final ArrayList<Preference> _data = new ArrayList<>();
-            for (Object o : d) {
-                _data.add((Preference) o);
-            }
-            ArrayAdapter<Preference> adapter = new ListAdapter_1(c, R.layout.list_row_1, _data);
-            onClick = new AdapterView.OnItemClickListener() {
+            ArrayAdapter<Preference> adapter = new ListAdapter_1(c, R.layout.list_row_1, _data, delay);
+            AdapterView.OnItemClickListener onClick = new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> a, View v, int position, long id) {
                     Preference preference = _data.get(position);
                     if (Objects.equals(preference.get_row_type(), "preference")) {
@@ -126,9 +127,11 @@ public class PreferencesFragment extends Fragment {
                     }
                 }
             };
+
             lv.setAdapter(adapter);
-            AdapterView.OnItemClickListener onClickCallback = onClick;
-            lv.setOnItemClickListener(onClickCallback);
+            lv.setOnItemClickListener(onClick);
+
+            ListUtils.setDynamicHeight(lv);
         }
     }
 
