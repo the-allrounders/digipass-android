@@ -50,7 +50,6 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
                 android:height="5dp"
-
                 />
 
             <TextView
@@ -59,7 +58,8 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
                 android:textStyle="italic"
-
+                android:ellipsize="end"
+                android:singleLine="true"
                 />
         </LinearLayout>
 
