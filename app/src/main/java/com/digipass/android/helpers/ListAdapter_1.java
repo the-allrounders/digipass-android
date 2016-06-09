@@ -21,13 +21,15 @@ public class ListAdapter_1 extends ArrayAdapter<Preference> {
     private ArrayList<Preference> data;
     private int rowlayout;
     private LayoutInflater mInflater;
+    private int delay;
 
-    public ListAdapter_1(Context context, int textViewResourceId, ArrayList<Preference> data) {
+    public ListAdapter_1(Context context, int textViewResourceId, ArrayList<Preference> data, int delay) {
         super(context, textViewResourceId, data);
         this.context = context;
         this.mInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.data = data;
         this.rowlayout = textViewResourceId;
+        this.delay = delay;
     }
 
     private class Holder {
@@ -62,7 +64,8 @@ public class ListAdapter_1 extends ArrayAdapter<Preference> {
         holder.subtitle.setText(preference.get_values_as_string());
 
         Animation animation = AnimationUtils.loadAnimation(context, R.anim.fade_in);
-        animation.setStartOffset(50 * (position + 1));
+        int d = 50;
+        animation.setStartOffset(d * (position + 1) + (d * delay));
 
         convertView.startAnimation(animation);
 
