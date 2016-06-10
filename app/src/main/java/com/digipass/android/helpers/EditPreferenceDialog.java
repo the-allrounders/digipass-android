@@ -17,12 +17,14 @@ public class EditPreferenceDialog extends DialogFragment {
 
     String[] options = {};
     boolean[] values = {};
+    String preference_id;
 
     String title;
 
-    public void setData(String[] o, boolean[] v) {
+    public void setData(String[] o, boolean[] v, String pref_id) {
         options = o;
         values = v;
+        preference_id = pref_id;
     }
 
     public void setTitle(String t) {
@@ -32,6 +34,11 @@ public class EditPreferenceDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         mSelectedItems = new ArrayList<>();  // Where we track the selected items
+        for (int i = 0; i < values.length; i++) {
+            if (values[i]) {
+                mSelectedItems.add(i);
+            }
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Set the dialog title
         builder.setTitle(title)
@@ -58,7 +65,12 @@ public class EditPreferenceDialog extends DialogFragment {
                         // User clicked OK, so save the mSelectedItems results somewhere
                         // or return them to the component that opened the dialog
                         Log.d("dialog", "ok");
-                    //    API.getInstance(getActivity().getApplicationContext()).PostPreferenceTask();
+                        Log.d("dialog", mSelectedItems.toString());
+                        ArrayList<String> values = new ArrayList<>();
+                        for (int i = 0; i < mSelectedItems.size(); i++) {
+                            values.add(options[mSelectedItems.get(i)]);
+                        }
+                        API.getInstance(getActivity().getApplicationContext()).PostPreferenceTask(values, preference_id);
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

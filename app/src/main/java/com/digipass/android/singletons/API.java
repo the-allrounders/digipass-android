@@ -21,7 +21,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
@@ -38,6 +38,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -57,7 +58,7 @@ public class API extends ContextWrapper {
     /**
      *
      */
-    public String userid;
+    public String userid = "5759730ae80926100050329f";
 
     /**
      * The username of the logged in user, or null if not logged in
@@ -120,6 +121,10 @@ public class API extends ContextWrapper {
 
         return instance;
 
+    }
+
+    public String getUserEndpoint() {
+        return BaseUrl + "/users/" + userid;
     }
 
     /**
@@ -237,8 +242,8 @@ public class API extends ContextWrapper {
 
         @Override
         protected String doInBackground(Void... params) {
-            SaveResult(BaseUrl + "/preferences", "preferences_data");
-            SaveResult(BaseUrl + "/categories", "preference_category_data");
+            SaveResult(getUserEndpoint() + "/preferences", "preferences_data");
+            SaveResult(getUserEndpoint() + "/categories", "preference_category_data");
             return "";
         }
 
@@ -261,7 +266,7 @@ public class API extends ContextWrapper {
     }
 
 
-    public void PostPreferenceTask(final Boolean[] values, final String id) {
+    public void PostPreferenceTask(final ArrayList<String> values, final String preference_id) {
         Thread t = new Thread() {
 
             public void run() {
@@ -272,9 +277,9 @@ public class API extends ContextWrapper {
                 JSONObject json = new JSONObject();
 
                 try {
-                    HttpPut post = new HttpPut(BaseUrl + "/users/" + userid + "/preferences");
+                    HttpPost post = new HttpPost(getUserEndpoint() + "/preferences");
                     json.put("values", values);
-                    json.put("preference_id", id);
+                    json.put("preference", preference_id);
                     StringEntity se = new StringEntity(json.toString());
                     se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
                     post.setEntity(se);
