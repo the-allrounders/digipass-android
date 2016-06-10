@@ -11,19 +11,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.digipass.android.R;
-import com.digipass.android.objects.Preference;
+import com.digipass.android.objects.ListItem;
 
 import java.util.ArrayList;
 
-public class ListAdapter_1 extends ArrayAdapter<Preference> {
+public class ListAdapter_1 extends ArrayAdapter<ListItem> {
 
     private Context context;
-    private ArrayList<Preference> data;
+    private ArrayList<ListItem> data;
     private int rowlayout;
     private LayoutInflater mInflater;
     private int delay;
 
-    public ListAdapter_1(Context context, int textViewResourceId, ArrayList<Preference> data, int delay) {
+    public ListAdapter_1(Context context, int textViewResourceId, ArrayList<ListItem> data, int delay) {
         super(context, textViewResourceId, data);
         this.context = context;
         this.mInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -41,7 +41,7 @@ public class ListAdapter_1 extends ArrayAdapter<Preference> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        final Preference preference = this.data.get(position);
+        final ListItem listItem = this.data.get(position);
         final Holder holder;
 
         if (convertView == null) {
@@ -55,13 +55,13 @@ public class ListAdapter_1 extends ArrayAdapter<Preference> {
             holder = (Holder) convertView.getTag();
         }
 
-        if (preference.has_icon()) {
-            holder.thumb.setImageDrawable(preference.get_icon(context));
+        if (listItem.has_icon()) {
+            holder.thumb.setImageDrawable(listItem.get_icon(context));
         } else {
             holder.thumb.setVisibility(View.GONE);
         }
-        holder.title.setText(preference.get_name());
-        holder.subtitle.setText(preference.get_values_as_string());
+        holder.title.setText(listItem.get_name());
+        holder.subtitle.setText(listItem.get_values_as_string());
 
         Animation animation = AnimationUtils.loadAnimation(context, R.anim.fade_in);
         int d = 50;

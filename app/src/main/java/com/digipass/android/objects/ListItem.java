@@ -11,7 +11,7 @@ import org.json.JSONObject;
 
 import java.util.Objects;
 
-public class Preference implements Parcelable {
+public class ListItem implements Parcelable {
 
 
     private String _key;
@@ -20,8 +20,20 @@ public class Preference implements Parcelable {
     private String _values;
     private String _row_type;
     private String _icon_name;
+    private int _status;
+    private String _timestamp;
 
-    public Preference(String k, String name, String description, JSONArray values, String row_type, String icon_name)
+    public ListItem(String k, String name, String description, JSONArray values, String row_type, String icon_name, String timestamp) {
+        _timestamp = timestamp;
+        new ListItem(k, name, description, values, row_type, icon_name);
+    }
+
+    public ListItem(String k, String name, String description, JSONArray values, String row_type, String icon_name, int status) {
+        _status = status;
+        new ListItem(k, name, description, values, row_type, icon_name);
+    }
+
+    public ListItem(String k, String name, String description, JSONArray values, String row_type, String icon_name)
     {
         _key = k;
         _name = name;
@@ -31,24 +43,26 @@ public class Preference implements Parcelable {
         _icon_name = icon_name;
     }
 
-    protected Preference(Parcel in) {
+    protected ListItem(Parcel in) {
         _key = in.readString();
         _name = in.readString();
         _description = in.readString();
         _values = in.readString();
         _row_type = in.readString();
         _icon_name = in.readString();
+        _status = in.readInt();
+        _timestamp = in.readString();
     }
 
-    public static final Creator<Preference> CREATOR = new Creator<Preference>() {
+    public static final Creator<ListItem> CREATOR = new Creator<ListItem>() {
         @Override
-        public Preference createFromParcel(Parcel in) {
-            return new Preference(in);
+        public ListItem createFromParcel(Parcel in) {
+            return new ListItem(in);
         }
 
         @Override
-        public Preference[] newArray(int size) {
-            return new Preference[size];
+        public ListItem[] newArray(int size) {
+            return new ListItem[size];
         }
     };
 
@@ -112,6 +126,22 @@ public class Preference implements Parcelable {
         return values_string;
     }
 
+//    public Bitmap get_status_icon() {
+//        return ;
+//    }
+
+    public int get_status() {
+        return _status;
+    }
+
+    public String get_timestamp() {
+        return _timestamp;
+    }
+
+    public String get_timestamp_formatted() {
+        return _timestamp;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -125,5 +155,7 @@ public class Preference implements Parcelable {
         dest.writeString(_values);
         dest.writeString(_row_type);
         dest.writeString(_icon_name);
+        dest.writeInt(_status);
+        dest.writeString(_timestamp);
     }
 }

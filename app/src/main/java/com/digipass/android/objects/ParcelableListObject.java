@@ -2,9 +2,6 @@ package com.digipass.android.objects;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 
 import java.util.ArrayList;
 
@@ -27,7 +24,7 @@ public class ParcelableListObject implements Parcelable {
         Class t;
         switch(list_type) {
             case "preferences":
-                t = Preference.class;
+                t = ListItem.class;
                 break;
             default:
                 t = null;

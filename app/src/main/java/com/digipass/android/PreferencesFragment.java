@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -16,7 +15,7 @@ import android.widget.ListView;
 import com.digipass.android.helpers.EditPreferenceDialog;
 import com.digipass.android.helpers.ListAdapter_1;
 import com.digipass.android.helpers.ListUtils;
-import com.digipass.android.objects.Preference;
+import com.digipass.android.objects.ListItem;
 import com.digipass.android.singletons.Data;
 
 import org.json.JSONArray;
@@ -33,7 +32,7 @@ public class PreferencesFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private Map<String, ArrayList<Preference>> data;
+    private Map<String, ArrayList<ListItem>> data;
     private Context c;
 
     public PreferencesFragment() {
@@ -63,7 +62,7 @@ public class PreferencesFragment extends Fragment {
         getActivity().setTitle(R.string.title_preferences);
         if (bundle != null) {
             try {
-                data = (Map<String, ArrayList<Preference>>)bundle.getSerializable("data");
+                data = (Map<String, ArrayList<ListItem>>)bundle.getSerializable("data");
                 if (data != null) {
                     if (data.get("preferences").size() == 0 || data.get("categories").size() == 0) {
                         getActivity().findViewById(R.id.pref_list).setVisibility(View.GONE);
@@ -84,24 +83,24 @@ public class PreferencesFragment extends Fragment {
         }
     }
 
-    private void printList(int list_id, final ArrayList<Preference> _data) {
+    private void printList(int list_id, final ArrayList<ListItem> _data) {
         printList(list_id, _data, 0);
     }
 
-    private void printList(int list_id, final ArrayList<Preference> _data, int delay) {
+    private void printList(int list_id, final ArrayList<ListItem> _data, int delay) {
         View v = getView();
         ListView lv;
         if (v != null) {
             lv = (ListView) v.findViewById(list_id);
             lv.setFadingEdgeLength(0);
             lv.setDividerHeight(0);
-            ArrayAdapter<Preference> adapter = new ListAdapter_1(c, R.layout.list_row_1, _data, delay);
+            ArrayAdapter<ListItem> adapter = new ListAdapter_1(c, R.layout.list_row_1, _data, delay);
             AdapterView.OnItemClickListener onClick = new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> a, View v, int position, long id) {
-                    Preference preference = _data.get(position);
-                    if (Objects.equals(preference.get_row_type(), "preference")) {
+                    ListItem listItem = _data.get(position);
+                    if (Objects.equals(listItem.get_row_type(), "preference")) {
                         EditPreferenceDialog dialog = new EditPreferenceDialog();
-                        JSONArray _data = preference.get_values();
+                        JSONArray _data = listItem.get_values();
 
                         String[] options = new String[_data.length()];
                         boolean[] values = new boolean[_data.length()];
@@ -115,10 +114,10 @@ public class PreferencesFragment extends Fragment {
                                 e.printStackTrace();
                             }
                         }
-                        dialog.setData(options, values);
-                        dialog.setTitle(preference.get_name());
+                        dialog.setData(options, values, listItem.get_key());
+                        dialog.setTitle(listItem.get_name());
                         dialog.show(getFragmentManager(), "preference");
-                    } else if (Objects.equals(preference.get_row_type(), "group")) {
+                    } else if (Objects.equals(listItem.get_row_type(), "group")) {
                         final MainActivity ac = ((MainActivity)getActivity());
                         ac.showHomeAsUp = true;
                         Bundle b = new Bundle();
@@ -151,16 +150,5 @@ public class PreferencesFragment extends Fragment {
 
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Get item selected and deal with it
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                //called when the up affordance/carat in actionbar is pressed
-                getActivity().onBackPressed();
-        }
-        return true;
     }
 }
