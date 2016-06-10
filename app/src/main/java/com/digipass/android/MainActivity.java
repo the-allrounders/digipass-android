@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void initMainFragment() {
-        onNavigationItemSelected(navigationView.getMenu().getItem(1));
+        onNavigationItemSelected(navigationView.getMenu().getItem(0));
     }
 
     private ServiceConnection backgroundServiceConnection = new ServiceConnection() {
@@ -163,6 +163,7 @@ public class MainActivity extends AppCompatActivity
         switch(id) {
             case R.id.nav_home:
                 fragmentClass = HomeFragment.class;
+                bundle.putSerializable("data", (Serializable)Data.GetInstance(this).GetHomeLists());
                 break;
             case R.id.nav_preferences:
                 fragmentClass = PreferencesFragment.class;

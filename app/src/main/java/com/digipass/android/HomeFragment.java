@@ -8,44 +8,42 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import com.digipass.android.helpers.ListAdapter_1;
+import com.digipass.android.helpers.ListUtils;
+import com.digipass.android.objects.ListItem;
+import com.digipass.android.singletons.Data;
+
+import org.json.JSONArray;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Map;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link HomeFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link HomeFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class HomeFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
+
+    private Map<String, ArrayList<ListItem>> data;
+    private Context c;
 
     public HomeFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment HomeFragment.
-     */
-    public static HomeFragment newInstance() {
-        HomeFragment fragment = new HomeFragment();
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        c = this.getContext();
+        setHasOptionsMenu(true);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
@@ -54,12 +52,77 @@ public class HomeFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         Bundle bundle = this.getArguments();
         getActivity().setTitle(R.string.title_home);
+        if (bundle != null) {
+            try {
+                data = (Map<String, ArrayList<ListItem>>)bundle.getSerializable("data");
+                if (data != null) {
+                    printListRequests(data.get("requests"));
+                    printListActivities(data.get("activities"), data.get("requests").size());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+//                getActivity().onBackPressed();
+            }
+        }
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+    private void printListRequests(final ArrayList<ListItem> _data) {
+        View v = getView();
+        ListView lv;
+        if (v != null) {
+            lv = (ListView) v.findViewById(R.id.list_pen_req_list);
+            lv.setFadingEdgeLength(0);
+            lv.setDividerHeight(0);
+            ArrayAdapter<ListItem> adapter = new ListAdapter_1(c, R.layout.list_row_1, _data, 0);
+            AdapterView.OnItemClickListener onClick = new AdapterView.OnItemClickListener() {
+                public void onItemClick(AdapterView<?> a, View v, int position, long id) {
+                    ListItem listItem = _data.get(position);
+                    final MainActivity ac = ((MainActivity)getActivity());
+                    ac.showHomeAsUp = true;
+                    Bundle b = new Bundle();
+                    b.putSerializable("data", (Serializable) Data.GetInstance(c).GetPreferences(_data.get(position).get_key()));
+                    ac.StartFragment(PreferencesFragment.class, b);
+                }
+            };
+
+            if (adapter.getCount() == 0) {
+                adapter.add(new ListItem("0", getResources().getString(R.string.no_requests), "", new JSONArray(), "preference", ""));
+            }
+
+            lv.setAdapter(adapter);
+            lv.setOnItemClickListener(onClick);
+
+            ListUtils.setDynamicHeight(lv);
+        }
+    }
+
+    private void printListActivities(final ArrayList<ListItem> _data, int delay) {
+        View v = getView();
+        ListView lv;
+        if (v != null) {
+            lv = (ListView) v.findViewById(R.id.list_ac_log_list);
+            lv.setFadingEdgeLength(0);
+            lv.setDividerHeight(0);
+            ArrayAdapter<ListItem> adapter = new ListAdapter_1(c, R.layout.list_row_1, _data, delay);
+            AdapterView.OnItemClickListener onClick = new AdapterView.OnItemClickListener() {
+                public void onItemClick(AdapterView<?> a, View v, int position, long id) {
+                    ListItem listItem = _data.get(position);
+                    final MainActivity ac = ((MainActivity)getActivity());
+                    ac.showHomeAsUp = true;
+                    Bundle b = new Bundle();
+                    b.putSerializable("data", (Serializable) Data.GetInstance(c).GetPreferences(_data.get(position).get_key()));
+                    ac.StartFragment(PreferencesFragment.class, b);
+                }
+            };
+
+            if (adapter.getCount() == 0) {
+                adapter.add(new ListItem("0", getResources().getString(R.string.no_activities), "", new JSONArray(), "preference", ""));
+            }
+
+            lv.setAdapter(adapter);
+            lv.setOnItemClickListener(onClick);
+
+            ListUtils.setDynamicHeight(lv);
         }
     }
 
@@ -68,9 +131,6 @@ public class HomeFragment extends Fragment {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
         }
     }
 
@@ -81,7 +141,6 @@ public class HomeFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 }

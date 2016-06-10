@@ -37,4 +37,6 @@
     <string name="thumb_description">Image or icon with list item</string>
     <string name="preferences">Preferences</string>
     <string name="categories">Groups</string>
+    <string name="no_requests">There are no pending requests at the moment…</string>
+    <string name="no_activities">There are no activities yet…</string>
 </resources>
