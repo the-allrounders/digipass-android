@@ -4,9 +4,11 @@ import android.Manifest;
 import android.animation.ValueAnimator;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -26,6 +28,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 
+import com.digipass.android.helpers.NetworkReceiver;
 import com.digipass.android.singletons.Data;
 
 import java.io.Serializable;
@@ -47,6 +50,9 @@ public class MainActivity extends AppCompatActivity
 
     public Boolean showHomeAsUp = false;
     public Boolean animateDrawerToggle = true;
+
+    // The BroadcastReceiver that tracks network connectivity changes.
+    private NetworkReceiver receiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +105,11 @@ public class MainActivity extends AppCompatActivity
                     }
                 }
             });
+
+        // Register BroadcastReceiver to track connection changes.
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        receiver = new NetworkReceiver(this);
+        this.registerReceiver(receiver, filter);
     }
 
     public void resetDrawerToggle() {
@@ -194,7 +205,7 @@ public class MainActivity extends AppCompatActivity
 
         Bundle bundle = new Bundle();
 
-        switch(id) {
+        switch (id) {
             default:
             case R.id.nav_permissions:
             case R.id.nav_activity_log:

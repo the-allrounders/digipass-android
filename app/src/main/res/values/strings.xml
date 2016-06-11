@@ -39,4 +39,7 @@
     <string name="categories">Groups</string>
     <string name="no_requests">There are no pending requests at the moment…</string>
     <string name="no_activities">There are no activities yet…</string>
+    <string name="io_connected">Connected!</string>
+    <string name="lost_connection">No active connection found! Retrying to connect…</string>
+    <string name="what_now">What now?</string>
 </resources>
