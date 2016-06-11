@@ -12,10 +12,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.digipass.android.helpers.DefaultListAdapter;
 import com.digipass.android.helpers.EditPreferenceDialog;
-import com.digipass.android.helpers.ListAdapter_1;
 import com.digipass.android.helpers.ListUtils;
-import com.digipass.android.objects.ListItem;
+import com.digipass.android.objects.DefaultListItem;
 import com.digipass.android.singletons.Data;
 
 import org.json.JSONArray;
@@ -32,7 +32,7 @@ public class PreferencesFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private Map<String, ArrayList<ListItem>> data;
+    private Map<String, ArrayList<DefaultListItem>> data;
     private Context c;
 
     public PreferencesFragment() {
@@ -59,10 +59,13 @@ public class PreferencesFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Bundle bundle = this.getArguments();
-        getActivity().setTitle(R.string.title_preferences);
         if (bundle != null) {
+            getActivity().setTitle(bundle.getString("title"));
+            if (Objects.equals(bundle.getString("key"), "0")) {
+                ((MainActivity)getActivity()).resetDrawerToggle();
+            }
             try {
-                data = (Map<String, ArrayList<ListItem>>)bundle.getSerializable("data");
+                data = (Map<String, ArrayList<DefaultListItem>>)bundle.getSerializable("data");
                 if (data != null) {
                     if (data.get("preferences").size() == 0 || data.get("categories").size() == 0) {
                         getActivity().findViewById(R.id.pref_list).setVisibility(View.GONE);
@@ -83,24 +86,24 @@ public class PreferencesFragment extends Fragment {
         }
     }
 
-    private void printList(int list_id, final ArrayList<ListItem> _data) {
+    private void printList(int list_id, final ArrayList<DefaultListItem> _data) {
         printList(list_id, _data, 0);
     }
 
-    private void printList(int list_id, final ArrayList<ListItem> _data, int delay) {
+    private void printList(int list_id, final ArrayList<DefaultListItem> _data, int delay) {
         View v = getView();
         ListView lv;
         if (v != null) {
             lv = (ListView) v.findViewById(list_id);
             lv.setFadingEdgeLength(0);
             lv.setDividerHeight(0);
-            ArrayAdapter<ListItem> adapter = new ListAdapter_1(c, R.layout.list_row_1, _data, delay);
+            ArrayAdapter<DefaultListItem> adapter = new DefaultListAdapter(c, R.layout.list_row_default, _data, delay);
             AdapterView.OnItemClickListener onClick = new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> a, View v, int position, long id) {
-                    ListItem listItem = _data.get(position);
-                    if (Objects.equals(listItem.get_row_type(), "preference")) {
+                    DefaultListItem defaultListItem = _data.get(position);
+                    if (Objects.equals(defaultListItem.get_row_type(), "preference")) {
                         EditPreferenceDialog dialog = new EditPreferenceDialog();
-                        JSONArray _data = listItem.get_values();
+                        JSONArray _data = defaultListItem.get_values();
 
                         String[] options = new String[_data.length()];
                         boolean[] values = new boolean[_data.length()];
@@ -114,14 +117,23 @@ public class PreferencesFragment extends Fragment {
                                 e.printStackTrace();
                             }
                         }
-                        dialog.setData(options, values, listItem.get_key());
-                        dialog.setTitle(listItem.get_name());
+                        dialog.setData(options, values, defaultListItem.get_key());
+                        dialog.setTitle(defaultListItem.get_name());
                         dialog.show(getFragmentManager(), "preference");
-                    } else if (Objects.equals(listItem.get_row_type(), "group")) {
+                    } else if (Objects.equals(defaultListItem.get_row_type(), "group")) {
                         final MainActivity ac = ((MainActivity)getActivity());
+                        if (ac.showHomeAsUp) {
+                            ac.animateDrawerToggle = false;
+                            ac.animDrawerToggle(0, 1, 0);
+                        } else {
+                            ac.animateDrawerToggle = true;
+                            ac.animDrawerToggle(0, 1);
+                        }
                         ac.showHomeAsUp = true;
                         Bundle b = new Bundle();
-                        b.putSerializable("data", (Serializable)Data.GetInstance(c).GetPreferences(_data.get(position).get_key()));
+                        b.putSerializable("data", (Serializable)Data.GetInstance(c).GetPreferences(defaultListItem.get_key()));
+                        b.putString("key", defaultListItem.get_key());
+                        b.putString("title", c.getResources().getString(R.string.title_preferences) + " - " + defaultListItem.get_name());
                         ac.StartFragment(PreferencesFragment.class, b);
                     }
                 }

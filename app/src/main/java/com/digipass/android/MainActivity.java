@@ -1,6 +1,7 @@
 package com.digipass.android;
 
 import android.Manifest;
+import android.animation.ValueAnimator;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -23,6 +24,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
 
 import com.digipass.android.singletons.Data;
 
@@ -44,6 +46,7 @@ public class MainActivity extends AppCompatActivity
     ActionBarDrawerToggle toggle;
 
     public Boolean showHomeAsUp = false;
+    public Boolean animateDrawerToggle = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,11 +64,11 @@ public class MainActivity extends AppCompatActivity
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (showHomeAsUp) {
-                        onBackPressed();
-                    } else {
-                        mDrawer.openDrawer(GravityCompat.START);
-                    }
+                if (showHomeAsUp) {
+                    onBackPressed();
+                } else {
+                    mDrawer.openDrawer(GravityCompat.START);
+                }
                 }
             });
         }
@@ -91,12 +94,43 @@ public class MainActivity extends AppCompatActivity
         getSupportFragmentManager().addOnBackStackChangedListener(
             new FragmentManager.OnBackStackChangedListener() {
                 public void onBackStackChanged() {
-                    actionBar.setDisplayHomeAsUpEnabled(showHomeAsUp);
                     if (!showHomeAsUp) {
                         toggle.syncState();
                     }
                 }
             });
+    }
+
+    public void resetDrawerToggle() {
+        showHomeAsUp = false;
+        toggle.syncState();
+        if (animateDrawerToggle) {
+            animDrawerToggle(1, 0);
+        } else {
+            animDrawerToggle(1, 0, 0);
+        }
+    }
+
+    public void animDrawerToggle(int start, int end) {
+        animDrawerToggle(start, end, 500);
+    }
+
+    public void animDrawerToggle(int start, int end, int delay) {
+        if (delay > 0) {
+            ValueAnimator anim = ValueAnimator.ofFloat(start, end);
+            anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    float slideOffset = (Float) valueAnimator.getAnimatedValue();
+                    toggle.onDrawerSlide(mDrawer, slideOffset);
+                }
+            });
+            anim.setInterpolator(new DecelerateInterpolator());
+            anim.setDuration(delay);
+            anim.start();
+        } else {
+            toggle.onDrawerSlide(mDrawer, end);
+        }
     }
 
     public void initMainFragment() {
@@ -129,7 +163,7 @@ public class MainActivity extends AppCompatActivity
         if (mDrawer.isDrawerOpen(GravityCompat.START)) {
             mDrawer.closeDrawer(GravityCompat.START);
         } else {
-            showHomeAsUp = false;
+            animateDrawerToggle = true;
             toggle.setDrawerIndicatorEnabled(true);
             super.onBackPressed();
         }
@@ -161,6 +195,12 @@ public class MainActivity extends AppCompatActivity
         Bundle bundle = new Bundle();
 
         switch(id) {
+            default:
+            case R.id.nav_permissions:
+            case R.id.nav_activity_log:
+            case R.id.nav_contacts:
+            case R.id.nav_settings:
+            case R.id.nav_help_feedback:
             case R.id.nav_home:
                 fragmentClass = HomeFragment.class;
                 bundle.putSerializable("data", (Serializable)Data.GetInstance(this).GetHomeLists());
@@ -168,24 +208,9 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_preferences:
                 fragmentClass = PreferencesFragment.class;
                 bundle.putSerializable("data", (Serializable)Data.GetInstance(this).GetPreferences("0"));
+                bundle.putString("key", "0");
+                bundle.putString("title", getResources().getString(R.string.title_preferences));
                 break;
-            case R.id.nav_permissions:
-                fragmentClass = HomeFragment.class;
-                break;
-            case R.id.nav_activity_log:
-                fragmentClass = HomeFragment.class;
-                break;
-            case R.id.nav_contacts:
-                fragmentClass = HomeFragment.class;
-                break;
-            case R.id.nav_settings:
-                fragmentClass = HomeFragment.class;
-                break;
-            case R.id.nav_help_feedback:
-                fragmentClass = HomeFragment.class;
-                break;
-            default:
-                fragmentClass = HomeFragment.class;
         }
 
         item.setChecked(true);
