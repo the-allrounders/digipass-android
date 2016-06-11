@@ -12,12 +12,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.digipass.android.helpers.ListAdapter_1;
 import com.digipass.android.helpers.ListUtils;
-import com.digipass.android.objects.ListItem;
+import com.digipass.android.helpers.OrganisationListAdapter;
+import com.digipass.android.helpers.TextListAdapter;
+import com.digipass.android.objects.DefaultListItem;
+import com.digipass.android.objects.OrganisationDefaultListItem;
+import com.digipass.android.objects.TextListItem;
 import com.digipass.android.singletons.Data;
-
-import org.json.JSONArray;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public class HomeFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private Map<String, ArrayList<ListItem>> data;
+    private Map<String, ArrayList<DefaultListItem>> data;
     private Context c;
 
     public HomeFragment() {
@@ -54,7 +55,7 @@ public class HomeFragment extends Fragment {
         getActivity().setTitle(R.string.title_home);
         if (bundle != null) {
             try {
-                data = (Map<String, ArrayList<ListItem>>)bundle.getSerializable("data");
+                data = (Map<String, ArrayList<DefaultListItem>>)bundle.getSerializable("data");
                 if (data != null) {
                     printListRequests(data.get("requests"));
                     printListActivities(data.get("activities"), data.get("requests").size());
@@ -66,61 +67,69 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private void printListRequests(final ArrayList<ListItem> _data) {
+    private void printListRequests(final ArrayList<DefaultListItem> _data) {
         View v = getView();
         ListView lv;
         if (v != null) {
             lv = (ListView) v.findViewById(R.id.list_pen_req_list);
             lv.setFadingEdgeLength(0);
             lv.setDividerHeight(0);
-            ArrayAdapter<ListItem> adapter = new ListAdapter_1(c, R.layout.list_row_1, _data, 0);
-            AdapterView.OnItemClickListener onClick = new AdapterView.OnItemClickListener() {
-                public void onItemClick(AdapterView<?> a, View v, int position, long id) {
-                    ListItem listItem = _data.get(position);
-                    final MainActivity ac = ((MainActivity)getActivity());
-                    ac.showHomeAsUp = true;
-                    Bundle b = new Bundle();
-                    b.putSerializable("data", (Serializable) Data.GetInstance(c).GetPreferences(_data.get(position).get_key()));
-                    ac.StartFragment(PreferencesFragment.class, b);
-                }
-            };
 
-            if (adapter.getCount() == 0) {
-                adapter.add(new ListItem("0", getResources().getString(R.string.no_requests), "", new JSONArray(), "preference", ""));
+            ArrayAdapter<DefaultListItem> adapter;
+
+            if (_data.size() == 0) {
+                adapter = new TextListAdapter(c, R.layout.list_row_text, _data, 0);
+                adapter.add(new TextListItem(getResources().getString(R.string.no_requests)));
+            } else {
+                adapter = new OrganisationListAdapter(c, R.layout.list_row_default, _data, 0);
+                AdapterView.OnItemClickListener onClick = new AdapterView.OnItemClickListener() {
+                    public void onItemClick(AdapterView<?> a, View v, int position, long id) {
+                        OrganisationDefaultListItem organisation = (OrganisationDefaultListItem)_data.get(position);
+                        final MainActivity ac = ((MainActivity)getActivity());
+                        ac.showHomeAsUp = true;
+                        Bundle b = new Bundle();
+                        b.putSerializable("data", (Serializable) Data.GetInstance(c).GetPreferences(organisation.get_key()));
+                        ac.StartFragment(PermissionsFragment.class, b);
+                    }
+                };
+                lv.setOnItemClickListener(onClick);
             }
 
             lv.setAdapter(adapter);
-            lv.setOnItemClickListener(onClick);
 
             ListUtils.setDynamicHeight(lv);
         }
     }
 
-    private void printListActivities(final ArrayList<ListItem> _data, int delay) {
+    private void printListActivities(final ArrayList<DefaultListItem> _data, int delay) {
         View v = getView();
         ListView lv;
         if (v != null) {
             lv = (ListView) v.findViewById(R.id.list_ac_log_list);
             lv.setFadingEdgeLength(0);
             lv.setDividerHeight(0);
-            ArrayAdapter<ListItem> adapter = new ListAdapter_1(c, R.layout.list_row_1, _data, delay);
-            AdapterView.OnItemClickListener onClick = new AdapterView.OnItemClickListener() {
-                public void onItemClick(AdapterView<?> a, View v, int position, long id) {
-                    ListItem listItem = _data.get(position);
-                    final MainActivity ac = ((MainActivity)getActivity());
-                    ac.showHomeAsUp = true;
-                    Bundle b = new Bundle();
-                    b.putSerializable("data", (Serializable) Data.GetInstance(c).GetPreferences(_data.get(position).get_key()));
-                    ac.StartFragment(PreferencesFragment.class, b);
-                }
-            };
 
-            if (adapter.getCount() == 0) {
-                adapter.add(new ListItem("0", getResources().getString(R.string.no_activities), "", new JSONArray(), "preference", ""));
+            ArrayAdapter<DefaultListItem> adapter;
+
+            if (_data.size() == 0) {
+                adapter = new TextListAdapter(c, R.layout.list_row_text, _data, 0);
+                adapter.add(new TextListItem(getResources().getString(R.string.no_activities)));
+            } else {
+                adapter = new OrganisationListAdapter(c, R.layout.list_row_default, _data, 0);
+                AdapterView.OnItemClickListener onClick = new AdapterView.OnItemClickListener() {
+                    public void onItemClick(AdapterView<?> a, View v, int position, long id) {
+                        OrganisationDefaultListItem organisation = (OrganisationDefaultListItem)_data.get(position);
+                        final MainActivity ac = ((MainActivity)getActivity());
+                        ac.showHomeAsUp = true;
+                        Bundle b = new Bundle();
+                        b.putSerializable("data", (Serializable) Data.GetInstance(c).GetPreferences(organisation.get_key()));
+                        ac.StartFragment(PermissionsFragment.class, b);
+                    }
+                };
+                lv.setOnItemClickListener(onClick);
             }
 
             lv.setAdapter(adapter);
-            lv.setOnItemClickListener(onClick);
 
             ListUtils.setDynamicHeight(lv);
         }

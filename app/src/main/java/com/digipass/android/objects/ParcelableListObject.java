@@ -24,7 +24,7 @@ public class ParcelableListObject implements Parcelable {
         Class t;
         switch(list_type) {
             case "preferences":
-                t = ListItem.class;
+                t = DefaultListItem.class;
                 break;
             default:
                 t = null;

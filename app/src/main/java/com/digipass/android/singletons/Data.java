@@ -2,7 +2,8 @@ package com.digipass.android.singletons;
 
 import android.content.Context;
 
-import com.digipass.android.objects.ListItem;
+import com.digipass.android.objects.DefaultListItem;
+import com.digipass.android.objects.OrganisationDefaultListItem;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,8 +28,8 @@ public class Data {
         return _data;
     }
 
-    public Map<String, ArrayList<ListItem>> GetPreferences(String key) {
-        Map<String, ArrayList<ListItem>> preferences_list = new HashMap<>();
+    public Map<String, ArrayList<DefaultListItem>> GetPreferences(String key) {
+        Map<String, ArrayList<DefaultListItem>> preferences_list = new HashMap<>();
         String pref_string = context.getSharedPreferences("preferences_data", Context.MODE_PRIVATE).getString("preferences_data", "[]");
         String tax_string = context.getSharedPreferences("preference_category_data", Context.MODE_PRIVATE).getString("preference_category_data", "[]");
         try {
@@ -42,8 +43,8 @@ public class Data {
         return preferences_list;
     }
 
-    private ArrayList<ListItem> getPreferencesList(String key, JSONArray categories, String json) {
-        ArrayList<ListItem> preferences_list = new ArrayList<>();
+    private ArrayList<DefaultListItem> getPreferencesList(String key, JSONArray categories, String json) {
+        ArrayList<DefaultListItem> preferences_list = new ArrayList<>();
         JSONArray preferences;
         try {
             preferences = new JSONArray(json);
@@ -51,7 +52,7 @@ public class Data {
             {
                 JSONObject preference = (JSONObject)preferences.get(i);
                 if (preference.getJSONArray("category").toString().contains("\""+ key +"\"")) {
-                    preferences_list.add(new ListItem(preference.getString("_id"), preference.getString("title"), preference.getString("description"), preference.getJSONArray("values"), "preference", ""));
+                    preferences_list.add(new DefaultListItem(preference.getString("_id"), preference.getString("title"), preference.getString("description"), preference.getJSONArray("values"), "preference", ""));
                 }
             }
         } catch (JSONException e) {
@@ -60,15 +61,15 @@ public class Data {
         return preferences_list;
     }
 
-    private ArrayList<ListItem> getCategoriesList(String key, JSONArray categories, String json) {
-        ArrayList<ListItem> preferences_list = new ArrayList<>();
+    private ArrayList<DefaultListItem> getCategoriesList(String key, JSONArray categories, String json) {
+        ArrayList<DefaultListItem> preferences_list = new ArrayList<>();
         JSONArray preferences;
         try {
             preferences = new JSONArray(json);
             for(int n = 0; n < categories.length(); n++) {
                 JSONObject category = (JSONObject) categories.get(n);
                 JSONArray categoryParents = category.getJSONArray("parent");
-                if (categoryParents.toString().contains("\""+ key +"\"") || (Objects.equals(key, "0") && categoryParents.length() == 0)) {
+//                if (categoryParents.toString().contains("\""+ key +"\"") || (Objects.equals(key, "0") && categoryParents.length() == 0)) {
                     JSONArray values = new JSONArray();
                     for(int i = 0; i < preferences.length(); i++)
                     {
@@ -79,8 +80,8 @@ public class Data {
                             values.put(_v);
                         }
                     }
-                    preferences_list.add(new ListItem(category.getString("_id"), category.getString("title"), "", values, "group", category.getString("icon")));
-                }
+                    preferences_list.add(new DefaultListItem(category.getString("_id"), category.getString("title"), "", values, "group", category.getString("icon")));
+//                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -88,12 +89,12 @@ public class Data {
         return preferences_list;
     }
 
-    public Map<String, ArrayList<ListItem>> GetHomeLists() {
+    public Map<String, ArrayList<DefaultListItem>> GetHomeLists() {
         return GetHomeLists(3, 3);
     }
 
-    public Map<String, ArrayList<ListItem>> GetHomeLists(int max_req, int max_ac_log) {
-        Map<String, ArrayList<ListItem>> home_map = new HashMap<>();
+    public Map<String, ArrayList<DefaultListItem>> GetHomeLists(int max_req, int max_ac_log) {
+        Map<String, ArrayList<DefaultListItem>> home_map = new HashMap<>();
         String req_string = context.getSharedPreferences("requests_data", Context.MODE_PRIVATE).getString("requests", "[]");
         String ac_log_string = context.getSharedPreferences("preference_category_data", Context.MODE_PRIVATE).getString("preference_category_data", "[]");
         home_map.put("requests", getRequestsList("0", req_string));
@@ -111,8 +112,8 @@ public class Data {
         return home_map;
     }
 
-    private ArrayList<ListItem> getRequestsList(String key, String json) {
-        ArrayList<ListItem> requests_list = new ArrayList<>();
+    private ArrayList<DefaultListItem> getRequestsList(String key, String json) {
+        ArrayList<DefaultListItem> requests_list = new ArrayList<>();
         JSONArray organisations;
         try {
             organisations = new JSONArray(json);
@@ -133,7 +134,7 @@ public class Data {
                                 values.put(_v);
                             }
                         }
-                        requests_list.add(new ListItem(permission.getString("_id"), permission.getString("title"), "", values, "permission", permission.getString("icon"), permission.getInt("status")));
+                        requests_list.add(new OrganisationDefaultListItem(permission.getString("_id"), permission.getString("title"), "", values, "permission", permission.getString("icon"), permission.getInt("status")));
                     } else if (Objects.equals(key, "0")) {
                         JSONObject _v = new JSONObject();
                         _v.put("title", permission.getString("title"));
@@ -141,7 +142,7 @@ public class Data {
                     }
                 }
                 if (Objects.equals(key, "0")) {
-                    requests_list.add(new ListItem(organisation.getString("_id"), organisation.getString("title"), "", values, "organisation", organisation.getString("icon"), organisation.getInt("status")));
+                    requests_list.add(new OrganisationDefaultListItem(organisation.getString("_id"), organisation.getString("title"), "", values, "organisation", organisation.getString("icon"), organisation.getInt("status")));
                 }
 
             }
@@ -151,14 +152,14 @@ public class Data {
         return requests_list;
     }
 
-    private ArrayList<ListItem> getActivitiesList(String json) {
-        ArrayList<ListItem> activities_list = new ArrayList<>();
+    private ArrayList<DefaultListItem> getActivitiesList(String json) {
+        ArrayList<DefaultListItem> activities_list = new ArrayList<>();
         JSONArray activities;
         try {
             activities = new JSONArray(json);
             for(int n = 0; n < activities.length(); n++) {
                 JSONObject activity = (JSONObject)activities.get(n);
-                activities_list.add(new ListItem(activity.getString("_id"), activity.getString("title"), activity.getString("description"), new JSONArray(), "activity", activity.getString("icon"), activity.getString("timestamp")));
+//                activities_list.add(new DefaultListItem(activity.getString("_id"), activity.getString("title"), activity.getString("description"), new JSONArray(), "activity", activity.getString("icon"), activity.getString("createdAt")));
             }
         } catch (JSONException e) {
             e.printStackTrace();

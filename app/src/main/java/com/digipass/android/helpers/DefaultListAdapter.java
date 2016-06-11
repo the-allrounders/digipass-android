@@ -11,19 +11,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.digipass.android.R;
-import com.digipass.android.objects.ListItem;
+import com.digipass.android.objects.DefaultListItem;
 
 import java.util.ArrayList;
 
-public class ListAdapter_1 extends ArrayAdapter<ListItem> {
+public class DefaultListAdapter extends ArrayAdapter<DefaultListItem> {
 
     private Context context;
-    private ArrayList<ListItem> data;
+    private ArrayList<DefaultListItem> data;
     private int rowlayout;
     private LayoutInflater mInflater;
     private int delay;
 
-    public ListAdapter_1(Context context, int textViewResourceId, ArrayList<ListItem> data, int delay) {
+    public DefaultListAdapter(Context context, int textViewResourceId, ArrayList<DefaultListItem> data, int delay) {
         super(context, textViewResourceId, data);
         this.context = context;
         this.mInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -41,7 +41,7 @@ public class ListAdapter_1 extends ArrayAdapter<ListItem> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        final ListItem listItem = this.data.get(position);
+        final DefaultListItem defaultListItem = this.data.get(position);
         final Holder holder;
 
         if (convertView == null) {
@@ -55,13 +55,13 @@ public class ListAdapter_1 extends ArrayAdapter<ListItem> {
             holder = (Holder) convertView.getTag();
         }
 
-        if (listItem.has_icon()) {
-            holder.thumb.setImageDrawable(listItem.get_icon(context));
+        if (defaultListItem.has_icon()) {
+            holder.thumb.setImageDrawable(defaultListItem.get_icon(context));
         } else {
             holder.thumb.setVisibility(View.GONE);
         }
-        holder.title.setText(listItem.get_name());
-        holder.subtitle.setText(listItem.get_values_as_string());
+        holder.title.setText(defaultListItem.get_name());
+        holder.subtitle.setText(defaultListItem.get_values_as_string());
 
         Animation animation = AnimationUtils.loadAnimation(context, R.anim.fade_in);
         int d = 50;

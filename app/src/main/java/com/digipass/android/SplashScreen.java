@@ -29,7 +29,7 @@ public class SplashScreen extends AppCompatActivity {
         startActivity(new Intent(this, MainActivity.class));
 
         API api = API.getInstance(this);
-        api.GetJSONResult();
+//        api.GetJSONResult();
 
         final Context c = this;
 

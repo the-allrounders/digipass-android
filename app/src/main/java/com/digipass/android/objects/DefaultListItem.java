@@ -11,29 +11,29 @@ import org.json.JSONObject;
 
 import java.util.Objects;
 
-public class ListItem implements Parcelable {
+public class DefaultListItem implements Parcelable {
 
 
-    private String _key;
-    private String _name;
-    private String _description;
-    private String _values;
-    private String _row_type;
-    private String _icon_name;
-    private int _status;
-    private String _timestamp;
+    protected String _key;
+    protected String _name;
+    protected String _description;
+    protected String _values;
+    protected String _row_type;
+    protected String _icon_name;
+    protected int _status;
+    protected String _timestamp;
 
-    public ListItem(String k, String name, String description, JSONArray values, String row_type, String icon_name, String timestamp) {
+    public DefaultListItem(String k, String name, String description, JSONArray values, String row_type, String icon_name, String timestamp) {
         _timestamp = timestamp;
-        new ListItem(k, name, description, values, row_type, icon_name);
+        new DefaultListItem(k, name, description, values, row_type, icon_name);
     }
 
-    public ListItem(String k, String name, String description, JSONArray values, String row_type, String icon_name, int status) {
+    public DefaultListItem(String k, String name, String description, JSONArray values, String row_type, String icon_name, int status) {
         _status = status;
-        new ListItem(k, name, description, values, row_type, icon_name);
+        new DefaultListItem(k, name, description, values, row_type, icon_name);
     }
 
-    public ListItem(String k, String name, String description, JSONArray values, String row_type, String icon_name)
+    public DefaultListItem(String k, String name, String description, JSONArray values, String row_type, String icon_name)
     {
         _key = k;
         _name = name;
@@ -43,7 +43,7 @@ public class ListItem implements Parcelable {
         _icon_name = icon_name;
     }
 
-    protected ListItem(Parcel in) {
+    protected DefaultListItem(Parcel in) {
         _key = in.readString();
         _name = in.readString();
         _description = in.readString();
@@ -54,15 +54,15 @@ public class ListItem implements Parcelable {
         _timestamp = in.readString();
     }
 
-    public static final Creator<ListItem> CREATOR = new Creator<ListItem>() {
+    public static final Creator<DefaultListItem> CREATOR = new Creator<DefaultListItem>() {
         @Override
-        public ListItem createFromParcel(Parcel in) {
-            return new ListItem(in);
+        public DefaultListItem createFromParcel(Parcel in) {
+            return new DefaultListItem(in);
         }
 
         @Override
-        public ListItem[] newArray(int size) {
-            return new ListItem[size];
+        public DefaultListItem[] newArray(int size) {
+            return new DefaultListItem[size];
         }
     };
 
