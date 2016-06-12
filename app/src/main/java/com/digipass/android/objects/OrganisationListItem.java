@@ -1,7 +1,5 @@
 package com.digipass.android.objects;
 
-import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -38,11 +36,6 @@ public class OrganisationListItem extends DefaultListItem implements Parcelable 
             return new OrganisationListItem[size];
         }
     };
-
-    public Drawable get_icon(Context c) {
-        int imageResource = c.getResources().getIdentifier("drawable/" + this._icon_name, null, c.getPackageName());
-        return c.getResources().getDrawable(imageResource);
-    }
 
     public String get_icon_url() {
         return _icon_name;

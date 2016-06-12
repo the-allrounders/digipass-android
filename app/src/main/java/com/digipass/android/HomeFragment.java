@@ -69,9 +69,22 @@ public class HomeFragment extends Fragment {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-//                getActivity().onBackPressed();
             }
         }
+
+        titleOnClick(R.id.pending_requests_title_wrapper, 2);
+        titleOnClick(R.id.activity_log_title_wrapper, 3);
+    }
+
+    private void titleOnClick(int title, final int menu_item) {
+        final MainActivity ac = (MainActivity)getActivity();
+        getActivity().findViewById(title).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ac.animateDrawerToggle = false;
+                ac.onNavigationItemSelected(ac.navigationView.getMenu().getItem(menu_item));
+            }
+        });
     }
 
     private void printListRequests(ArrayList<DefaultListItem> _data) {
