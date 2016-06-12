@@ -42,4 +42,5 @@
     <string name="io_connected">Connected!</string>
     <string name="lost_connection">No active connection found! Retrying to connect…</string>
     <string name="what_now">What now?</string>
+    <string name="title_permissions">Permissions</string>
 </resources>

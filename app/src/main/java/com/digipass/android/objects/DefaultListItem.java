@@ -24,13 +24,13 @@ public class DefaultListItem implements Parcelable {
     protected String _timestamp;
 
     public DefaultListItem(String k, String name, String description, JSONArray values, String row_type, String icon_name, String timestamp) {
+        this(k, name, description, values, row_type, icon_name);
         _timestamp = timestamp;
-        new DefaultListItem(k, name, description, values, row_type, icon_name);
     }
 
     public DefaultListItem(String k, String name, String description, JSONArray values, String row_type, String icon_name, int status) {
+        this(k, name, description, values, row_type, icon_name);
         _status = status;
-        new DefaultListItem(k, name, description, values, row_type, icon_name);
     }
 
     public DefaultListItem(String k, String name, String description, JSONArray values, String row_type, String icon_name)

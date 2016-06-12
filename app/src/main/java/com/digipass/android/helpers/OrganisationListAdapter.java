@@ -9,8 +9,11 @@ import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.digipass.android.R;
 import com.digipass.android.objects.DefaultListItem;
+import com.digipass.android.objects.OrganisationDefaultListItem;
 
 import java.util.ArrayList;
 
@@ -21,6 +24,7 @@ public class OrganisationListAdapter extends ArrayAdapter<DefaultListItem> {
     private int rowlayout;
     private LayoutInflater mInflater;
     private int delay;
+    ImageLoader imageLoader = AppController.getInstance().getImageLoader();
 
     public OrganisationListAdapter(Context context, int textViewResourceId, ArrayList<DefaultListItem> data, int delay) {
         super(context, textViewResourceId, data);
@@ -34,29 +38,31 @@ public class OrganisationListAdapter extends ArrayAdapter<DefaultListItem> {
     private class Holder {
         public TextView title;
         public TextView subtitle;
+        public NetworkImageView thumb;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        final DefaultListItem defaultListItem = this.data.get(position);
+        final OrganisationDefaultListItem organisation = (OrganisationDefaultListItem)this.data.get(position);
         final Holder holder;
+
+        if (imageLoader == null)
+            imageLoader = AppController.getInstance().getImageLoader();
 
         if (convertView == null) {
             convertView = mInflater.inflate(rowlayout, null);
             holder = new Holder();
             holder.title = (TextView) convertView.findViewById(R.id.row_1_title);
             holder.subtitle = (TextView) convertView.findViewById(R.id.row_1_subtitle);
+            holder.thumb = (NetworkImageView) convertView.findViewById(R.id.row_1_thumb_icon);
             convertView.setTag(holder);
         } else {
             holder = (Holder) convertView.getTag();
         }
 
-        if (defaultListItem.has_icon()) {
-            holder.subtitle.setText(defaultListItem.get_values_as_string());
-        } else {
-            holder.subtitle.setVisibility(View.GONE);
-        }
-        holder.title.setText(defaultListItem.get_name());
+        holder.subtitle.setText(organisation.get_values_as_string());
+        holder.title.setText(organisation.get_name());
+        holder.thumb.setImageUrl(organisation.get_icon_url(), imageLoader);
 
         Animation animation = AnimationUtils.loadAnimation(context, R.anim.fade_in);
         int d = 50;

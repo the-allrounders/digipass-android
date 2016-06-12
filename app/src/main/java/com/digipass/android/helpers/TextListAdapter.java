@@ -51,7 +51,7 @@ public class TextListAdapter extends ArrayAdapter<DefaultListItem> {
             holder = (Holder) convertView.getTag();
         }
 
-        if (defaultListItem.has_icon()) {
+        if (defaultListItem.get_values_as_string().length() > 0) {
             holder.subtitle.setText(defaultListItem.get_values_as_string());
         } else {
             holder.subtitle.setVisibility(View.GONE);

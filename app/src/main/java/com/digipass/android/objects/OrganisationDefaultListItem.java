@@ -9,7 +9,6 @@ import org.json.JSONArray;
 
 public class OrganisationDefaultListItem extends DefaultListItem implements Parcelable {
 
-
     public OrganisationDefaultListItem(String k, String name, String description, JSONArray values, String row_type, String icon_name, int status) {
         super(k, name, description, values, row_type, icon_name, status);
     }
@@ -43,5 +42,9 @@ public class OrganisationDefaultListItem extends DefaultListItem implements Parc
     public Drawable get_icon(Context c) {
         int imageResource = c.getResources().getIdentifier("drawable/" + this._icon_name, null, c.getPackageName());
         return c.getResources().getDrawable(imageResource);
+    }
+
+    public String get_icon_url() {
+        return _icon_name;
     }
 }

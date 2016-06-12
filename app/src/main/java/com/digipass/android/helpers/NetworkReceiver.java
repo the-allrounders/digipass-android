@@ -14,13 +14,11 @@ import com.digipass.android.R;
 
 public class NetworkReceiver extends BroadcastReceiver {
 
-    private Context c;
     private boolean lostConnection = false;
     private boolean reshow = false;
     private View view;
 
     public NetworkReceiver(Context c) {
-        this.c = c;
         view = ((MainActivity)c).findViewById(R.id.root_view);
     }
 

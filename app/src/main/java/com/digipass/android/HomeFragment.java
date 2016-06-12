@@ -81,14 +81,16 @@ public class HomeFragment extends Fragment {
                 adapter = new TextListAdapter(c, R.layout.list_row_text, _data, 0);
                 adapter.add(new TextListItem(getResources().getString(R.string.no_requests)));
             } else {
-                adapter = new OrganisationListAdapter(c, R.layout.list_row_default, _data, 0);
+                adapter = new OrganisationListAdapter(c, R.layout.list_row_organisation, _data, 0);
                 AdapterView.OnItemClickListener onClick = new AdapterView.OnItemClickListener() {
                     public void onItemClick(AdapterView<?> a, View v, int position, long id) {
                         OrganisationDefaultListItem organisation = (OrganisationDefaultListItem)_data.get(position);
                         final MainActivity ac = ((MainActivity)getActivity());
                         ac.showHomeAsUp = true;
                         Bundle b = new Bundle();
-                        b.putSerializable("data", (Serializable) Data.GetInstance(c).GetPreferences(organisation.get_key()));
+                        b.putSerializable("data", (Serializable)Data.GetInstance(c).GetRequestsList(organisation.get_key()));
+                        b.putString("key", organisation.get_key());
+                        b.putString("title", c.getResources().getString(R.string.title_permissions) + " - " + organisation.get_name());
                         ac.StartFragment(PermissionsFragment.class, b);
                     }
                 };

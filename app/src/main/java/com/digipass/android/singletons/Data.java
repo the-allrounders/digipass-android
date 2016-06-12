@@ -95,10 +95,8 @@ public class Data {
 
     public Map<String, ArrayList<DefaultListItem>> GetHomeLists(int max_req, int max_ac_log) {
         Map<String, ArrayList<DefaultListItem>> home_map = new HashMap<>();
-        String req_string = context.getSharedPreferences("requests_data", Context.MODE_PRIVATE).getString("requests", "[]");
-        String ac_log_string = context.getSharedPreferences("preference_category_data", Context.MODE_PRIVATE).getString("preference_category_data", "[]");
-        home_map.put("requests", getRequestsList("0", req_string));
-        home_map.put("activities", getActivitiesList(ac_log_string));
+        home_map.put("requests", GetRequestsList("0").get("organisations"));
+        home_map.put("activities", GetActivitiesList());
 
         int req_size = home_map.get("requests").size();
         if (req_size > max_req && max_req > 0) {
@@ -112,8 +110,13 @@ public class Data {
         return home_map;
     }
 
-    private ArrayList<DefaultListItem> getRequestsList(String key, String json) {
-        ArrayList<DefaultListItem> requests_list = new ArrayList<>();
+    public  Map<String, ArrayList<DefaultListItem>> GetRequestsList(String key) {
+        String json = context.getSharedPreferences("requests_data", Context.MODE_PRIVATE).getString("requests", "[]");
+        json = "[{\"title\": \"CitizenM\", \"_id\": \"1\", \"icon\": \"http://project.cmi.hro.nl/2015_2016/emedia_mt2b_t4/digipass/images/organisations/citizenm.jpg\", \"status\":0, \"permissions\": [{\"parent\":\"1\", \"_id\": \"0\", \"title\": \"Bed size\", \"icon\": \"ic_food\", \"status\": 2, \"values\": [{\"title\": \"King size\", \"value\": \"true\"}]}]},{\"title\": \"HRO\", \"_id\": \"2\", \"icon\": \"http://project.cmi.hro.nl/2015_2016/emedia_mt2b_t4/digipass/images/organisations/hro.jpg\", \"status\":0, \"permissions\": [{\"parent\":\"2\", \"_id\": \"3\", \"title\": \"Eetvoorkeuren\", \"icon\": \"ic_food\", \"status\": 0, \"values\": []}, {\"parent\":\"3\", \"_id\": \"4\", \"title\": \"Allergieen\", \"icon\": \"\", \"status\": 0, \"values\": [{\"title\": \"Aardbei\", \"value\": \"true\"}]}]}]";
+        Map<String, ArrayList<DefaultListItem>> requests_list = new HashMap<>();
+        ArrayList<DefaultListItem> preference_list = new ArrayList<>();
+        ArrayList<DefaultListItem> group_list = new ArrayList<>();
+        ArrayList<DefaultListItem> organisation_list = new ArrayList<>();
         JSONArray organisations;
         try {
             organisations = new JSONArray(json);
@@ -134,25 +137,32 @@ public class Data {
                                 values.put(_v);
                             }
                         }
-                        requests_list.add(new OrganisationDefaultListItem(permission.getString("_id"), permission.getString("title"), "", values, "permission", permission.getString("icon"), permission.getInt("status")));
-                    } else if (Objects.equals(key, "0")) {
+                        if (permission.getJSONArray("values").length() == 0) {
+                            group_list.add(new DefaultListItem(permission.getString("_id"), permission.getString("title"), "", values, "group", permission.getString("icon"), permission.getInt("status")));
+                        } else {
+                            preference_list.add(new DefaultListItem(permission.getString("_id"), permission.getString("title"), "", values, "preference", "", permission.getInt("status")));
+                        }
+                    } else if (Objects.equals(organisation.getString("_id"), permission.getString("parent"))) {
                         JSONObject _v = new JSONObject();
                         _v.put("title", permission.getString("title"));
                         values.put(_v);
                     }
                 }
                 if (Objects.equals(key, "0")) {
-                    requests_list.add(new OrganisationDefaultListItem(organisation.getString("_id"), organisation.getString("title"), "", values, "organisation", organisation.getString("icon"), organisation.getInt("status")));
+                    organisation_list.add(new OrganisationDefaultListItem(organisation.getString("_id"), organisation.getString("title"), "", values, "organisation", organisation.getString("icon"), organisation.getInt("status")));
                 }
-
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        requests_list.put("preferences", preference_list);
+        requests_list.put("categories", group_list);
+        requests_list.put("organisations", organisation_list);
         return requests_list;
     }
 
-    private ArrayList<DefaultListItem> getActivitiesList(String json) {
+    public ArrayList<DefaultListItem> GetActivitiesList() {
+        String json = context.getSharedPreferences("preference_category_data", Context.MODE_PRIVATE).getString("preference_category_data", "[]");
         ArrayList<DefaultListItem> activities_list = new ArrayList<>();
         JSONArray activities;
         try {
