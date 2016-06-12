@@ -18,7 +18,7 @@ import com.digipass.android.helpers.ListUtils;
 import com.digipass.android.helpers.OrganisationListAdapter;
 import com.digipass.android.helpers.TextListAdapter;
 import com.digipass.android.objects.DefaultListItem;
-import com.digipass.android.objects.OrganisationDefaultListItem;
+import com.digipass.android.objects.OrganisationListItem;
 import com.digipass.android.objects.TextListItem;
 import com.digipass.android.singletons.Data;
 import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
@@ -95,7 +95,7 @@ public class HomeFragment extends Fragment {
                 final ArrayList<DefaultListItem> _d = _data;
                 AdapterView.OnItemClickListener onClick = new AdapterView.OnItemClickListener() {
                     public void onItemClick(AdapterView<?> a, View v, int position, long id) {
-                        OrganisationDefaultListItem organisation = (OrganisationDefaultListItem)_d.get(position);
+                        OrganisationListItem organisation = (OrganisationListItem)_d.get(position);
                         final MainActivity ac = ((MainActivity)getActivity());
                         if (ac.showHomeAsUp) {
                             ac.animateDrawerToggle = false;
@@ -130,7 +130,7 @@ public class HomeFragment extends Fragment {
                         for(int i=0;i<positionList.length;i++) {
                             SwipeDirection direction = directionList[i];
                             final int position = positionList[i];
-                            OrganisationDefaultListItem organisation = (OrganisationDefaultListItem)_d.get(position);
+                            OrganisationListItem organisation = (OrganisationListItem)_d.get(position);
                             switch (direction) {
                                 case DIRECTION_FAR_LEFT:
                                 case DIRECTION_NORMAL_LEFT:

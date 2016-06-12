@@ -3,7 +3,7 @@ package com.digipass.android.singletons;
 import android.content.Context;
 
 import com.digipass.android.objects.DefaultListItem;
-import com.digipass.android.objects.OrganisationDefaultListItem;
+import com.digipass.android.objects.OrganisationListItem;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -149,7 +149,7 @@ public class Data {
                     }
                 }
                 if (Objects.equals(key, "0")) {
-                    organisation_list.add(new OrganisationDefaultListItem(organisation.getString("_id"), organisation.getString("title"), "", values, "organisation", organisation.getString("icon"), organisation.getInt("status")));
+                    organisation_list.add(new OrganisationListItem(organisation.getString("_id"), organisation.getString("title"), "", values, "organisation", organisation.getString("icon"), organisation.getInt("status")));
                 }
             }
         } catch (JSONException e) {

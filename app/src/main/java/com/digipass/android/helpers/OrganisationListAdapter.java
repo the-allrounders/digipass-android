@@ -13,7 +13,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.digipass.android.R;
 import com.digipass.android.objects.DefaultListItem;
-import com.digipass.android.objects.OrganisationDefaultListItem;
+import com.digipass.android.objects.OrganisationListItem;
 
 import java.util.ArrayList;
 
@@ -43,7 +43,7 @@ public class OrganisationListAdapter extends ArrayAdapter<DefaultListItem> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        final OrganisationDefaultListItem organisation = (OrganisationDefaultListItem)this.data.get(position);
+        final OrganisationListItem organisation = (OrganisationListItem)this.data.get(position);
         final Holder holder;
 
         if (imageLoader == null)

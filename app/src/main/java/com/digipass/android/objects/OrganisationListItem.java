@@ -7,13 +7,13 @@ import android.os.Parcelable;
 
 import org.json.JSONArray;
 
-public class OrganisationDefaultListItem extends DefaultListItem implements Parcelable {
+public class OrganisationListItem extends DefaultListItem implements Parcelable {
 
-    public OrganisationDefaultListItem(String k, String name, String description, JSONArray values, String row_type, String icon_name, int status) {
+    public OrganisationListItem(String k, String name, String description, JSONArray values, String row_type, String icon_name, int status) {
         super(k, name, description, values, row_type, icon_name, status);
     }
 
-    protected OrganisationDefaultListItem(Parcel in) {
+    protected OrganisationListItem(Parcel in) {
         super(in);
     }
 
@@ -27,15 +27,15 @@ public class OrganisationDefaultListItem extends DefaultListItem implements Parc
         return 0;
     }
 
-    public static final Creator<OrganisationDefaultListItem> CREATOR = new Creator<OrganisationDefaultListItem>() {
+    public static final Creator<OrganisationListItem> CREATOR = new Creator<OrganisationListItem>() {
         @Override
-        public OrganisationDefaultListItem createFromParcel(Parcel in) {
-            return new OrganisationDefaultListItem(in);
+        public OrganisationListItem createFromParcel(Parcel in) {
+            return new OrganisationListItem(in);
         }
 
         @Override
-        public OrganisationDefaultListItem[] newArray(int size) {
-            return new OrganisationDefaultListItem[size];
+        public OrganisationListItem[] newArray(int size) {
+            return new OrganisationListItem[size];
         }
     };
 
