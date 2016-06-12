@@ -15,6 +15,7 @@ import android.widget.ListView;
 
 import com.digipass.android.helpers.DefaultListAdapter;
 import com.digipass.android.helpers.ListUtils;
+import com.digipass.android.helpers.OrganisationListAdapter;
 import com.digipass.android.objects.DefaultListItem;
 import com.digipass.android.singletons.Data;
 import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
@@ -37,8 +38,8 @@ public class PermissionsFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static PreferencesFragment newInstance() {
-        return new PreferencesFragment();
+    public static PermissionsFragment newInstance() {
+        return new PermissionsFragment();
     }
 
     @Override
@@ -67,19 +68,25 @@ public class PermissionsFragment extends Fragment {
             try {
                 data = (Map<String, ArrayList<DefaultListItem>>)bundle.getSerializable("data");
                 if (data != null) {
-                    if (data.get("preferences").size() == 0 || data.get("categories").size() == 0) {
+                    if (Objects.equals(bundle.getString("key"), "0")) {
                         getActivity().findViewById(R.id.pref_list).setVisibility(View.GONE);
                         getActivity().findViewById(R.id.cat_list).setVisibility(View.GONE);
-                        if (data.get("preferences").size() == 0) {
-                            printList(R.id.list_full_list, data.get("categories"));
-                        } else if (data.get("categories").size() == 0) {
-                            printList(R.id.list_full_list, data.get("preferences"));
+                        printList(R.id.list_full_list, data.get("organisations"));
+                    } else {
+                        if (data.get("preferences").size() == 0 || data.get("categories").size() == 0) {
+                            getActivity().findViewById(R.id.pref_list).setVisibility(View.GONE);
+                            getActivity().findViewById(R.id.cat_list).setVisibility(View.GONE);
+                            if (data.get("preferences").size() == 0) {
+                                printList(R.id.list_full_list, data.get("categories"));
+                            } else if (data.get("categories").size() == 0) {
+                                printList(R.id.list_full_list, data.get("preferences"));
+                            }
                         }
-                    }
-                    else {
-                        printList(R.id.list_pref_list, data.get("preferences"));
-                        printList(R.id.list_cat_list, data.get("categories"), data.get("preferences").size());
-                        getActivity().findViewById(R.id.full_list).setVisibility(View.GONE);
+                        else {
+                            printList(R.id.list_pref_list, data.get("preferences"));
+                            printList(R.id.list_cat_list, data.get("categories"), data.get("preferences").size());
+                            getActivity().findViewById(R.id.full_list).setVisibility(View.GONE);
+                        }
                     }
                 }
             } catch (Exception ignored) {}
@@ -97,13 +104,16 @@ public class PermissionsFragment extends Fragment {
             lv = (ListView) v.findViewById(list_id);
             lv.setFadingEdgeLength(0);
             lv.setDividerHeight(0);
-            ArrayAdapter<DefaultListItem> adapter = new DefaultListAdapter(c, R.layout.list_row_default, _data, delay);
+            ArrayAdapter<DefaultListItem> adapter;
+            if (Objects.equals(this.getArguments().getString("key"), "0")) {
+                adapter = new OrganisationListAdapter(c, R.layout.list_row_organisation, _data, delay);
+            } else {
+                adapter = new DefaultListAdapter(c, R.layout.list_row_default, _data, delay);
+            }
             AdapterView.OnItemClickListener onClick = new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> a, View v, int position, long id) {
                     DefaultListItem defaultListItem = _data.get(position);
-                    if (Objects.equals(defaultListItem.get_row_type(), "preference")) {
-
-                    } else if (Objects.equals(defaultListItem.get_row_type(), "group")) {
+                    if (Objects.equals(defaultListItem.get_row_type(), "group") || Objects.equals(defaultListItem.get_row_type(), "organisation")) {
                         final MainActivity ac = ((MainActivity)getActivity());
                         if (ac.showHomeAsUp) {
                             ac.animateDrawerToggle = false;
@@ -116,7 +126,11 @@ public class PermissionsFragment extends Fragment {
                         Bundle b = new Bundle();
                         b.putSerializable("data", (Serializable)Data.GetInstance(c).GetRequestsList(defaultListItem.get_key()));
                         b.putString("key", defaultListItem.get_key());
-                        b.putString("title", "§");
+                        if (Objects.equals(defaultListItem.get_row_type(), "organisation")) {
+                            b.putString("title", c.getResources().getString(R.string.title_permissions) + " - " + defaultListItem.get_name());
+                        } else {
+                            b.putString("title", "§");
+                        }
                         ac.StartFragment(PermissionsFragment.class, b);
                     }
                 }

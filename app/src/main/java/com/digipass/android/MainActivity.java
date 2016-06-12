@@ -207,7 +207,6 @@ public class MainActivity extends AppCompatActivity
 
         switch (id) {
             default:
-            case R.id.nav_permissions:
             case R.id.nav_activity_log:
             case R.id.nav_contacts:
             case R.id.nav_settings:
@@ -221,6 +220,12 @@ public class MainActivity extends AppCompatActivity
                 bundle.putSerializable("data", (Serializable)Data.GetInstance(this).GetPreferences("0"));
                 bundle.putString("key", "0");
                 bundle.putString("title", getResources().getString(R.string.title_preferences));
+                break;
+            case R.id.nav_permissions:
+                fragmentClass = PermissionsFragment.class;
+                bundle.putSerializable("data", (Serializable)Data.GetInstance(this).GetRequestsList("0"));
+                bundle.putString("key", "0");
+                bundle.putString("title", getResources().getString(R.string.title_permissions));
                 break;
         }
 
