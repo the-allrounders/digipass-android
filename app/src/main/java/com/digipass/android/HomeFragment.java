@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,8 @@ import com.digipass.android.objects.DefaultListItem;
 import com.digipass.android.objects.OrganisationDefaultListItem;
 import com.digipass.android.objects.TextListItem;
 import com.digipass.android.singletons.Data;
+import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
+import com.wdullaer.swipeactionadapter.SwipeDirection;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -109,8 +112,48 @@ public class HomeFragment extends Fragment {
                         ac.StartFragment(PermissionsFragment.class, b);
                     }
                 };
+                final SwipeActionAdapter swipeAdapter = new SwipeActionAdapter(adapter);
                 lv.setOnItemClickListener(onClick);
-                lv.setAdapter(adapter);
+                lv.setAdapter(swipeAdapter);
+                swipeAdapter.setListView(lv);
+                swipeAdapter.addBackground(SwipeDirection.DIRECTION_FAR_LEFT,R.layout.list_row_permission_row_bg_left)
+                        .addBackground(SwipeDirection.DIRECTION_NORMAL_LEFT,R.layout.list_row_permission_row_bg_left)
+                        .addBackground(SwipeDirection.DIRECTION_FAR_RIGHT,R.layout.list_row_permission_row_bg_right)
+                        .addBackground(SwipeDirection.DIRECTION_NORMAL_RIGHT,R.layout.list_row_permission_row_bg_right);
+
+                swipeAdapter.setSwipeActionListener(new SwipeActionAdapter.SwipeActionListener() {
+                    @Override
+                    public boolean hasActions(int position, SwipeDirection direction) {
+                        return direction.isLeft() || direction.isRight();
+                    }
+
+                    @Override
+                    public boolean shouldDismiss(int position, SwipeDirection direction) {
+                        return false;
+                    }
+
+                    @Override
+                    public void onSwipe(int[] positionList, SwipeDirection[] directionList){
+                        Log.d("avc", "swipe!");
+                        for(int i=0;i<positionList.length;i++) {
+                            SwipeDirection direction = directionList[i];
+                            int position = positionList[i];
+                            String dir = "";
+
+                            switch (direction) {
+                                case DIRECTION_FAR_LEFT:
+                                case DIRECTION_NORMAL_LEFT:
+                                    dir = "left";
+                                    break;
+                                case DIRECTION_FAR_RIGHT:
+                                case DIRECTION_NORMAL_RIGHT:
+                                    dir = "right";
+                                    break;
+                            }
+                            Log.d("Swipe", dir + " " + position);
+                        }
+                    }
+                });
             }
 
             ListUtils.setDynamicHeight(lv);
