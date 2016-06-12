@@ -112,16 +112,9 @@ public class HomeFragment extends Fragment {
                         ac.StartFragment(PermissionsFragment.class, b);
                     }
                 };
-                final SwipeActionAdapter swipeAdapter = new SwipeActionAdapter(adapter);
                 lv.setOnItemClickListener(onClick);
-                lv.setAdapter(swipeAdapter);
-                swipeAdapter.setListView(lv);
-                swipeAdapter.addBackground(SwipeDirection.DIRECTION_FAR_LEFT,R.layout.list_row_permission_row_bg_left)
-                        .addBackground(SwipeDirection.DIRECTION_NORMAL_LEFT,R.layout.list_row_permission_row_bg_left)
-                        .addBackground(SwipeDirection.DIRECTION_FAR_RIGHT,R.layout.list_row_permission_row_bg_right)
-                        .addBackground(SwipeDirection.DIRECTION_NORMAL_RIGHT,R.layout.list_row_permission_row_bg_right);
 
-                swipeAdapter.setSwipeActionListener(new SwipeActionAdapter.SwipeActionListener() {
+                SwipeActionAdapter.SwipeActionListener listener = new SwipeActionAdapter.SwipeActionListener() {
                     @Override
                     public boolean hasActions(int position, SwipeDirection direction) {
                         return direction.isLeft() || direction.isRight();
@@ -134,26 +127,27 @@ public class HomeFragment extends Fragment {
 
                     @Override
                     public void onSwipe(int[] positionList, SwipeDirection[] directionList){
-                        Log.d("avc", "swipe!");
                         for(int i=0;i<positionList.length;i++) {
                             SwipeDirection direction = directionList[i];
-                            int position = positionList[i];
-                            String dir = "";
-
+                            final int position = positionList[i];
+                            OrganisationDefaultListItem organisation = (OrganisationDefaultListItem)_d.get(position);
                             switch (direction) {
                                 case DIRECTION_FAR_LEFT:
                                 case DIRECTION_NORMAL_LEFT:
-                                    dir = "left";
+                                    Log.d("swipe", "Deny all from " + organisation.get_name() + " (" + organisation.get_key() + ")");
                                     break;
                                 case DIRECTION_FAR_RIGHT:
                                 case DIRECTION_NORMAL_RIGHT:
-                                    dir = "right";
+                                    Log.d("swipe", "Accept all from " + organisation.get_name() + " (" + organisation.get_key() + ")");
                                     break;
                             }
-                            Log.d("Swipe", dir + " " + position);
                         }
                     }
-                });
+                };
+
+                SwipeActionAdapter swipeAdapter = PermissionsFragment.GetSwipeAdapter(adapter, lv, listener);
+
+                lv.setAdapter(swipeAdapter);
             }
 
             ListUtils.setDynamicHeight(lv);

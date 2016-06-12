@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,14 +14,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.digipass.android.helpers.DefaultListAdapter;
-import com.digipass.android.helpers.EditPreferenceDialog;
 import com.digipass.android.helpers.ListUtils;
 import com.digipass.android.objects.DefaultListItem;
 import com.digipass.android.singletons.Data;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
+import com.wdullaer.swipeactionadapter.SwipeDirection;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -104,24 +102,7 @@ public class PermissionsFragment extends Fragment {
                 public void onItemClick(AdapterView<?> a, View v, int position, long id) {
                     DefaultListItem defaultListItem = _data.get(position);
                     if (Objects.equals(defaultListItem.get_row_type(), "preference")) {
-                        EditPreferenceDialog dialog = new EditPreferenceDialog();
-                        JSONArray _data = defaultListItem.get_values();
 
-                        String[] options = new String[_data.length()];
-                        boolean[] values = new boolean[_data.length()];
-
-                        for(int i = 0; i < _data.length(); i++) {
-                            try {
-                                JSONObject d = (JSONObject)_data.get(i);
-                                options[i] = d.getString("title");
-                                values[i] = Boolean.valueOf(d.getString("value"));
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        dialog.setData(options, values, defaultListItem.get_key());
-                        dialog.setTitle(defaultListItem.get_name());
-                        dialog.show(getFragmentManager(), "preference");
                     } else if (Objects.equals(defaultListItem.get_row_type(), "group")) {
                         final MainActivity ac = ((MainActivity)getActivity());
                         if (ac.showHomeAsUp) {
@@ -141,7 +122,41 @@ public class PermissionsFragment extends Fragment {
                 }
             };
 
-            lv.setAdapter(adapter);
+            SwipeActionAdapter.SwipeActionListener listener = new SwipeActionAdapter.SwipeActionListener() {
+                @Override
+                public boolean hasActions(int position, SwipeDirection direction) {
+                    return direction.isLeft() || direction.isRight();
+                }
+
+                @Override
+                public boolean shouldDismiss(int position, SwipeDirection direction) {
+                    return false;
+                }
+
+                @Override
+                public void onSwipe(int[] positionList, SwipeDirection[] directionList){
+                    for(int i=0;i<positionList.length;i++) {
+                        SwipeDirection direction = directionList[i];
+                        final int position = positionList[i];
+                        DefaultListItem defaultListItem = _data.get(position);
+                        switch (direction) {
+                            case DIRECTION_FAR_LEFT:
+                            case DIRECTION_NORMAL_LEFT:
+                                Log.d("swipe", "Deny all from " + defaultListItem.get_name() + " (" + defaultListItem.get_key() + ")");
+                                break;
+                            case DIRECTION_FAR_RIGHT:
+                            case DIRECTION_NORMAL_RIGHT:
+                                Log.d("swipe", "Accept all from " + defaultListItem.get_name() + " (" + defaultListItem.get_key() + ")");
+                                break;
+                        }
+                    }
+                }
+            };
+
+            SwipeActionAdapter swipeAdapter = PermissionsFragment.GetSwipeAdapter(adapter, lv, listener);
+
+            lv.setAdapter(swipeAdapter);
+
             lv.setOnItemClickListener(onClick);
 
             ListUtils.setDynamicHeight(lv);
@@ -164,5 +179,14 @@ public class PermissionsFragment extends Fragment {
 
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
+    }
+
+    public static SwipeActionAdapter GetSwipeAdapter(ArrayAdapter adapter, ListView lv, SwipeActionAdapter.SwipeActionListener listener) {
+        final SwipeActionAdapter swipeAdapter = new SwipeActionAdapter(adapter);
+        swipeAdapter.setListView(lv);
+        swipeAdapter.addBackground(SwipeDirection.DIRECTION_FAR_LEFT,R.layout.list_row_permission_row_bg_left).addBackground(SwipeDirection.DIRECTION_NORMAL_LEFT,R.layout.list_row_permission_row_bg_left).addBackground(SwipeDirection.DIRECTION_FAR_RIGHT,R.layout.list_row_permission_row_bg_right).addBackground(SwipeDirection.DIRECTION_NORMAL_RIGHT,R.layout.list_row_permission_row_bg_right);
+
+        swipeAdapter.setSwipeActionListener(listener);
+        return swipeAdapter;
     }
 }
