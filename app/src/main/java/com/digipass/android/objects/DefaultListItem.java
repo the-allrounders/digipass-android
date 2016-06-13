@@ -1,9 +1,12 @@
 package com.digipass.android.objects;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.digipass.android.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -126,12 +129,33 @@ public class DefaultListItem implements Parcelable {
         return values_string;
     }
 
-//    public Bitmap get_status_icon() {
-//        return ;
-//    }
-
     public int get_status() {
         return _status;
+    }
+
+    public Drawable get_status_icon(Context c) {
+        String icon_string = "ic_pending";
+        int icon_color = android.R.color.white;
+        switch(_status) {
+            case 0:
+                icon_string = "ic_check";
+                icon_color = R.color.acceptColor;
+                break;
+            case 1:
+                icon_string = "ic_clear";
+                icon_color = R.color.denyColor;
+                break;
+            case 2:
+                icon_string = "ic_pending";
+                icon_color = R.color.pendingColor;
+            default:
+        }
+        int imageResource = c.getResources().getIdentifier("drawable/" + icon_string, null, c.getPackageName());
+        Drawable icon = c.getResources().getDrawable(imageResource);
+        if (icon != null) {
+            icon.setColorFilter(c.getResources().getColor(icon_color), PorterDuff.Mode.MULTIPLY);
+        }
+        return icon;
     }
 
     public String get_timestamp() {
@@ -140,6 +164,10 @@ public class DefaultListItem implements Parcelable {
 
     public String get_timestamp_formatted() {
         return _timestamp;
+    }
+
+    public String get_icon_name() {
+        return _icon_name;
     }
 
     @Override

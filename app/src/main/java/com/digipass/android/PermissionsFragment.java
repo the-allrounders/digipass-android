@@ -108,7 +108,7 @@ public class PermissionsFragment extends Fragment {
             if (Objects.equals(this.getArguments().getString("key"), "0")) {
                 adapter = new OrganisationListAdapter(c, R.layout.list_row_organisation, _data, delay);
             } else {
-                adapter = new DefaultListAdapter(c, R.layout.list_row_default, _data, delay);
+                adapter = new DefaultListAdapter(c, R.layout.list_row_permission, _data, delay);
             }
             AdapterView.OnItemClickListener onClick = new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> a, View v, int position, long id) {

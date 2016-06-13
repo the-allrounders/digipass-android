@@ -103,14 +103,14 @@ public class PreferencesFragment extends Fragment {
                     DefaultListItem defaultListItem = _data.get(position);
                     if (Objects.equals(defaultListItem.get_row_type(), "preference")) {
                         EditPreferenceDialog dialog = new EditPreferenceDialog();
-                        JSONArray _data = defaultListItem.get_values();
+                        JSONArray _value_data = defaultListItem.get_values();
 
-                        String[] options = new String[_data.length()];
-                        boolean[] values = new boolean[_data.length()];
+                        String[] options = new String[_value_data.length()];
+                        boolean[] values = new boolean[_value_data.length()];
 
-                        for(int i = 0; i < _data.length(); i++) {
+                        for(int i = 0; i < _value_data.length(); i++) {
                             try {
-                                JSONObject d = (JSONObject)_data.get(i);
+                                JSONObject d = (JSONObject)_value_data.get(i);
                                 options[i] = d.getString("title");
                                 values[i] = Boolean.valueOf(d.getString("value"));
                             } catch (JSONException e) {
