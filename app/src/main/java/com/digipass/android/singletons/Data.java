@@ -3,7 +3,6 @@ package com.digipass.android.singletons;
 import android.content.Context;
 
 import com.digipass.android.objects.DefaultListItem;
-import com.digipass.android.objects.OrganisationListItem;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -149,7 +148,7 @@ public class Data {
                     }
                 }
                 if (Objects.equals(key, "0")) {
-                    organisation_list.add(new OrganisationListItem(organisation.getString("_id"), organisation.getString("title"), "", values, "organisation", organisation.getString("icon"), organisation.getInt("status")));
+                    organisation_list.add(new DefaultListItem(organisation.getString("_id"), organisation.getString("title"), "", values, "organisation", organisation.getString("icon"), organisation.getInt("status")));
                 }
             }
         } catch (JSONException e) {
@@ -163,13 +162,26 @@ public class Data {
 
     public ArrayList<DefaultListItem> GetActivitiesList() {
         String json = context.getSharedPreferences("preference_category_data", Context.MODE_PRIVATE).getString("preference_category_data", "[]");
+        json = "[{\n" +
+                "    \"_id\": \"7\",\n" +
+                "    \"title\": \"Eetvoorkeur aangepast\",\n" +
+                "    \"description\": \"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\",\n" +
+                "    \"icon\": \"ic_help_feedback\",\n" +
+                "    \"createdAt\": \"2 min\"\n" +
+                "}, {\n" +
+                "    \"_id\": \"8\",\n" +
+                "    \"title\": \"Geweigerd verzoek tot toegang\",\n" +
+                "    \"description\": \"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\",\n" +
+                "    \"icon\": \"ic_hotel\",\n" +
+                "    \"createdAt\": \"20 min\"\n" +
+                "}]";
         ArrayList<DefaultListItem> activities_list = new ArrayList<>();
         JSONArray activities;
         try {
             activities = new JSONArray(json);
             for(int n = 0; n < activities.length(); n++) {
                 JSONObject activity = (JSONObject)activities.get(n);
-//                activities_list.add(new DefaultListItem(activity.getString("_id"), activity.getString("title"), activity.getString("description"), new JSONArray(), "activity", activity.getString("icon"), activity.getString("createdAt")));
+                activities_list.add(new DefaultListItem(activity.getString("_id"), activity.getString("title"), activity.getString("description"), new JSONArray(), "activity", activity.getString("icon"), activity.getString("createdAt")));
             }
         } catch (JSONException e) {
             e.printStackTrace();
