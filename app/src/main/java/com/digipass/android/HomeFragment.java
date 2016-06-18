@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.digipass.android.helpers.ActivityListAdapter;
 import com.digipass.android.helpers.DefaultListAdapter;
 import com.digipass.android.helpers.ListUtils;
 import com.digipass.android.helpers.OrganisationListAdapter;
@@ -183,9 +184,10 @@ public class HomeFragment extends Fragment {
                 lv.setAdapter(adapter);
                 hasAcData = false;
             } else if (hasAcData) {
-                adapter = new DefaultListAdapter(c, R.layout.list_row_default, _data, 0);
+                adapter = new ActivityListAdapter(c, R.layout.list_row_activity, _data, 0);
                 AdapterView.OnItemClickListener onClick = new AdapterView.OnItemClickListener() {
                     public void onItemClick(AdapterView<?> a, View v, int position, long id) {
+                        v.setMinimumHeight(200);
 
                     }
                 };

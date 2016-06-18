@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentTop="true"
+        android:background="@android:color/white" />
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:minHeight="?android:attr/listPreferredItemHeight"
+        android:fontFamily="sans-serif-light"
+        android:padding="5dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp">
+
+        <ImageView
+            android:id="@+id/row_1_thumb_icon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:contentDescription="@string/thumb_description"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="24dp"
+            android:layout_gravity="center_vertical"
+            />
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+
+        <com.google.android.flexbox.FlexboxLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:flexWrap="wrap"
+            app:alignItems="stretch"
+            app:alignContent="stretch" >
+
+            <TextView
+                android:id="@+id/row_1_title"
+                android:layout_height="wrap_content"
+                android:textColor="#bc000000"
+                android:fontFamily="sans-serif"
+                android:layout_width="150dp"
+                app:layout_flexBasisPercent="70%"
+                />
+
+            <ImageView
+                android:id="@+id/row_1_arrow_icon"
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow"
+                android:layout_toRightOf ="@id/row_1_title"
+                android:contentDescription="@string/thumb_description"
+                android:layout_gravity="center_horizontal"
+                />
+
+            <TextView
+                android:id="@+id/date_added"
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:textColor="#bc000000"
+                android:fontFamily="sans-serif"
+                android:layout_toRightOf ="@id/row_1_arrow_icon"
+                app:layout_alignSelf="flex_end"
+                />
+
+        </com.google.android.flexbox.FlexboxLayout>
+
+
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:height="5dp"
+                />
+
+            <TextView
+                android:id="@+id/row_1_subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:textStyle="italic"
+                android:ellipsize="end"
+                android:singleLine="true"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="#23000000" />
+
+</RelativeLayout>

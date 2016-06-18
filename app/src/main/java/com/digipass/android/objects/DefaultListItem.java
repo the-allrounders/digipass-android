@@ -5,6 +5,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.digipass.android.R;
 
@@ -12,7 +13,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.TimeZone;
 
 public class DefaultListItem implements Parcelable {
 
@@ -24,11 +31,12 @@ public class DefaultListItem implements Parcelable {
     protected String _row_type;
     protected String _icon_name;
     protected int _status;
-    protected String _timestamp;
+    public String _timestamp;
 
     public DefaultListItem(String k, String name, String description, JSONArray values, String row_type, String icon_name, String timestamp) {
         this(k, name, description, values, row_type, icon_name);
         _timestamp = timestamp;
+
     }
 
     public DefaultListItem(String k, String name, String description, JSONArray values, String row_type, String icon_name, int status) {
@@ -36,14 +44,15 @@ public class DefaultListItem implements Parcelable {
         _status = status;
     }
 
-    public DefaultListItem(String k, String name, String description, JSONArray values, String row_type, String icon_name)
-    {
+    public DefaultListItem(String k, String name, String description, JSONArray values, String row_type, String icon_name) {
         _key = k;
         _name = name;
         _description = description;
         _values = values.toString();
         _row_type = row_type;
         _icon_name = icon_name;
+
+
     }
 
     protected DefaultListItem(Parcel in) {
@@ -55,6 +64,7 @@ public class DefaultListItem implements Parcelable {
         _icon_name = in.readString();
         _status = in.readInt();
         _timestamp = in.readString();
+
     }
 
     public static final Creator<DefaultListItem> CREATOR = new Creator<DefaultListItem>() {
@@ -73,20 +83,18 @@ public class DefaultListItem implements Parcelable {
         return _key + "";
     }
 
-    public String get_description()
-    {
+    public String get_description() {
         return _description;
     }
 
-    public String get_name()
-    {
+    public String get_name() {
         return _name;
     }
 
-    public String get_row_type()
-    {
+    public String get_row_type() {
         return _row_type;
     }
+
 
     public Boolean has_icon() {
         return _icon_name != null && !Objects.equals(_icon_name, "");
@@ -136,7 +144,7 @@ public class DefaultListItem implements Parcelable {
     public Drawable get_status_icon(Context c) {
         String icon_string = "ic_pending";
         int icon_color = android.R.color.white;
-        switch(_status) {
+        switch (_status) {
             case 0:
                 icon_string = "ic_check";
                 icon_color = R.color.acceptColor;
@@ -185,5 +193,25 @@ public class DefaultListItem implements Parcelable {
         dest.writeString(_icon_name);
         dest.writeInt(_status);
         dest.writeString(_timestamp);
+
     }
-}
+
+
+    public String get_the_date() {
+
+        String dtStart = _timestamp;
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        format.setTimeZone(TimeZone.getTimeZone("GMT"));
+        Log.d("FORMAT", format.toString());
+        Date date = null;
+        try {
+            date = format.parse(dtStart);
+        } catch (ParseException e) {
+            Log.d("DATE_error", "FOUT");
+
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return date.toString();
+}}
