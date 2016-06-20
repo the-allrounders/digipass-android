@@ -3,6 +3,7 @@ package com.digipass.android;
 import android.Manifest;
 import android.animation.ValueAnimator;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -29,6 +30,7 @@ import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 
 import com.digipass.android.helpers.NetworkReceiver;
+import com.digipass.android.singletons.API;
 import com.digipass.android.singletons.Data;
 
 import java.io.Serializable;
@@ -112,6 +114,14 @@ public class MainActivity extends AppCompatActivity
         this.registerReceiver(receiver, filter);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        Intent service_intent = new Intent(this, BackgroundService.class);
+        bindService(service_intent, backgroundServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
     public void resetDrawerToggle() {
         showHomeAsUp = false;
         toggle.syncState();
@@ -150,15 +160,15 @@ public class MainActivity extends AppCompatActivity
 
     private ServiceConnection backgroundServiceConnection = new ServiceConnection() {
         @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
+        public void onServiceConnected(ComponentName className, IBinder service) {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
             BackgroundService.LocalBinder binder = (BackgroundService.LocalBinder) service;
             backgroundService = binder.getService();
             boundWithService = true;
             backgroundService.getBTScanner().addListner(new Runnable(){
                 public void run() {
-                    Log.d("MainActivity", "Scanner callback recieved.");
+                    Log.d("MainActivity", "Scanner callback received.");
+                    API.getInstance(getApplicationContext()).GetJSONResult();
                 }
             });
         }

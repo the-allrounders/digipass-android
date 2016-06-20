@@ -13,11 +13,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.TimeZone;
 
@@ -150,7 +148,7 @@ public class DefaultListItem implements Parcelable {
                 icon_color = R.color.acceptColor;
                 break;
             case 1:
-                icon_string = "ic_clear";
+                icon_string = "ic_deny";
                 icon_color = R.color.denyColor;
                 break;
             case 2:

@@ -13,9 +13,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.digipass.android.helpers.DefaultListAdapter;
 import com.digipass.android.helpers.ListUtils;
 import com.digipass.android.helpers.OrganisationListAdapter;
+import com.digipass.android.helpers.StatusListAdapter;
 import com.digipass.android.objects.DefaultListItem;
 import com.digipass.android.singletons.Data;
 import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
@@ -106,9 +106,9 @@ public class PermissionsFragment extends Fragment {
             lv.setDividerHeight(0);
             ArrayAdapter<DefaultListItem> adapter;
             if (Objects.equals(this.getArguments().getString("key"), "0")) {
-                adapter = new OrganisationListAdapter(c, R.layout.list_row_organisation, _data, delay);
+                adapter = new OrganisationListAdapter(c, R.layout.list_row_permission, _data, delay);
             } else {
-                adapter = new DefaultListAdapter(c, R.layout.list_row_permission, _data, delay);
+                adapter = new StatusListAdapter(c, R.layout.list_row_status, _data, delay);
             }
             AdapterView.OnItemClickListener onClick = new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> a, View v, int position, long id) {

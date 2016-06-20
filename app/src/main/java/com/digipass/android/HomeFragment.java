@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.digipass.android.helpers.ActivityListAdapter;
-import com.digipass.android.helpers.DefaultListAdapter;
 import com.digipass.android.helpers.ListUtils;
 import com.digipass.android.helpers.OrganisationListAdapter;
 import com.digipass.android.helpers.TextListAdapter;
@@ -27,6 +25,7 @@ import com.wdullaer.swipeactionadapter.SwipeDirection;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 
 
 public class HomeFragment extends Fragment {
@@ -104,7 +103,7 @@ public class HomeFragment extends Fragment {
                 lv.setAdapter(adapter);
                 hasReqData = false;
             } else if (hasReqData) {
-                adapter = new OrganisationListAdapter(c, R.layout.list_row_organisation, _data, 0);
+                adapter = new OrganisationListAdapter(c, R.layout.list_row_permission, _data, 0);
                 final ArrayList<DefaultListItem> _d = _data;
                 AdapterView.OnItemClickListener onClick = new AdapterView.OnItemClickListener() {
                     public void onItemClick(AdapterView<?> a, View v, int position, long id) {
@@ -143,16 +142,20 @@ public class HomeFragment extends Fragment {
                         for(int i=0;i<positionList.length;i++) {
                             SwipeDirection direction = directionList[i];
                             final int position = positionList[i];
+                            String status = "";
                             DefaultListItem organisation = _d.get(position);
                             switch (direction) {
                                 case DIRECTION_FAR_LEFT:
                                 case DIRECTION_NORMAL_LEFT:
-                                    Log.d("swipe", "Deny all from " + organisation.get_name() + " (" + organisation.get_key() + ")");
+                                    status = "deny";
                                     break;
                                 case DIRECTION_FAR_RIGHT:
                                 case DIRECTION_NORMAL_RIGHT:
-                                    Log.d("swipe", "Accept all from " + organisation.get_name() + " (" + organisation.get_key() + ")");
+                                    status = "approve";
                                     break;
+                            }
+                            if (!Objects.equals(status, "")) {
+                                Data.GetInstance(getContext()).PrePermissionsPost(organisation.get_key(), status);
                             }
                         }
                     }
@@ -185,13 +188,6 @@ public class HomeFragment extends Fragment {
                 hasAcData = false;
             } else if (hasAcData) {
                 adapter = new ActivityListAdapter(c, R.layout.list_row_activity, _data, 0);
-                AdapterView.OnItemClickListener onClick = new AdapterView.OnItemClickListener() {
-                    public void onItemClick(AdapterView<?> a, View v, int position, long id) {
-                        v.setMinimumHeight(200);
-
-                    }
-                };
-                lv.setOnItemClickListener(onClick);
                 lv.setAdapter(adapter);
             }
 

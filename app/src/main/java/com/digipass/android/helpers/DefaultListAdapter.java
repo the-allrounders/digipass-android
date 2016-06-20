@@ -14,6 +14,7 @@ import com.digipass.android.R;
 import com.digipass.android.objects.DefaultListItem;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class DefaultListAdapter extends ArrayAdapter<DefaultListItem> {
 
@@ -61,7 +62,11 @@ public class DefaultListAdapter extends ArrayAdapter<DefaultListItem> {
             holder.thumb.setVisibility(View.GONE);
         }
         holder.title.setText(defaultListItem.get_name());
-        holder.subtitle.setText(defaultListItem.get_values_as_string());
+        if (Objects.equals(defaultListItem.get_values_as_string(), "")) {
+//            holder.subtitle.setVisibility(View.GONE);
+        } else {
+            holder.subtitle.setText(defaultListItem.get_values_as_string());
+        }
 
         Animation animation = AnimationUtils.loadAnimation(context, R.anim.fade_in);
         int d = 50;
