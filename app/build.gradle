@@ -68,6 +68,6 @@ dependencies {
 play {
     serviceAccountEmail = '606050766430-compute@developer.gserviceaccount.com'
     jsonFile = file('../google-credentials.json')
-    track = 'alpha'
+    track = 'production'
     uploadImages = true
 }
