@@ -1,3 +1,0 @@
-[submodule "bluenet"]
-	path = bluenet
-	url = https://github.com/dobots/bluenet-lib-android.git
