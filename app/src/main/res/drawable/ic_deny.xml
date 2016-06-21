@@ -1,9 +1,13 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-        android:width="24dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:width="24dp"
         android:height="24dp"
         android:viewportWidth="24.0"
-        android:viewportHeight="24.0">
+        android:viewportHeight="24.0"
+    tools:keep="@drawable/ic_deny"
+    tools:ignore="VectorRaster">
     <path
         android:fillColor="@color/denyColor"
-        android:pathData="M19 13H5v-2h14v2z"/>
+        android:pathData="M19 13H5v-2h14v2z"
+        tools:ignore="VectorRaster" />
 </vector>
