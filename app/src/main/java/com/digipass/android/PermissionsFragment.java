@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +16,7 @@ import com.digipass.android.helpers.ListUtils;
 import com.digipass.android.helpers.OrganisationListAdapter;
 import com.digipass.android.helpers.StatusListAdapter;
 import com.digipass.android.objects.DefaultListItem;
+import com.digipass.android.objects.StatusListItem;
 import com.digipass.android.singletons.Data;
 import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
 import com.wdullaer.swipeactionadapter.SwipeDirection;
@@ -152,16 +152,27 @@ public class PermissionsFragment extends Fragment {
                     for(int i=0;i<positionList.length;i++) {
                         SwipeDirection direction = directionList[i];
                         final int position = positionList[i];
-                        DefaultListItem defaultListItem = _data.get(position);
+                        String status = "";
+                        StatusListItem listItem = (StatusListItem)_data.get(position);
                         switch (direction) {
                             case DIRECTION_FAR_LEFT:
                             case DIRECTION_NORMAL_LEFT:
-                                Log.d("swipe", "Deny all from " + defaultListItem.get_name() + " (" + defaultListItem.get_key() + ")");
+                                status = "deny";
                                 break;
                             case DIRECTION_FAR_RIGHT:
                             case DIRECTION_NORMAL_RIGHT:
-                                Log.d("swipe", "Accept all from " + defaultListItem.get_name() + " (" + defaultListItem.get_key() + ")");
+                                status = "approve";
                                 break;
+                        }
+                        if (!Objects.equals(status, "")) {
+                            ArrayList<String> permissions;
+                            if (Objects.equals(listItem.get_row_type(), "preference")) {
+                                permissions = new ArrayList<>();
+                                permissions.add(listItem.get_key());
+                            } else {
+                                permissions = listItem.get_children();
+                            }
+                            Data.GetInstance(getContext()).PrePermissionsPost(permissions, status);
                         }
                     }
                 }

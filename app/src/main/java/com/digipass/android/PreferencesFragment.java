@@ -111,7 +111,7 @@ public class PreferencesFragment extends Fragment {
                         for(int i = 0; i < _value_data.length(); i++) {
                             try {
                                 JSONObject d = (JSONObject)_value_data.get(i);
-                                options[i] = d.getString("title");
+                                options[i] = d.has("title") ? d.getString("title") : defaultListItem.get_name();
                                 values[i] = Boolean.valueOf(d.getString("value"));
                             } catch (JSONException e) {
                                 e.printStackTrace();

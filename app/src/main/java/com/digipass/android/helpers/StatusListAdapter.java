@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.digipass.android.R;
 import com.digipass.android.objects.DefaultListItem;
+import com.digipass.android.objects.StatusListItem;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -37,11 +38,12 @@ public class StatusListAdapter extends ArrayAdapter<DefaultListItem> {
         public TextView title;
         public TextView subtitle;
         public ImageView status;
+        public ImageView thumb;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        final DefaultListItem listItem = this.data.get(position);
+        final StatusListItem listItem = (StatusListItem)this.data.get(position);
         final Holder holder;
 
         if (convertView == null) {
@@ -50,24 +52,26 @@ public class StatusListAdapter extends ArrayAdapter<DefaultListItem> {
             holder.title = (TextView) convertView.findViewById(R.id.row_1_title);
             holder.subtitle = (TextView) convertView.findViewById(R.id.row_1_subtitle);
             holder.status = (ImageView) convertView.findViewById(R.id.row_1_status_icon);
+            holder.thumb = (ImageView) convertView.findViewById(R.id.row_1_thumb_icon);
             convertView.setTag(holder);
         } else {
             holder = (Holder) convertView.getTag();
         }
 
+        if (listItem.has_icon()) {
+            holder.thumb.setImageDrawable(listItem.get_icon(context));
+        } else {
+            holder.thumb.setVisibility(View.GONE);
+        }
+
         holder.title.setText(listItem.get_name());
+
         if (Objects.equals(listItem.get_values_as_string(), "")) {
             holder.subtitle.setVisibility(View.GONE);
         } else {
             holder.subtitle.setText(listItem.get_values_as_string());
         }
 
-        holder.subtitle.setText(listItem.get_values_as_string());
-        if (Objects.equals(listItem.get_values_as_string(), "")) {
-            holder.subtitle.setVisibility(View.GONE);
-        } else {
-            holder.subtitle.setText(listItem.get_values_as_string());
-        }
         holder.status.setImageDrawable(listItem.get_status_icon(context));
 
         Animation animation = AnimationUtils.loadAnimation(context, R.anim.fade_in);

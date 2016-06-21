@@ -16,7 +16,7 @@
         android:layout_height="fill_parent"
         android:minHeight="?android:attr/listPreferredItemHeight"
         android:fontFamily="sans-serif-light"
-        android:padding="5dp"
+        android:padding="12dp"
         android:paddingStart="20dp"
         android:paddingEnd="20dp">
 
@@ -64,8 +64,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="#bc000000"
                     android:fontFamily="sans-serif"
-                    android:layout_toEndOf ="@id/row_1_arrow_icon"
-                    android:singleLine="true"
+                    android:layout_alignParentEnd="true"
                     />
             </RelativeLayout>
 

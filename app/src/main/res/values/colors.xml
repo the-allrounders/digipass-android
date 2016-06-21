@@ -5,6 +5,8 @@
     <color name="colorAccent">#2196f3</color>
     <color name="textSub">#8d000000</color>
     <color name="acceptColor">#388e3c</color>
+    <color name="lightAcceptColor">#28c40c</color>
     <color name="denyColor">#e53935</color>
+    <color name="indeterminateColor">#9e9e9e</color>
     <color name="pendingColor">#f9a825</color>
 </resources>

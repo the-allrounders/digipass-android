@@ -17,6 +17,7 @@ import com.digipass.android.helpers.ListUtils;
 import com.digipass.android.helpers.OrganisationListAdapter;
 import com.digipass.android.helpers.TextListAdapter;
 import com.digipass.android.objects.DefaultListItem;
+import com.digipass.android.objects.StatusListItem;
 import com.digipass.android.objects.TextListItem;
 import com.digipass.android.singletons.Data;
 import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
@@ -143,7 +144,7 @@ public class HomeFragment extends Fragment {
                             SwipeDirection direction = directionList[i];
                             final int position = positionList[i];
                             String status = "";
-                            DefaultListItem organisation = _d.get(position);
+                            StatusListItem organisation = (StatusListItem)_d.get(position);
                             switch (direction) {
                                 case DIRECTION_FAR_LEFT:
                                 case DIRECTION_NORMAL_LEFT:
@@ -155,7 +156,7 @@ public class HomeFragment extends Fragment {
                                     break;
                             }
                             if (!Objects.equals(status, "")) {
-                                Data.GetInstance(getContext()).PrePermissionsPost(organisation.get_key(), status);
+                                Data.GetInstance(getContext()).PrePermissionsPost(organisation.get_children(), status);
                             }
                         }
                     }

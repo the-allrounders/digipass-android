@@ -1,7 +1,6 @@
 package com.digipass.android.helpers;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,7 +54,7 @@ public class ActivityListAdapter extends ArrayAdapter<DefaultListItem> {
             holder.thumb = (ImageView) convertView.findViewById(R.id.row_1_thumb_icon);
             holder.title = (TextView) convertView.findViewById(R.id.row_1_title);
             holder.subtitle = (TextView) convertView.findViewById(R.id.row_1_subtitle);
-            holder.dateAdded = (TextView) convertView.findViewById(R.id.row_1_subtitle);
+            holder.dateAdded = (TextView) convertView.findViewById(R.id.date_added);
             convertView.setTag(holder);
         } else {
             holder = (Holder) convertView.getTag();
@@ -69,8 +68,7 @@ public class ActivityListAdapter extends ArrayAdapter<DefaultListItem> {
         holder.title.setText(defaultListItem.get_name());
         holder.subtitle.setText(defaultListItem.get_description());
 
-//        holder.dateAdded.setText(defaultListItem.get_timestamp());
-        holder.dateAdded.setText(defaultListItem.get_the_date());
+        holder.dateAdded.setText(defaultListItem.get_timestamp());
 
         Animation animation = AnimationUtils.loadAnimation(context, R.anim.fade_in);
         int d = 50;

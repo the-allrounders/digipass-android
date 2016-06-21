@@ -1,13 +1,10 @@
 package com.digipass.android.objects;
 
 import android.content.Context;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
-
-import com.digipass.android.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,18 +25,12 @@ public class DefaultListItem implements Parcelable {
     protected String _values;
     protected String _row_type;
     protected String _icon_name;
-    protected int _status;
     public String _timestamp;
 
     public DefaultListItem(String k, String name, String description, JSONArray values, String row_type, String icon_name, String timestamp) {
         this(k, name, description, values, row_type, icon_name);
         _timestamp = timestamp;
 
-    }
-
-    public DefaultListItem(String k, String name, String description, JSONArray values, String row_type, String icon_name, int status) {
-        this(k, name, description, values, row_type, icon_name);
-        _status = status;
     }
 
     public DefaultListItem(String k, String name, String description, JSONArray values, String row_type, String icon_name) {
@@ -49,8 +40,6 @@ public class DefaultListItem implements Parcelable {
         _values = values.toString();
         _row_type = row_type;
         _icon_name = icon_name;
-
-
     }
 
     protected DefaultListItem(Parcel in) {
@@ -60,7 +49,6 @@ public class DefaultListItem implements Parcelable {
         _values = in.readString();
         _row_type = in.readString();
         _icon_name = in.readString();
-        _status = in.readInt();
         _timestamp = in.readString();
 
     }
@@ -120,7 +108,8 @@ public class DefaultListItem implements Parcelable {
             JSONArray v = new JSONArray(_values);
             for (int i = 0; i < v.length(); i++) {
                 try {
-                    values_string += ((JSONObject) v.get(i)).getString("title");
+                    JSONObject value = (JSONObject)v.get(i);
+                    values_string += value.has("title") ? value.getString("title") : get_name();
                     if (i < v.length() - 1) {
                         values_string += ", ";
                     }
@@ -132,36 +121,9 @@ public class DefaultListItem implements Parcelable {
             e.printStackTrace();
         }
 
+        while (values_string.length() > 0 && values_string.length() < 60) values_string += " ";
+
         return values_string;
-    }
-
-    public int get_status() {
-        return _status;
-    }
-
-    public Drawable get_status_icon(Context c) {
-        String icon_string = "ic_pending";
-        int icon_color = android.R.color.white;
-        switch (_status) {
-            case 0:
-                icon_string = "ic_check";
-                icon_color = R.color.acceptColor;
-                break;
-            case 1:
-                icon_string = "ic_deny";
-                icon_color = R.color.denyColor;
-                break;
-            case 2:
-                icon_string = "ic_pending";
-                icon_color = R.color.pendingColor;
-            default:
-        }
-        int imageResource = c.getResources().getIdentifier("drawable/" + icon_string, null, c.getPackageName());
-        Drawable icon = c.getResources().getDrawable(imageResource);
-        if (icon != null) {
-            icon.setColorFilter(c.getResources().getColor(icon_color), PorterDuff.Mode.MULTIPLY);
-        }
-        return icon;
     }
 
     public String get_timestamp() {
@@ -189,7 +151,6 @@ public class DefaultListItem implements Parcelable {
         dest.writeString(_values);
         dest.writeString(_row_type);
         dest.writeString(_icon_name);
-        dest.writeInt(_status);
         dest.writeString(_timestamp);
 
     }

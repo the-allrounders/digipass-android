@@ -22,6 +22,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
@@ -58,7 +59,7 @@ public class API extends ContextWrapper {
     /**
      *
      */
-    public String userid = "5759730ae80926100050329f";
+    public String userid = "57655315b25d3610006b67f9";
 
     /**
      * The username of the logged in user, or null if not logged in
@@ -243,7 +244,10 @@ public class API extends ContextWrapper {
         @Override
         protected String doInBackground(Void... params) {
             SaveResult(getUserEndpoint() + "/preferences", "preferences_data");
-            SaveResult(getUserEndpoint() + "/categories", "preference_category_data");
+            SaveResult(BaseUrl + "/categories", "preference_category_data");
+            SaveResult(getUserEndpoint() + "/requests", "requests_data");
+//            SaveResult("http://project.cmi.hro.nl/2015_2016/emedia_mt2b_t4/json/pref.json", "preferences_data");
+//            SaveResult("http://project.cmi.hro.nl/2015_2016/emedia_mt2b_t4/json/cat.json", "preference_category_data");
             return "";
         }
 
@@ -292,19 +296,47 @@ public class API extends ContextWrapper {
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    createDialog("Error", "Cannot Estabilish Connection");
                 }
 
                 Looper.loop(); //Loop in the message queue
-            }
-
-            private void createDialog(String error, String s) {
             }
         };
 
         t.start();
     }
 
+    public void PostPermissionsTask(final ArrayList<String> permissions, final String status) {
+        if (permissions == null || permissions.size() == 0) return;
+        Thread t = new Thread() {
 
+            public void run() {
+                Looper.prepare(); //For Preparing Message Pool for the child Thread
+                HttpClient client = new DefaultHttpClient();
+                HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000); //Timeout Limit
+                HttpResponse response;
+                JSONObject json = new JSONObject();
+
+                try {
+                    HttpPut put = new HttpPut(getUserEndpoint() + "/permissions");
+                    json.put("permissions", permissions);
+                    json.put("status", status);
+                    StringEntity se = new StringEntity(json.toString());
+                    se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+                    put.setEntity(se);
+                    response = client.execute(put);
+
+                    if (response != null) {
+                        InputStream in = response.getEntity().getContent();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                Looper.loop(); //Loop in the message queue
+            }
+        };
+
+        t.start();
+    }
 
 }

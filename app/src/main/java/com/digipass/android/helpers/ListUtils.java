@@ -9,7 +9,6 @@ public class ListUtils {
     public static void setDynamicHeight(ListView mListView) {
         ListAdapter mListAdapter = mListView.getAdapter();
         if (mListAdapter == null) {
-            // when adapter is null
             return;
         }
         int height = 0;
