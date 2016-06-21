@@ -14,6 +14,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HurlStack;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -57,24 +58,9 @@ public class API extends ContextWrapper {
     private SharedPreferences preferences;
 
     /**
-     *
+     * The JSON object
      */
-    public String userid = "57655315b25d3610006b67f9";
-
-    /**
-     * The username of the logged in user, or null if not logged in
-     */
-    public String username;
-
-    /**
-     * The display name of the user currently logged in
-     */
-    public String firstname;
-
-    /**
-     * The password of the logged in user, or null if not logged in
-     */
-    private String password;
+    public JSONObject user;
 
     /**
      * The request queue from the Volley library
@@ -92,7 +78,7 @@ public class API extends ContextWrapper {
      * Initializes all variables
      * @param base The context that is used to get the sharedPreferences
      */
-    private API(Context base) {
+    private API(Context base){
 
         super(base);
 
@@ -105,9 +91,13 @@ public class API extends ContextWrapper {
             }
         });
         preferences = getSharedPreferences("User", 0);
-        username = preferences.getString("username", null);
-        password = preferences.getString("password", null);
-        firstname = preferences.getString("firstname", null);
+
+        String userString = preferences.getString("user", null);
+        try {
+            if(userString != null) user = new JSONObject(userString);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         c = base;
 
@@ -125,7 +115,12 @@ public class API extends ContextWrapper {
     }
 
     public String getUserEndpoint() {
-        return BaseUrl + "/users/" + userid;
+        try {
+            return BaseUrl + "/users/" + user.getJSONObject("User").getString("id");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return "/";
+        }
     }
 
     /**
@@ -140,72 +135,43 @@ public class API extends ContextWrapper {
 
         // Remove previous username and password
         SharedPreferences.Editor editor = preferences.edit();
-        editor.remove("username");
-        editor.remove("password");
-        username = null;
-        password = null;
-        firstname = null;
+        editor.remove("user");
+        editor.apply();
+        user = null;
 
         // Creating the request
-        StringRequest request = new StringRequest(
+        JSONObject json = new JSONObject();
+        try {
+            json.put("username", name);
+            json.put("password", pass);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
-                BaseUrl + "/user/login",
-                new Response.Listener<String>() {
+                BaseUrl + "/users/login",
+                json,
+                new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(String response) {
-                        Log.d("API", "Username and password are not right.");
+                    public void onResponse(JSONObject response) {
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.putString("user", response.toString());
+                        editor.apply();
+                        user = response;
                         callback.run();
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        if(error.networkResponse.statusCode == 303){
-                            Log.d("API", "Username and password are right.");
-
-                            // Save in class
-                            username = name;
-                            password = pass;
-                            firstname = Objects.equals(username.toLowerCase(), "schcj@hr.nl") ? "Stan" : username;
-
-                            // Save in preferences
-                            SharedPreferences.Editor editor = preferences.edit();
-                            editor.putString("username", name);
-                            editor.putString("password", pass);
-                            editor.putString("firstname", firstname);
-                            editor.apply();
-                        }
-                        else{
-                            Log.d("API", "Unexpected API error: " + error.toString());
-                        }
+                        Log.d("API", "API error: " + error.toString());
                         callback.run();
                     }
                 }
-        ){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                HashMap<String, String> params = new HashMap<>();
+        );
 
-                params.put("name", name);
-                params.put("pass", pass);
-                params.put("form_id", "user_login_form");
-
-                return params;
-            }
-
-            @Override
-            public String getBodyContentType() {
-                return "application/x-www-form-urlencoded; charset=UTF-8";
-            }
-        };
-
-        // Add timeout of 30 seconds
-        request.setRetryPolicy(new DefaultRetryPolicy(
-                30000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-        // Request!
         queue.add(request);
     }
 

@@ -88,7 +88,7 @@ public class BackgroundService extends Service {
     }
 
     private void onScannerChange(){
-        String fn = API.getInstance(this).firstname;
+        String fn = API.getInstance(this).user.toString();
         String firstname = fn != null ? fn : "";
         if (BTScanner.getState() == BluetoothScanner.STATE_BT_OFF) {
             notification

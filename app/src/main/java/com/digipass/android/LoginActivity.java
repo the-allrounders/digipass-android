@@ -349,7 +349,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     Thread.sleep(100);
                 }
 
-                Boolean test = api.username != null;
+                Boolean test = api.user != null;
 
                 Log.d("LoginActivity", "Login succeeded? " + test.toString());
 
