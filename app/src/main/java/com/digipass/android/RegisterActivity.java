@@ -55,13 +55,13 @@ public class RegisterActivity extends AppCompatActivity{
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
             toolbar.setTitleTextColor(Color.WHITE);
-            toolbar.setTitle(getResources().getString(R.string.title_activity_login));
+            toolbar.setTitle(getResources().getString(R.string.title_activity_register));
             setSupportActionBar(toolbar);
         }
         // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        mEmailView = (AutoCompleteTextView) findViewById(R.id.name_first);
 
-        mPasswordView = (EditText) findViewById(R.id.password);
+        mPasswordView = (EditText) findViewById(R.id.name_last);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
