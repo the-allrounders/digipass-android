@@ -39,4 +39,9 @@
     <string name="lost_connection">No active connection found! Retrying to connect…</string>
     <string name="what_now">What now?</string>
     <string name="title_permissions">Permissions</string>
+    <string name="title_activity_register">Register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
 </resources>
