@@ -4,17 +4,12 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Objects;
-import java.util.TimeZone;
 
 public class DefaultListItem implements Parcelable {
 
@@ -154,23 +149,4 @@ public class DefaultListItem implements Parcelable {
         dest.writeString(_timestamp);
 
     }
-
-
-    public String get_the_date() {
-
-        String dtStart = _timestamp;
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        format.setTimeZone(TimeZone.getTimeZone("GMT"));
-        Log.d("FORMAT", format.toString());
-        Date date = null;
-        try {
-            date = format.parse(dtStart);
-        } catch (ParseException e) {
-            Log.d("DATE_error", "FOUT");
-
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        return date.toString();
-}}
+}

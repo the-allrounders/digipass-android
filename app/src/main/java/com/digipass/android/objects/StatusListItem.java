@@ -5,8 +5,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.digipass.android.R;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -70,7 +68,6 @@ public class StatusListItem extends DefaultListItem implements Parcelable {
 
     public Drawable get_status_icon(Context c) {
         String icon_string;
-        int icon_color;
         switch (_status) {
             case "approved":
                 icon_string = "ic_approve";
@@ -80,10 +77,10 @@ public class StatusListItem extends DefaultListItem implements Parcelable {
                 break;
             case "indeterminate":
                 icon_string = "ic_indeterminate";
+                break;
             case "pending":
             default:
                 icon_string = "ic_pending";
-                icon_color = R.color.pendingColor;
         }
         int imageResource = c.getResources().getIdentifier("drawable/" + icon_string, null, c.getPackageName());
         return c.getResources().getDrawable(imageResource);

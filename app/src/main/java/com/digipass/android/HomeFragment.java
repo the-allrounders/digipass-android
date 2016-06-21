@@ -103,7 +103,8 @@ public class HomeFragment extends Fragment {
                 adapter.add(new TextListItem(getResources().getString(R.string.no_requests)));
                 lv.setAdapter(adapter);
                 hasReqData = false;
-            } else if (hasReqData) {
+            } else //noinspection ConstantConditions
+                if (hasReqData) {
                 adapter = new OrganisationListAdapter(c, R.layout.list_row_permission, _data, 0);
                 final ArrayList<DefaultListItem> _d = _data;
                 AdapterView.OnItemClickListener onClick = new AdapterView.OnItemClickListener() {
@@ -187,7 +188,8 @@ public class HomeFragment extends Fragment {
                 adapter.add(new TextListItem(getResources().getString(R.string.no_activities)));
                 lv.setAdapter(adapter);
                 hasAcData = false;
-            } else if (hasAcData) {
+            } else //noinspection ConstantConditions
+                if (hasAcData) {
                 adapter = new ActivityListAdapter(c, R.layout.list_row_activity, _data, 0);
                 lv.setAdapter(adapter);
             }

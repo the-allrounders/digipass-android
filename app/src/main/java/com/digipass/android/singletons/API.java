@@ -226,7 +226,7 @@ public class API extends ContextWrapper {
 
 
             HttpGet httpget_pref = new HttpGet(url);
-            HttpResponse response = null;
+            HttpResponse response;
             try {
                 response = httpclient.execute(httpget_pref);
                 HttpEntity entity = response.getEntity();
@@ -277,7 +277,6 @@ public class API extends ContextWrapper {
                 Looper.prepare(); //For Preparing Message Pool for the child Thread
                 HttpClient client = new DefaultHttpClient();
                 HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000); //Timeout Limit
-                HttpResponse response;
                 JSONObject json = new JSONObject();
 
                 try {
@@ -287,13 +286,7 @@ public class API extends ContextWrapper {
                     StringEntity se = new StringEntity(json.toString());
                     se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
                     post.setEntity(se);
-                    response = client.execute(post);
-
-
-                    if (response != null) {
-                        InputStream in = response.getEntity().getContent();
-                    }
-
+                    client.execute(post);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -313,7 +306,6 @@ public class API extends ContextWrapper {
                 Looper.prepare(); //For Preparing Message Pool for the child Thread
                 HttpClient client = new DefaultHttpClient();
                 HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000); //Timeout Limit
-                HttpResponse response;
                 JSONObject json = new JSONObject();
 
                 try {
@@ -323,11 +315,7 @@ public class API extends ContextWrapper {
                     StringEntity se = new StringEntity(json.toString());
                     se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
                     put.setEntity(se);
-                    response = client.execute(put);
-
-                    if (response != null) {
-                        InputStream in = response.getEntity().getContent();
-                    }
+                    client.execute(put);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
