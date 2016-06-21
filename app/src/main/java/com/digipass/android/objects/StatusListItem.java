@@ -7,6 +7,7 @@ import android.os.Parcelable;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -21,7 +22,7 @@ public class StatusListItem extends DefaultListItem implements Parcelable {
         _children = new ArrayList<>();
         for (int i=0;i<children.length();i++){
             try {
-                _children.add(children.get(i).toString());
+                _children.add(((JSONObject)children.get(i)).getString("_id"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }

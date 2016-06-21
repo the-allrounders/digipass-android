@@ -48,10 +48,9 @@ public class Data {
         JSONArray preferences;
         try {
             preferences = new JSONArray(json);
-            for(int i = 0; i < preferences.length(); i++)
-            {
-                JSONObject preference = (JSONObject)preferences.get(i);
-                if (preference.getJSONArray("category").toString().contains("\""+ key +"\"")) {
+            for (int i = 0; i < preferences.length(); i++) {
+                JSONObject preference = (JSONObject) preferences.get(i);
+                if (preference.getJSONArray("category").toString().contains("\"" + key + "\"")) {
                     preferences_list.add(new DefaultListItem(preference.getString("_id"), preference.getString("title"), preference.getString("description"), preference.getJSONArray("values"), "preference", ""));
                 }
             }
@@ -66,15 +65,14 @@ public class Data {
         JSONArray preferences;
         try {
             preferences = new JSONArray(json);
-            for(int n = 0; n < categories.length(); n++) {
+            for (int n = 0; n < categories.length(); n++) {
                 JSONObject category = (JSONObject) categories.get(n);
                 JSONArray categoryParents = category.getJSONArray("parent");
-                if (categoryParents.toString().contains("\""+ key +"\"") || (Objects.equals(key, "0") && categoryParents.length() == 0)) {
+                if (categoryParents.toString().contains("\"" + key + "\"") || (Objects.equals(key, "0") && categoryParents.length() == 0)) {
                     JSONArray values = new JSONArray();
-                    for(int i = 0; i < preferences.length(); i++)
-                    {
-                        JSONObject preference = (JSONObject)preferences.get(i);
-                        if (preference.getJSONArray("category").toString().contains("\""+ category.getString("_id") +"\"")) {
+                    for (int i = 0; i < preferences.length(); i++) {
+                        JSONObject preference = (JSONObject) preferences.get(i);
+                        if (preference.getJSONArray("category").toString().contains("\"" + category.getString("_id") + "\"")) {
                             JSONObject _v = new JSONObject();
                             _v.put("title", preference.getString("title"));
                             values.put(_v);
@@ -110,7 +108,7 @@ public class Data {
         return home_map;
     }
 
-    public  Map<String, ArrayList<DefaultListItem>> GetRequestsList(String key) {
+    public Map<String, ArrayList<DefaultListItem>> GetRequestsList(String key) {
         String json = context.getSharedPreferences("requests_data", Context.MODE_PRIVATE).getString("requests_data", "[]");
         json = "[\n" +
 
@@ -402,14 +400,14 @@ public class Data {
                 "        },\n" +
                 "        \"request\": \"5766fb5ef8a4037b446f9d4e\",\n" +
                 "        \"children\": [\n" +
-                "          \"5766ffd7f8a4037b446f9d50\",\n" +
-                "          \"5766ffeaf8a4037b446f9d51\",\n" +
-                "          \"5767025af8a4037b446f9d59\",\n" +
-                "          \"57670290f8a4037b446f9d5b\",\n" +
-                "          \"576702a4f8a4037b446f9d5c\",\n" +
-                "          \"57670028f8a4037b446f9d52\",\n" +
-                "          \"57670201f8a4037b446f9d58\",\n" +
-                "          \"57670271f8a4037b446f9d5a\"\n" +
+                "          {\"status\": \"pending\", \"_id\": \"5766ffd7f8a4037b446f9d50\"},\n" +
+                "          {\"status\": \"pending\", \"_id\": \"5766ffeaf8a4037b446f9d51\"},\n" +
+                "          {\"status\": \"pending\", \"_id\": \"5767025af8a4037b446f9d59\"},\n" +
+                "          {\"status\": \"pending\", \"_id\": \"57670290f8a4037b446f9d5b\"},\n" +
+                "          {\"status\": \"pending\", \"_id\": \"576702a4f8a4037b446f9d5c\"},\n" +
+                "          {\"status\": \"pending\", \"_id\": \"57670028f8a4037b446f9d52\"},\n" +
+                "          {\"status\": \"pending\", \"_id\": \"57670201f8a4037b446f9d58\"},\n" +
+                "          {\"status\": \"pending\", \"_id\": \"57670271f8a4037b446f9d5a\"}\n" +
                 "        ]\n" +
                 "      },\n" +
                 "      {\n" +
@@ -422,10 +420,10 @@ public class Data {
                 "        \"parent\": \"5766ffa8f8a4037b446f9d4f\",\n" +
                 "        \"request\": \"5766fb5ef8a4037b446f9d4e\",\n" +
                 "        \"children\": [\n" +
-                "          \"5767025af8a4037b446f9d59\",\n" +
-                "          \"57670028f8a4037b446f9d52\",\n" +
-                "          \"57670201f8a4037b446f9d58\",\n" +
-                "          \"57670271f8a4037b446f9d5a\"\n" +
+                "          {\"status\": \"pending\", \"_id\": \"5767025af8a4037b446f9d59\"},\n" +
+                "          {\"status\": \"pending\", \"_id\": \"57670028f8a4037b446f9d52\"},\n" +
+                "          {\"status\": \"pending\", \"_id\": \"57670201f8a4037b446f9d58\"},\n" +
+                "          {\"status\": \"pending\", \"_id\": \"57670271f8a4037b446f9d5a\"}\n" +
                 "        ]\n" +
                 "      },\n" +
                 "      {\n" +
@@ -438,8 +436,8 @@ public class Data {
                 "        \"parent\": \"5766ffa8f8a4037b446f9d4f\",\n" +
                 "        \"request\": \"5766fb5ef8a4037b446f9d4e\",\n" +
                 "        \"children\": [\n" +
-                "          \"57670290f8a4037b446f9d5b\",\n" +
-                "          \"576702a4f8a4037b446f9d5c\"\n" +
+                "          {\"status\": \"pending\", \"_id\": \"57670290f8a4037b446f9d5b\"},\n" +
+                "         {\"status\": \"pending\", \"_id\":  \"576702a4f8a4037b446f9d5c\"}\n" +
                 "        ]\n" +
                 "      },\n" +
                 "      {\n" +
@@ -452,8 +450,8 @@ public class Data {
                 "        \"parent\": \"5766ffd7f8a4037b446f9d50\",\n" +
                 "        \"request\": \"5766fb5ef8a4037b446f9d4e\",\n" +
                 "        \"children\": [\n" +
-                "          \"57670201f8a4037b446f9d58\",\n" +
-                "          \"57670271f8a4037b446f9d5a\"\n" +
+                "          {\"status\": \"pending\", \"_id\": \"57670201f8a4037b446f9d58\"},\n" +
+                "          {\"status\": \"pending\", \"_id\": \"57670271f8a4037b446f9d5a\"}\n" +
                 "        ]\n" +
                 "      },\n" +
                 "      {\n" +
@@ -466,10 +464,10 @@ public class Data {
                 "        },\n" +
                 "        \"request\": \"5766fb5ef8a4037b446f9d4e\",\n" +
                 "        \"children\": [\n" +
-                "          \"57670157f8a4037b446f9d55\",\n" +
-                "          \"57670180f8a4037b446f9d56\",\n" +
-                "          \"57670081f8a4037b446f9d54\",\n" +
-                "          \"576701dff8a4037b446f9d57\"\n" +
+                "          {\"status\": \"pending\", \"_id\": \"57670157f8a4037b446f9d55\"},\n" +
+                "          {\"status\": \"pending\", \"_id\": \"57670180f8a4037b446f9d56\"},\n" +
+                "          {\"status\": \"pending\", \"_id\": \"57670081f8a4037b446f9d54\"},\n" +
+                "          {\"status\": \"pending\", \"_id\": \"576701dff8a4037b446f9d57\"}\n" +
                 "        ]\n" +
                 "      },\n" +
                 "      {\n" +
@@ -482,7 +480,7 @@ public class Data {
                 "        \"parent\": \"5767006bf8a4037b446f9d53\",\n" +
                 "        \"request\": \"5766fb5ef8a4037b446f9d4e\",\n" +
                 "        \"children\": [\n" +
-                "          \"576701dff8a4037b446f9d57\"\n" +
+                "          {\"status\": \"pending\", \"_id\": \"576701dff8a4037b446f9d57\"}\n" +
                 "        ]\n" +
                 "      },\n" +
                 "      {\n" +
@@ -495,7 +493,7 @@ public class Data {
                 "        \"parent\": \"5767006bf8a4037b446f9d53\",\n" +
                 "        \"request\": \"5766fb5ef8a4037b446f9d4e\",\n" +
                 "        \"children\": [\n" +
-                "          \"576701dff8a4037b446f9d57\"\n" +
+                "          {\"status\": \"pending\", \"_id\": \"576701dff8a4037b446f9d57\"}\n" +
                 "        ]\n" +
                 "      }\n" +
                 "    ],\n" +
@@ -633,10 +631,10 @@ public class Data {
                 "        },\n" +
                 "        \"request\": \"5766bc6a7c32934b42f14f61\",\n" +
                 "        \"children\": [\n" +
-                "          \"5766be807c32934b42f14f66\",\n" +
-                "          \"5766bddb7c32934b42f14f63\",\n" +
-                "          \"5766be567c32934b42f14f64\",\n" +
-                "          \"5766be637c32934b42f14f65\"\n" +
+                "          {\"status\": \"pending\", \"_id\": \"5766be807c32934b42f14f66\"},\n" +
+                "          {\"status\": \"pending\", \"_id\": \"5766bddb7c32934b42f14f63\"},\n" +
+                "          {\"status\": \"pending\", \"_id\": \"5766be567c32934b42f14f64\"},\n" +
+                "          {\"status\": \"pending\", \"_id\": \"5766be637c32934b42f14f65\"}\n" +
                 "        ]\n" +
                 "      },\n" +
                 "      {\n" +
@@ -649,8 +647,8 @@ public class Data {
                 "        \"parent\": \"5766bdb27c32934b42f14f62\",\n" +
                 "        \"request\": \"5766bc6a7c32934b42f14f61\",\n" +
                 "        \"children\": [\n" +
-                "          \"5766be567c32934b42f14f64\",\n" +
-                "          \"5766be637c32934b42f14f65\"\n" +
+                "          {\"status\": \"pending\", \"_id\": \"5766be567c32934b42f14f64\"},\n" +
+                "          {\"status\": \"pending\", \"_id\": \"5766be637c32934b42f14f65\"}\n" +
                 "        ]\n" +
                 "      }\n" +
                 "    ],\n" +
@@ -668,16 +666,17 @@ public class Data {
         JSONArray organisations;
         try {
             organisations = new JSONArray(json);
-            for(int n = 0; n < organisations.length(); n++) {
-                JSONObject request = (JSONObject)organisations.get(n);
+            for (int n = 0; n < organisations.length(); n++) {
+                JSONObject request = (JSONObject) organisations.get(n);
                 JSONArray permissions = request.getJSONArray("permissions");
                 JSONArray values = new JSONArray();
-                for(int i = 0; i < permissions.length(); i++) {
-                    JSONObject permission = (JSONObject)permissions.get(i);
+                int total_preference_count = 0;
+                for (int i = 0; i < permissions.length(); i++) {
+                    JSONObject permission = (JSONObject) permissions.get(i);
 
                     if ((permission.has("parent") && Objects.equals(permission.getString("parent"), key)) || (!permission.has("parent") && Objects.equals(request.getJSONObject("organisation").getString("_id"), key))) {
-                        for(int p = 0; p < permissions.length(); p++) {
-                            JSONObject _per = (JSONObject)permissions.get(p);
+                        for (int p = 0; p < permissions.length(); p++) {
+                            JSONObject _per = (JSONObject) permissions.get(p);
                             if (_per.has("parent") && Objects.equals(_per.getString("parent"), permission.getString("_id"))) {
                                 JSONObject _v = new JSONObject();
                                 _v.put("title", _per.has("category") ? _per.getJSONObject("category").getString("title") : _per.getJSONObject("preference").getString("title"));
@@ -686,7 +685,35 @@ public class Data {
                         }
                         if (permission.has("category")) {
                             JSONObject cat = permission.getJSONObject(("category"));
-                            group_list.add(new StatusListItem(permission.getString("_id"), cat.getString("title"), "", values, "group", cat.getString("icon"), permission.has("status") ? permission.getString("status") : "pending", permission.getJSONArray("children")));
+                            JSONArray children = permission.getJSONArray("children");
+                            int pending_count = 0;
+                            int approved_count = 0;
+                            int denied_count = 0;
+                            for (int a = 0; a < children.length(); a++) {
+                                String child_status = ((JSONObject)children.get(a)).getString("status");
+                                switch (child_status) {
+                                    case "approved":
+                                        approved_count++;
+                                        break;
+                                    case "denied":
+                                        denied_count++;
+                                        break;
+                                    case "pending":
+                                    default:
+                                        pending_count++;
+                                }
+                            }
+                            String cat_status;
+                            if (approved_count == children.length()) {
+                                cat_status = "approved";
+                            } else if (denied_count == children.length()) {
+                                cat_status = "denied";
+                            } else if (pending_count == children.length()) {
+                                cat_status = "pending";
+                            } else {
+                                cat_status = "indeterminate";
+                            }
+                            group_list.add(new StatusListItem(permission.getString("_id"), cat.getString("title"), "", values, "group", cat.getString("icon"), cat_status, children));
                         } else {
                             JSONObject pref = permission.getJSONObject("preference");
                             preference_list.add(new StatusListItem(permission.getString("_id"), pref.getString("title"), "", values, "preference", "", permission.getString("status"), new JSONArray()));
@@ -730,8 +757,8 @@ public class Data {
         JSONArray activities;
         try {
             activities = new JSONArray(json);
-            for(int n = 0; n < activities.length(); n++) {
-                JSONObject activity = (JSONObject)activities.get(n);
+            for (int n = 0; n < activities.length(); n++) {
+                JSONObject activity = (JSONObject) activities.get(n);
                 activities_list.add(new DefaultListItem(activity.getString("_id"), activity.getString("title"), activity.getString("description"), new JSONArray(), "activity", activity.getString("icon"), activity.getString("createdAt")));
             }
         } catch (JSONException e) {
@@ -740,7 +767,7 @@ public class Data {
         return activities_list;
     }
 
-    public void PrePermissionsPost(  ArrayList<String> children, String status) {
+    public void PrePermissionsPost(ArrayList<String> children, String status) {
         API.getInstance(context).PostPermissionsTask(children, status);
     }
 }
