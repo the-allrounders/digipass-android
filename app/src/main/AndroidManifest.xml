@@ -43,7 +43,8 @@
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/LoginTheme">
+            android:theme="@style/LoginTheme"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.digipass.android.MainActivity" />
@@ -51,7 +52,8 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_home"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".RegisterActivity"
             android:label="@string/title_activity_register"

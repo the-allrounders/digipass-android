@@ -8,8 +8,13 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 
+import com.digipass.android.PreferencesFragment;
 import com.digipass.android.R;
 import com.digipass.android.singletons.API;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -22,10 +27,13 @@ public class EditPreferenceDialog extends DialogFragment {
 
     String title;
 
-    public void setData(String[] o, boolean[] v, String pref_id) {
+    PreferencesFragment fragment;
+
+    public void setData(String[] o, boolean[] v, String pref_id, PreferencesFragment fragment) {
         options = o;
         values = v;
         preference_id = pref_id;
+        this.fragment = fragment;
     }
 
     public void setTitle(String t) {
@@ -68,11 +76,23 @@ public class EditPreferenceDialog extends DialogFragment {
                         // or return them to the component that opened the dialog
                         Log.d("dialog", "ok");
                         Log.d("dialog", mSelectedItems.toString());
-                        ArrayList<String> values = new ArrayList<>();
+                        JSONArray values = new JSONArray();
                         for (int i = 0; i < mSelectedItems.size(); i++) {
-                            values.add(options[mSelectedItems.get(i)]);
+                            JSONObject value = new JSONObject();
+                            try {
+                                value.put("title", options[mSelectedItems.get(i)]);
+                                value.put("value", "true");
+                                values.put(value);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
-                        API.getInstance(getActivity().getApplicationContext()).PostPreferenceTask(values, preference_id);
+                        API.getInstance(getActivity().getApplicationContext()).PostPreferenceTask(values, preference_id, new Runnable() {
+                            @Override
+                            public void run() {
+                                fragment.refreshList();
+                            }
+                        }, getActivity());
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -84,6 +104,4 @@ public class EditPreferenceDialog extends DialogFragment {
 
         return builder.create();
     }
-
-
 }

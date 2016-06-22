@@ -12,6 +12,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -44,7 +47,7 @@ public class HomeFragment extends Fragment {
     private boolean hasReqData = true;
     private boolean hasAcData = true;
 
-    SwipeRefreshLayout refreshLayout;
+    SwipeRefreshLayout swipeContainer;
     String key = "0";
 
     ArrayAdapter<DefaultListItem> adapter;
@@ -87,10 +90,10 @@ public class HomeFragment extends Fragment {
         titleOnClick(R.id.pending_requests_title_wrapper, 2);
         titleOnClick(R.id.activity_log_title_wrapper, 3);
 
-        refreshLayout = (SwipeRefreshLayout)getActivity().findViewById(R.id.swiperefresh);
-        refreshLayout.setColorSchemeResources(R.color.colorPrimary);
+        swipeContainer = (SwipeRefreshLayout)getActivity().findViewById(R.id.swiperefresh);
+        swipeContainer.setColorSchemeResources(R.color.colorPrimary);
 
-        refreshLayout.setOnRefreshListener(
+        swipeContainer.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
@@ -150,6 +153,19 @@ public class HomeFragment extends Fragment {
                 };
                 lv.setOnItemClickListener(onClick);
 
+                lv.setOnScrollListener(new AbsListView.OnScrollListener() {
+                    @Override
+                    public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+                    }
+
+                    @Override
+                    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                        int topRowVerticalPosition = (lv.getChildCount() == 0) ? 0 : lv.getChildAt(0).getTop();
+                        swipeContainer.setEnabled(firstVisibleItem == 0 && topRowVerticalPosition >= 0);
+                    }
+                });
+
                 SwipeActionAdapter.SwipeActionListener listener = new SwipeActionAdapter.SwipeActionListener() {
                     @Override
                     public boolean hasActions(int position, SwipeDirection direction) {
@@ -180,7 +196,13 @@ public class HomeFragment extends Fragment {
                                     break;
                             }
                             if (!Objects.equals(status, "")) {
-                                ((ImageView)ListUtils.getViewByPosition(position, lv).findViewById(R.id.row_1_status_icon)).setImageDrawable(getResources().getDrawable(R.drawable.ic_loading));
+                                ImageView status_icon = (ImageView)ListUtils.getViewByPosition(position, lv).findViewById(R.id.row_1_status_icon);
+                                status_icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_loading));
+                                RotateAnimation r;
+                                r = new RotateAnimation(0, 360, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                                r.setDuration((long) 1000);
+                                r.setRepeatCount(Animation.INFINITE);
+                                status_icon.startAnimation(r);
                                 Data.GetInstance(getContext()).PrePermissionsPost(organisation.get_children(), status, new Runnable() {
                                     @Override
                                     public void run() {
@@ -265,12 +287,16 @@ public class HomeFragment extends Fragment {
     }
 
     private void refreshList() {
-        refreshLayout.setRefreshing(true);
+        swipeContainer.setRefreshing(true);
         API.getInstance(c).GetJSONResult(new Runnable() {
             @Override
             public void run() {
-                DefaultListItem.RefreshList(adapter, Data.GetInstance(getContext()).GetHomeLists().get("requests"), refreshLayout);
+                ArrayList<DefaultListItem> data = Data.GetInstance(getContext()).GetHomeLists().get("requests");
+                if (data.size() == 0) {
+                    data.add(new TextListItem(getResources().getString(R.string.no_requests)));
+                }
+                DefaultListItem.RefreshList(adapter, data, swipeContainer);
             }
-        });
+        }, "req");
     }
 }

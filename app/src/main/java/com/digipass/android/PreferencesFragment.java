@@ -5,9 +5,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -16,6 +19,7 @@ import com.digipass.android.helpers.DefaultListAdapter;
 import com.digipass.android.helpers.EditPreferenceDialog;
 import com.digipass.android.helpers.ListUtils;
 import com.digipass.android.objects.DefaultListItem;
+import com.digipass.android.singletons.API;
 import com.digipass.android.singletons.Data;
 
 import org.json.JSONArray;
@@ -34,6 +38,12 @@ public class PreferencesFragment extends Fragment {
 
     private Map<String, ArrayList<DefaultListItem>> data;
     private Context c;
+
+    SwipeRefreshLayout swipeContainer;
+    String key = "0";
+
+    ArrayAdapter<DefaultListItem> adapter_preferences;
+    ArrayAdapter<DefaultListItem> adapter_groups;
 
     public PreferencesFragment() {
         // Required empty public constructor
@@ -60,6 +70,7 @@ public class PreferencesFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
+            key = bundle.getString("key");
             getActivity().setTitle(bundle.getString("title"));
             if (Objects.equals(bundle.getString("key"), "0")) {
                 ((MainActivity)getActivity()).resetDrawerToggle();
@@ -71,33 +82,50 @@ public class PreferencesFragment extends Fragment {
                         getActivity().findViewById(R.id.pref_list).setVisibility(View.GONE);
                         getActivity().findViewById(R.id.cat_list).setVisibility(View.GONE);
                         if (data.get("preferences").size() == 0) {
-                            printList(R.id.list_full_list, data.get("categories"));
+                            printList(R.id.list_full_list, data.get("categories"), "groups");
                         } else if (data.get("categories").size() == 0) {
-                            printList(R.id.list_full_list, data.get("preferences"));
+                            printList(R.id.list_full_list, data.get("preferences"), "preferences");
                         }
                     }
                     else {
-                        printList(R.id.list_pref_list, data.get("preferences"));
-                        printList(R.id.list_cat_list, data.get("categories"), data.get("preferences").size());
+                        printList(R.id.list_pref_list, data.get("preferences"), "preferences");
+                        printList(R.id.list_cat_list, data.get("categories"), data.get("preferences").size(), "groups");
                         getActivity().findViewById(R.id.full_list).setVisibility(View.GONE);
                     }
                 }
             } catch (Exception ignored) {}
+            swipeContainer = (SwipeRefreshLayout)getActivity().findViewById(R.id.swiperefresh);
+            swipeContainer.setColorSchemeResources(R.color.colorPrimary);
+
+            swipeContainer.setOnRefreshListener(
+                    new SwipeRefreshLayout.OnRefreshListener() {
+                        @Override
+                        public void onRefresh() {
+                            refreshList();
+                        }
+                    }
+            );
         }
     }
 
-    private void printList(int list_id, final ArrayList<DefaultListItem> _data) {
-        printList(list_id, _data, 0);
+    private void printList(int list_id, final ArrayList<DefaultListItem> _data, String adapter_type) {
+        printList(list_id, _data, 0, adapter_type);
     }
 
-    private void printList(int list_id, final ArrayList<DefaultListItem> _data, int delay) {
+    private void printList(int list_id, final ArrayList<DefaultListItem> _data, int delay, String adapter_type) {
         View v = getView();
-        ListView lv;
+        final ListView lv;
         if (v != null) {
             lv = (ListView) v.findViewById(list_id);
             lv.setFadingEdgeLength(0);
             lv.setDividerHeight(0);
             ArrayAdapter<DefaultListItem> adapter = new DefaultListAdapter(c, R.layout.list_row_default, _data, delay);
+            if (Objects.equals(adapter_type, "preferences")) {
+                adapter_preferences = adapter;
+            } else if (Objects.equals(adapter_type, "groups")) {
+                adapter_groups = adapter;
+            }
+            final PreferencesFragment fragment = this;
             AdapterView.OnItemClickListener onClick = new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> a, View v, int position, long id) {
                     DefaultListItem defaultListItem = _data.get(position);
@@ -117,7 +145,7 @@ public class PreferencesFragment extends Fragment {
                                 e.printStackTrace();
                             }
                         }
-                        dialog.setData(options, values, defaultListItem.get_key());
+                        dialog.setData(options, values, defaultListItem.get_key(), fragment);
                         dialog.setTitle(defaultListItem.get_name());
                         dialog.show(getFragmentManager(), "preference");
                     } else if (Objects.equals(defaultListItem.get_row_type(), "group")) {
@@ -142,6 +170,19 @@ public class PreferencesFragment extends Fragment {
             lv.setAdapter(adapter);
             lv.setOnItemClickListener(onClick);
 
+            lv.setOnScrollListener(new AbsListView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+                }
+
+                @Override
+                public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                    int topRowVerticalPosition = (lv.getChildCount() == 0) ? 0 : lv.getChildAt(0).getTop();
+                    swipeContainer.setEnabled(firstVisibleItem == 0 && topRowVerticalPosition >= 0);
+                }
+            });
+
             ListUtils.setDynamicHeight(lv);
         }
     }
@@ -162,5 +203,34 @@ public class PreferencesFragment extends Fragment {
 
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+            // Check if user triggered a refresh:
+            case R.id.menu_refresh:
+                refreshList();
+                return true;
+        }
+
+        // User didn't trigger a refresh, let the superclass handle this action
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void refreshList() {
+        swipeContainer.setRefreshing(true);
+        API.getInstance(c).GetJSONResult(new Runnable() {
+            @Override
+            public void run() {
+                if (adapter_groups != null) {
+                    DefaultListItem.RefreshList(adapter_groups, Data.GetInstance(getContext()).GetPreferences(key).get("categories"), swipeContainer);
+                }
+                if (adapter_preferences != null) {
+                    DefaultListItem.RefreshList(adapter_preferences, Data.GetInstance(getContext()).GetPreferences(key).get("preferences"), swipeContainer);
+                }
+            }
+        }, "pref");
     }
 }

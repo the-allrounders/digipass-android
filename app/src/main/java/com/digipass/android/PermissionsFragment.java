@@ -7,10 +7,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -39,7 +41,7 @@ public class PermissionsFragment extends Fragment {
     private Map<String, ArrayList<DefaultListItem>> data;
     private Context c;
 
-    SwipeRefreshLayout refreshLayout;
+    SwipeRefreshLayout swipeContainer;
     String key = "0";
 
     ArrayAdapter<DefaultListItem> adapter_preferences;
@@ -104,10 +106,10 @@ public class PermissionsFragment extends Fragment {
                 }
             } catch (Exception ignored) {}
         }
-        refreshLayout = (SwipeRefreshLayout)getActivity().findViewById(R.id.swiperefresh);
-        refreshLayout.setColorSchemeResources(R.color.colorPrimary);
+        swipeContainer = (SwipeRefreshLayout)getActivity().findViewById(R.id.swiperefresh);
+        swipeContainer.setColorSchemeResources(R.color.colorPrimary);
 
-        refreshLayout.setOnRefreshListener(
+        swipeContainer.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
@@ -203,7 +205,7 @@ public class PermissionsFragment extends Fragment {
                             }
                             ImageView status_icon = (ImageView)ListUtils.getViewByPosition(position, lv).findViewById(R.id.row_1_status_icon);
                             status_icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_loading));
-                            RotateAnimation r; // = new RotateAnimation(ROTATE_FROM, ROTATE_TO);
+                            RotateAnimation r;
                             r = new RotateAnimation(0, 360, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
                             r.setDuration((long) 1000);
                             r.setRepeatCount(Animation.INFINITE);
@@ -224,6 +226,19 @@ public class PermissionsFragment extends Fragment {
             lv.setAdapter(swipeAdapter);
 
             lv.setOnItemClickListener(onClick);
+
+            lv.setOnScrollListener(new AbsListView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+                }
+
+                @Override
+                public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                    int topRowVerticalPosition = (lv.getChildCount() == 0) ? 0 : lv.getChildAt(0).getTop();
+                    swipeContainer.setEnabled(firstVisibleItem == 0 && topRowVerticalPosition >= 0);
+                }
+            });
 
             ListUtils.setDynamicHeight(lv);
         }
@@ -247,6 +262,21 @@ public class PermissionsFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+            // Check if user triggered a refresh:
+            case R.id.menu_refresh:
+                refreshList();
+                return true;
+        }
+
+        // User didn't trigger a refresh, let the superclass handle this action
+        return super.onOptionsItemSelected(item);
+    }
+
+
     public static SwipeActionAdapter GetSwipeAdapter(ArrayAdapter adapter, ListView lv, SwipeActionAdapter.SwipeActionListener listener) {
         final SwipeActionAdapter swipeAdapter = new SwipeActionAdapter(adapter);
         swipeAdapter.setListView(lv);
@@ -257,20 +287,20 @@ public class PermissionsFragment extends Fragment {
     }
 
     private void refreshList() {
-        refreshLayout.setRefreshing(true);
+        swipeContainer.setRefreshing(true);
         API.getInstance(c).GetJSONResult(new Runnable() {
             @Override
             public void run() {
                 if (adapter_groups != null) {
-                    DefaultListItem.RefreshList(adapter_groups, Data.GetInstance(getContext()).GetRequestsList(key).get("categories"), refreshLayout);
+                    DefaultListItem.RefreshList(adapter_groups, Data.GetInstance(getContext()).GetRequestsList(key).get("categories"), swipeContainer);
                 }
                 if (adapter_preferences != null) {
-                    DefaultListItem.RefreshList(adapter_preferences, Data.GetInstance(getContext()).GetRequestsList(key).get("preferences"), refreshLayout);
+                    DefaultListItem.RefreshList(adapter_preferences, Data.GetInstance(getContext()).GetRequestsList(key).get("preferences"), swipeContainer);
                 }
                 if (adapter_organisations != null) {
-                    DefaultListItem.RefreshList(adapter_organisations, Data.GetInstance(getContext()).GetRequestsList(key).get("organisations"), refreshLayout);
+                    DefaultListItem.RefreshList(adapter_organisations, Data.GetInstance(getContext()).GetRequestsList(key).get("organisations"), swipeContainer);
                 }
             }
-        });
+        }, "req");
     }
 }

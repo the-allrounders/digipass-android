@@ -242,12 +242,29 @@ public class API extends ContextWrapper {
             public void run() {
 
             }
-        });
+        }, true, true, true);
+    }
+
+    public void GetJSONResult(Runnable runnable, String req_type) {
+        switch (req_type) {
+            case "req":
+                GetJSONResult(runnable, false, false, true);
+                break;
+            case "pref":
+                GetJSONResult(runnable, true, false, false);
+                break;
+            case "cat":
+                GetJSONResult(runnable, false, true, false);
+                break;
+            case "all":
+            default:
+                GetJSONResult(runnable, true, true, true);
+        }
     }
 
 
-    public void GetJSONResult(Runnable runnable) {
-        new GetJSONTask(c, runnable).execute();
+    public void GetJSONResult(Runnable runnable, Boolean pref, Boolean cat, Boolean req) {
+        new GetJSONTask(c, runnable, pref, cat, req).execute();
     }
 
     public class GetJSONTask extends AsyncTask<Void, Void, String> {
@@ -255,19 +272,31 @@ public class API extends ContextWrapper {
         private Context c;
         private Runnable runnable;
 
+        private Boolean get_pref;
+        private Boolean get_cat;
+        private Boolean get_req;
+
         public GetJSONTask(Context c, Runnable runnable) {
+            this(c, runnable, true, true, true);
+        }
+
+        public GetJSONTask(Context c, Runnable runnable, Boolean pref, Boolean cat, Boolean req) {
             this.c = c;
             this.runnable = runnable;
+            get_pref = pref;
+            get_cat = cat;
+            get_req = req;
         }
 
         private void SaveResult(String url, String pref_key) {
             DefaultHttpClient httpclient = new DefaultHttpClient();
 
 
-            HttpGet httpget_pref = new HttpGet(url);
+            HttpGet request = new HttpGet(url);
             HttpResponse response;
             try {
-                response = httpclient.execute(httpget_pref);
+                request.setHeader("Cache-Control", "no-cache");
+                response = httpclient.execute(request);
                 HttpEntity entity = response.getEntity();
                 String str = readIt(entity.getContent());
                 JSONArray arr = new JSONArray(str);
@@ -282,9 +311,9 @@ public class API extends ContextWrapper {
 
         @Override
         protected String doInBackground(Void... params) {
-            SaveResult(getUserEndpoint() + "/preferences", "preferences_data");
-            SaveResult(BaseUrl + "/categories", "preference_category_data");
-            SaveResult(getUserEndpoint() + "/requests?transform=true", "requests_data");
+            if (get_pref) SaveResult(getUserEndpoint() + "/preferences", "preferences_data");
+            if (get_cat) SaveResult(BaseUrl + "/categories", "preference_category_data");
+            if (get_req) SaveResult(getUserEndpoint() + "/requests?transform=true", "requests_data");
             return "";
         }
 
@@ -313,7 +342,7 @@ public class API extends ContextWrapper {
     }
 
 
-    public void PostPreferenceTask(final ArrayList<String> values, final String preference_id) {
+    public void PostPreferenceTask(final JSONArray values, final String preference_id, final Runnable runnable, final Activity activity) {
         Thread t = new Thread() {
 
             public void run() {
@@ -329,7 +358,12 @@ public class API extends ContextWrapper {
                     StringEntity se = new StringEntity(json.toString());
                     se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
                     post.setEntity(se);
-                    client.execute(post);
+                    HttpResponse response = client.execute(post);
+                    ResponseHandler<String> handler = new BasicResponseHandler();
+                    handler.handleResponse(response);
+                    if (response.getStatusLine().getStatusCode() == 200) {
+                        activity.runOnUiThread(runnable);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

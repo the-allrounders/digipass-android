@@ -35,7 +35,7 @@ public class Data {
         String tax_string = context.getSharedPreferences("preference_category_data", Context.MODE_PRIVATE).getString("preference_category_data", "[]");
         try {
             JSONArray taxonomy_tree = new JSONArray(tax_string);
-            preferences_list.put("preferences", getPreferencesList(key, taxonomy_tree, pref_string));
+            preferences_list.put("preferences", getPreferencesList(key, pref_string));
             preferences_list.put("categories", getCategoriesList(key, taxonomy_tree, pref_string));
         } catch (JSONException e) {
             e.printStackTrace();
@@ -44,7 +44,7 @@ public class Data {
         return preferences_list;
     }
 
-    private ArrayList<DefaultListItem> getPreferencesList(String key, JSONArray categories, String json) {
+    private ArrayList<DefaultListItem> getPreferencesList(String key, String json) {
         ArrayList<DefaultListItem> preferences_list = new ArrayList<>();
         JSONArray preferences;
         try {
@@ -126,10 +126,16 @@ public class Data {
                 int total_pending_count = 0;
                 int total_approved_count = 0;
                 int total_denied_count = 0;
+                JSONArray organisation_children = new JSONArray();
                 for (int i = 0; i < permissions.length(); i++) {
                     JSONObject permission = (JSONObject) permissions.get(i);
 
                     if (permission.has("preference")) {
+                        JSONObject child = new JSONObject();
+                        child.put("status", permission.getString("status"));
+                        child.put("_id", permission.getString("_id"));
+                        organisation_children.put(child);
+
                         total_preference_count++;
                         String child_status = permission.getString("status");
                         switch (child_status) {
@@ -206,7 +212,7 @@ public class Data {
                         total_status = "indeterminate";
                     }
                     JSONObject org = request.getJSONObject("organisation");
-                    organisation_list.add(new StatusListItem(org.getString("_id"), org.getString("title"), "", values, "organisation", org.getString("icon"), total_status, new JSONArray()));
+                    organisation_list.add(new StatusListItem(org.getString("_id"), org.getString("title"), "", values, "organisation", org.getString("icon"), total_status, organisation_children));
                 }
             }
         } catch (JSONException e) {
