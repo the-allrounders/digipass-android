@@ -10,6 +10,12 @@ import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -111,14 +117,40 @@ public class BluetoothScanner extends ContextWrapper {
      */
     private ScanCallback scanCallback = new ScanCallback() {
         @Override
-        public void onScanResult(int callbackType, ScanResult result) {
+        public void onScanResult(int callbackType, final ScanResult result) {
             Log.d("BluetoothScanner", "Device found: " + result.getDevice().toString());
 
-            boolean isNew = !devices.containsKey(result.getDevice().toString());
 
-            devices.put(result.getDevice().toString(), result);
+            JSONObject bt = new JSONObject();
+            try {
+                bt.put("bluetooth", result.getDevice().getAddress());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
-            if(isNew) callListners();
+
+            API.getInstance(getApplicationContext()).Post(
+                    "/bluetooth",
+                    bt,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            boolean isNew = !devices.containsKey(result.getDevice().toString());
+
+                            devices.put(result.getDevice().toString(), result);
+
+                            if(isNew) callListners();
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            // nee
+                        }
+                    }
+            );
+
+
         }
     };
 

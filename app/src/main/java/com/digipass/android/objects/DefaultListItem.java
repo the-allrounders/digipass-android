@@ -4,11 +4,14 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.widget.ArrayAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class DefaultListItem implements Parcelable {
@@ -147,6 +150,11 @@ public class DefaultListItem implements Parcelable {
         dest.writeString(_row_type);
         dest.writeString(_icon_name);
         dest.writeString(_timestamp);
+    }
 
+    public static void RefreshList(ArrayAdapter<DefaultListItem> adapter, ArrayList<DefaultListItem> data, SwipeRefreshLayout refreshLayout) {
+        adapter.clear();
+        adapter.addAll(data);
+        refreshLayout.setRefreshing(false);
     }
 }

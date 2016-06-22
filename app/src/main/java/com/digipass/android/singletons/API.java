@@ -1,5 +1,6 @@
 package com.digipass.android.singletons;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.SharedPreferences;
@@ -8,23 +9,23 @@ import android.os.Looper;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.params.HttpConnectionParams;
@@ -43,7 +44,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class API extends ContextWrapper {
 
@@ -210,16 +210,54 @@ public class API extends ContextWrapper {
         queue.add(request);
     }
 
+    public void Post(String url, JSONObject data, Response.Listener<JSONObject> responseListener, Response.ErrorListener errorListener) {
+        Log.d("API", "POST "+ url + " - " + data.toString());
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.POST,
+                BaseUrl + url,
+                data,
+                responseListener,
+                errorListener
+        ){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                try {
+                    String bearer = user.getString("Bearer");
+                    headers.put("Authorization", "Bearer " + bearer);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                return headers;
+            }
+        };
+
+        queue.add(request);
+    }
+
     public void GetJSONResult() {
-        new GetJSONTask(c).execute();
+        GetJSONResult(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });
+    }
+
+
+    public void GetJSONResult(Runnable runnable) {
+        new GetJSONTask(c, runnable).execute();
     }
 
     public class GetJSONTask extends AsyncTask<Void, Void, String> {
 
         private Context c;
+        private Runnable runnable;
 
-        public GetJSONTask(Context c) {
+        public GetJSONTask(Context c, Runnable runnable) {
             this.c = c;
+            this.runnable = runnable;
         }
 
         private void SaveResult(String url, String pref_key) {
@@ -246,10 +284,14 @@ public class API extends ContextWrapper {
         protected String doInBackground(Void... params) {
             SaveResult(getUserEndpoint() + "/preferences", "preferences_data");
             SaveResult(BaseUrl + "/categories", "preference_category_data");
-            SaveResult(getUserEndpoint() + "/requests", "requests_data");
-//            SaveResult("http://project.cmi.hro.nl/2015_2016/emedia_mt2b_t4/json/pref.json", "preferences_data");
-//            SaveResult("http://project.cmi.hro.nl/2015_2016/emedia_mt2b_t4/json/cat.json", "preference_category_data");
+            SaveResult(getUserEndpoint() + "/requests?transform=true", "requests_data");
             return "";
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            runnable.run();
         }
 
         public String readIt(InputStream stream) throws IOException, UnsupportedEncodingException {
@@ -299,7 +341,7 @@ public class API extends ContextWrapper {
         t.start();
     }
 
-    public void PostPermissionsTask(final ArrayList<String> permissions, final String status) {
+    public void PostPermissionsTask(final ArrayList<String> permissions, final String status, final Runnable runnable, final Activity activity) {
         if (permissions == null || permissions.size() == 0) return;
         Thread t = new Thread() {
 
@@ -311,12 +353,21 @@ public class API extends ContextWrapper {
 
                 try {
                     HttpPut put = new HttpPut(getUserEndpoint() + "/permissions");
-                    json.put("permissions", permissions);
+                    JSONArray json_permissions = new JSONArray();
+                    for (int i = 0; i < permissions.size(); i++) {
+                        json_permissions.put(permissions.get(i));
+                    }
+                    json.put("permissions", json_permissions);
                     json.put("status", status);
                     StringEntity se = new StringEntity(json.toString());
                     se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
                     put.setEntity(se);
-                    client.execute(put);
+                    HttpResponse response = client.execute(put);
+                    ResponseHandler<String> handler = new BasicResponseHandler();
+                    handler.handleResponse(response);
+                    if (response.getStatusLine().getStatusCode() == 200) {
+                        activity.runOnUiThread(runnable);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

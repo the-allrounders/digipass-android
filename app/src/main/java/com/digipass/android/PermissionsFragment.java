@@ -5,11 +5,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.digipass.android.helpers.ListUtils;
@@ -17,6 +21,7 @@ import com.digipass.android.helpers.OrganisationListAdapter;
 import com.digipass.android.helpers.StatusListAdapter;
 import com.digipass.android.objects.DefaultListItem;
 import com.digipass.android.objects.StatusListItem;
+import com.digipass.android.singletons.API;
 import com.digipass.android.singletons.Data;
 import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
 import com.wdullaer.swipeactionadapter.SwipeDirection;
@@ -33,6 +38,13 @@ public class PermissionsFragment extends Fragment {
 
     private Map<String, ArrayList<DefaultListItem>> data;
     private Context c;
+
+    SwipeRefreshLayout refreshLayout;
+    String key = "0";
+
+    ArrayAdapter<DefaultListItem> adapter_preferences;
+    ArrayAdapter<DefaultListItem> adapter_groups;
+    ArrayAdapter<DefaultListItem> adapter_organisations;
 
     public PermissionsFragment() {
         // Required empty public constructor
@@ -68,47 +80,64 @@ public class PermissionsFragment extends Fragment {
             try {
                 data = (Map<String, ArrayList<DefaultListItem>>)bundle.getSerializable("data");
                 if (data != null) {
+                    key = bundle.getString("key");
                     if (Objects.equals(bundle.getString("key"), "0")) {
                         getActivity().findViewById(R.id.pref_list).setVisibility(View.GONE);
                         getActivity().findViewById(R.id.cat_list).setVisibility(View.GONE);
-                        printList(R.id.list_full_list, data.get("organisations"));
+                        printList(R.id.list_full_list, data.get("organisations"), "organisations");
                     } else {
                         if (data.get("preferences").size() == 0 || data.get("categories").size() == 0) {
                             getActivity().findViewById(R.id.pref_list).setVisibility(View.GONE);
                             getActivity().findViewById(R.id.cat_list).setVisibility(View.GONE);
                             if (data.get("preferences").size() == 0) {
-                                printList(R.id.list_full_list, data.get("categories"));
+                                printList(R.id.list_full_list, data.get("categories"), "groups");
                             } else if (data.get("categories").size() == 0) {
-                                printList(R.id.list_full_list, data.get("preferences"));
+                                printList(R.id.list_full_list, data.get("preferences"), "preferences");
                             }
                         }
                         else {
-                            printList(R.id.list_pref_list, data.get("preferences"));
-                            printList(R.id.list_cat_list, data.get("categories"), data.get("preferences").size());
+                            printList(R.id.list_pref_list, data.get("preferences"), "preferences");
+                            printList(R.id.list_cat_list, data.get("categories"), data.get("preferences").size(), "groups");
                             getActivity().findViewById(R.id.full_list).setVisibility(View.GONE);
                         }
                     }
                 }
             } catch (Exception ignored) {}
         }
+        refreshLayout = (SwipeRefreshLayout)getActivity().findViewById(R.id.swiperefresh);
+        refreshLayout.setColorSchemeResources(R.color.colorPrimary);
+
+        refreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        refreshList();
+                    }
+                }
+        );
     }
 
-    private void printList(int list_id, final ArrayList<DefaultListItem> _data) {
-        printList(list_id, _data, 0);
+    private void printList(int list_id, final ArrayList<DefaultListItem> _data, String adapter_type) {
+        printList(list_id, _data, 0, adapter_type);
     }
 
-    private void printList(int list_id, final ArrayList<DefaultListItem> _data, int delay) {
+    private void printList(int list_id, final ArrayList<DefaultListItem> _data, int delay, String adapter_type) {
         View v = getView();
-        ListView lv;
+        final ListView lv;
         if (v != null) {
             lv = (ListView) v.findViewById(list_id);
             lv.setFadingEdgeLength(0);
             lv.setDividerHeight(0);
             ArrayAdapter<DefaultListItem> adapter;
             if (Objects.equals(this.getArguments().getString("key"), "0")) {
-                adapter = new OrganisationListAdapter(c, R.layout.list_row_permission, _data, delay);
+                adapter = adapter_organisations = new OrganisationListAdapter(c, R.layout.list_row_permission, _data, delay);
             } else {
                 adapter = new StatusListAdapter(c, R.layout.list_row_status, _data, delay);
+                if (Objects.equals(adapter_type, "preferences")) {
+                    adapter_preferences = adapter;
+                } else if (Objects.equals(adapter_type, "groups")) {
+                    adapter_groups = adapter;
+                }
             }
             AdapterView.OnItemClickListener onClick = new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> a, View v, int position, long id) {
@@ -157,11 +186,11 @@ public class PermissionsFragment extends Fragment {
                         switch (direction) {
                             case DIRECTION_FAR_LEFT:
                             case DIRECTION_NORMAL_LEFT:
-                                status = "deny";
+                                status = "denied";
                                 break;
                             case DIRECTION_FAR_RIGHT:
                             case DIRECTION_NORMAL_RIGHT:
-                                status = "approve";
+                                status = "approved";
                                 break;
                         }
                         if (!Objects.equals(status, "")) {
@@ -172,7 +201,19 @@ public class PermissionsFragment extends Fragment {
                             } else {
                                 permissions = listItem.get_children();
                             }
-                            Data.GetInstance(getContext()).PrePermissionsPost(permissions, status);
+                            ImageView status_icon = (ImageView)ListUtils.getViewByPosition(position, lv).findViewById(R.id.row_1_status_icon);
+                            status_icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_loading));
+                            RotateAnimation r; // = new RotateAnimation(ROTATE_FROM, ROTATE_TO);
+                            r = new RotateAnimation(0, 360, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                            r.setDuration((long) 1000);
+                            r.setRepeatCount(Animation.INFINITE);
+                            status_icon.startAnimation(r);
+                            Data.GetInstance(getContext()).PrePermissionsPost(permissions, status, new Runnable() {
+                                @Override
+                                public void run() {
+                                    refreshList();
+                                }
+                            }, getActivity());
                         }
                     }
                 }
@@ -213,5 +254,23 @@ public class PermissionsFragment extends Fragment {
 
         swipeAdapter.setSwipeActionListener(listener);
         return swipeAdapter;
+    }
+
+    private void refreshList() {
+        refreshLayout.setRefreshing(true);
+        API.getInstance(c).GetJSONResult(new Runnable() {
+            @Override
+            public void run() {
+                if (adapter_groups != null) {
+                    DefaultListItem.RefreshList(adapter_groups, Data.GetInstance(getContext()).GetRequestsList(key).get("categories"), refreshLayout);
+                }
+                if (adapter_preferences != null) {
+                    DefaultListItem.RefreshList(adapter_preferences, Data.GetInstance(getContext()).GetRequestsList(key).get("preferences"), refreshLayout);
+                }
+                if (adapter_organisations != null) {
+                    DefaultListItem.RefreshList(adapter_organisations, Data.GetInstance(getContext()).GetRequestsList(key).get("organisations"), refreshLayout);
+                }
+            }
+        });
     }
 }

@@ -25,6 +25,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
@@ -186,7 +188,12 @@ public class MainActivity extends AppCompatActivity
         } else {
             animateDrawerToggle = true;
             toggle.setDrawerIndicatorEnabled(true);
-            super.onBackPressed();
+            Log.d("count", (getSupportFragmentManager().getBackStackEntryCount()) + "");
+            if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+                finish();
+            } else {
+                super.onBackPressed();
+            }
         }
     }
 
@@ -276,4 +283,12 @@ public class MainActivity extends AppCompatActivity
         super.onConfigurationChanged(newConfig);
         toggle.onConfigurationChanged(newConfig);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
+        return true;
+    }
+
 }

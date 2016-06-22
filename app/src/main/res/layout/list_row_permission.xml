@@ -29,7 +29,7 @@
             android:layout_marginEnd="24dp"
             android:layout_gravity="center_vertical"
             android:src="@drawable/placeholder"
-            android:layout_weight="1"
+            android:layout_weight="2"
             />
 
         <LinearLayout
@@ -75,7 +75,7 @@
             android:layout_marginEnd="0dp"
             android:layout_marginStart="24dp"
             android:layout_gravity="center_vertical"
-            android:layout_weight="1"
+            android:layout_weight="2"
             />
 
     </LinearLayout>

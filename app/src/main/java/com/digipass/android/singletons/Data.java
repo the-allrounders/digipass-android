@@ -1,5 +1,6 @@
 package com.digipass.android.singletons;
 
+import android.app.Activity;
 import android.content.Context;
 
 import com.digipass.android.objects.DefaultListItem;
@@ -110,555 +111,6 @@ public class Data {
 
     public Map<String, ArrayList<DefaultListItem>> GetRequestsList(String key) {
         String json = context.getSharedPreferences("requests_data", Context.MODE_PRIVATE).getString("requests_data", "[]");
-        json = "[\n" +
-
-                "  {\n" +
-                "    \"id\": \"5766fb5ef8a4037b446f9d4e\",\n" +
-                "    \"status\": \"pending\",\n" +
-                "    \"permissions\": [\n" +
-                "      {\n" +
-                "        \"_id\": \"57670157f8a4037b446f9d55\",\n" +
-                "        \"preference\": {\n" +
-                "          \"_id\": \"57669e2ed0bf105540f743d0\",\n" +
-                "          \"title\": \"Allergieen\",\n" +
-                "          \"description\": \"\",\n" +
-                "          \"category\": [\n" +
-                "            \"57669bd68fe61d3c40d2ae71\"\n" +
-                "          ],\n" +
-                "          \"type\": \"checkbox\",\n" +
-                "          \"values\": [\n" +
-                "            {\n" +
-                "              \"title\": \"Noten\",\n" +
-                "              \"value\": \"false\",\n" +
-                "              \"_id\": \"57669e2ed0bf105540f743d2\"\n" +
-                "            },\n" +
-                "            {\n" +
-                "              \"title\": \"Gluten\",\n" +
-                "              \"value\": \"false\",\n" +
-                "              \"_id\": \"57669e2ed0bf105540f743d1\"\n" +
-                "            }\n" +
-                "          ],\n" +
-                "          \"icon\": \"\"\n" +
-                "        },\n" +
-                "        \"status\": \"pending\",\n" +
-                "        \"parent\": \"5767006bf8a4037b446f9d53\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"_id\": \"57670180f8a4037b446f9d56\",\n" +
-                "        \"preference\": {\n" +
-                "          \"_id\": \"57669e6ed0bf105540f743d3\",\n" +
-                "          \"title\": \"Vegetarisch\",\n" +
-                "          \"description\": \"\",\n" +
-                "          \"category\": [\n" +
-                "            \"57669bd68fe61d3c40d2ae71\"\n" +
-                "          ],\n" +
-                "          \"type\": \"switch\",\n" +
-                "          \"values\": [\n" +
-                "            {\n" +
-                "              \"title\": \"Vegetarisch\",\n" +
-                "              \"value\": \"false\",\n" +
-                "              \"_id\": \"57669e6ed0bf105540f743d4\"\n" +
-                "            }\n" +
-                "          ],\n" +
-                "          \"icon\": \"\"\n" +
-                "        },\n" +
-                "        \"status\": \"pending\",\n" +
-                "        \"parent\": \"5767006bf8a4037b446f9d53\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"_id\": \"576701dff8a4037b446f9d57\",\n" +
-                "        \"preference\": {\n" +
-                "          \"_id\": \"57669f1ad0bf105540f743d8\",\n" +
-                "          \"title\": \"Kinderstoel\",\n" +
-                "          \"description\": \"\",\n" +
-                "          \"category\": [\n" +
-                "            \"57669bd68fe61d3c40d2ae71\"\n" +
-                "          ],\n" +
-                "          \"type\": \"switch\",\n" +
-                "          \"values\": [\n" +
-                "            {\n" +
-                "              \"title\": \"Kinderstoel\",\n" +
-                "              \"value\": \"false\",\n" +
-                "              \"_id\": \"57669f1ad0bf105540f743d9\"\n" +
-                "            }\n" +
-                "          ],\n" +
-                "          \"icon\": \"\"\n" +
-                "        },\n" +
-                "        \"status\": \"pending\",\n" +
-                "        \"parent\": \"57670081f8a4037b446f9d54\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"_id\": \"576701dff8a4037b446f9d57\",\n" +
-                "        \"preference\": {\n" +
-                "          \"_id\": \"57669f1ad0bf105540f743d8\",\n" +
-                "          \"title\": \"Kinderstoel\",\n" +
-                "          \"description\": \"\",\n" +
-                "          \"category\": [\n" +
-                "            \"57669bd68fe61d3c40d2ae71\"\n" +
-                "          ],\n" +
-                "          \"type\": \"switch\",\n" +
-                "          \"values\": [\n" +
-                "            {\n" +
-                "              \"title\": \"Kinderstoel\",\n" +
-                "              \"value\": \"false\",\n" +
-                "              \"_id\": \"57669f1ad0bf105540f743d9\"\n" +
-                "            }\n" +
-                "          ],\n" +
-                "          \"icon\": \"\"\n" +
-                "        },\n" +
-                "        \"status\": \"pending\",\n" +
-                "        \"parent\": \"57670081f8a4037b446f9d54z\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"_id\": \"576701dff8a4037b446f9d57\",\n" +
-                "        \"preference\": {\n" +
-                "          \"_id\": \"57669f1ad0bf105540f743d8\",\n" +
-                "          \"title\": \"Kinderstoel\",\n" +
-                "          \"description\": \"\",\n" +
-                "          \"category\": [\n" +
-                "            \"57669bd68fe61d3c40d2ae71\"\n" +
-                "          ],\n" +
-                "          \"type\": \"switch\",\n" +
-                "          \"values\": [\n" +
-                "            {\n" +
-                "              \"title\": \"Kinderstoel\",\n" +
-                "              \"value\": \"false\",\n" +
-                "              \"_id\": \"57669f1ad0bf105540f743d9\"\n" +
-                "            }\n" +
-                "          ],\n" +
-                "          \"icon\": \"\"\n" +
-                "        },\n" +
-                "        \"status\": \"pending\",\n" +
-                "        \"parent\": \"57670081f8a4037b446f9d54z\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"_id\": \"57670201f8a4037b446f9d58\",\n" +
-                "        \"preference\": {\n" +
-                "          \"_id\": \"5766f68ef8a4037b446f9d39\",\n" +
-                "          \"title\": \"Bedformaat\",\n" +
-                "          \"description\": \"\",\n" +
-                "          \"category\": [\n" +
-                "            \"5766f5d0f8a4037b446f9d38\"\n" +
-                "          ],\n" +
-                "          \"type\": \"checkbox\",\n" +
-                "          \"values\": [\n" +
-                "            {\n" +
-                "              \"title\": \"King size\",\n" +
-                "              \"value\": \"true\",\n" +
-                "              \"_id\": \"5766f68ef8a4037b446f9d3c\"\n" +
-                "            },\n" +
-                "            {\n" +
-                "              \"title\": \"Tweepersoons\",\n" +
-                "              \"value\": \"true\",\n" +
-                "              \"_id\": \"5766f68ef8a4037b446f9d3b\"\n" +
-                "            },\n" +
-                "            {\n" +
-                "              \"title\": \"Eenpersoons\",\n" +
-                "              \"value\": \"true\",\n" +
-                "              \"_id\": \"5766f68ef8a4037b446f9d3a\"\n" +
-                "            }\n" +
-                "          ],\n" +
-                "          \"icon\": \"\"\n" +
-                "        },\n" +
-                "        \"status\": \"pending\",\n" +
-                "        \"parent\": \"57670028f8a4037b446f9d52\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"_id\": \"5767025af8a4037b446f9d59\",\n" +
-                "        \"preference\": {\n" +
-                "          \"_id\": \"5766f6d3f8a4037b446f9d3d\",\n" +
-                "          \"title\": \"Uren per nacht\",\n" +
-                "          \"description\": \"\",\n" +
-                "          \"category\": [\n" +
-                "            \"5766f5a0f8a4037b446f9d37\"\n" +
-                "          ],\n" +
-                "          \"type\": \"slider\",\n" +
-                "          \"values\": [\n" +
-                "            {\n" +
-                "              \"title\": \"Uren per nacht\",\n" +
-                "              \"value\": \"8\",\n" +
-                "              \"_id\": \"5766f6d3f8a4037b446f9d3e\"\n" +
-                "            }\n" +
-                "          ],\n" +
-                "          \"icon\": \"\"\n" +
-                "        },\n" +
-                "        \"status\": \"pending\",\n" +
-                "        \"parent\": \"5766ffd7f8a4037b446f9d50\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"_id\": \"57670271f8a4037b446f9d5a\",\n" +
-                "        \"preference\": {\n" +
-                "          \"_id\": \"5766f723f8a4037b446f9d3f\",\n" +
-                "          \"title\": \"Bedstand\",\n" +
-                "          \"description\": \"\",\n" +
-                "          \"category\": [\n" +
-                "            \"5766f5d0f8a4037b446f9d38\"\n" +
-                "          ],\n" +
-                "          \"type\": \"slider\",\n" +
-                "          \"values\": [\n" +
-                "            {\n" +
-                "              \"title\": \"Plat\",\n" +
-                "              \"value\": \"0\",\n" +
-                "              \"_id\": \"5766f723f8a4037b446f9d42\"\n" +
-                "            },\n" +
-                "            {\n" +
-                "              \"title\": \"Licht Verhoogd\",\n" +
-                "              \"value\": \"1\",\n" +
-                "              \"_id\": \"5766f723f8a4037b446f9d41\"\n" +
-                "            },\n" +
-                "            {\n" +
-                "              \"title\": \"Verhoogd\",\n" +
-                "              \"value\": \"2\",\n" +
-                "              \"_id\": \"5766f723f8a4037b446f9d40\"\n" +
-                "            }\n" +
-                "          ],\n" +
-                "          \"icon\": \"\"\n" +
-                "        },\n" +
-                "        \"status\": \"pending\",\n" +
-                "        \"parent\": \"57670028f8a4037b446f9d52\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"_id\": \"57670290f8a4037b446f9d5b\",\n" +
-                "        \"preference\": {\n" +
-                "          \"_id\": \"5766f7a7f8a4037b446f9d44\",\n" +
-                "          \"title\": \"Kleur licht\",\n" +
-                "          \"description\": \"\",\n" +
-                "          \"category\": [\n" +
-                "            \"5766f75ff8a4037b446f9d43\"\n" +
-                "          ],\n" +
-                "          \"type\": \"checkbox\",\n" +
-                "          \"values\": [\n" +
-                "            {\n" +
-                "              \"title\": \"Rood\",\n" +
-                "              \"value\": \"true\",\n" +
-                "              \"_id\": \"5766f7a7f8a4037b446f9d48\"\n" +
-                "            },\n" +
-                "            {\n" +
-                "              \"title\": \"Groen\",\n" +
-                "              \"value\": \"true\",\n" +
-                "              \"_id\": \"5766f7a7f8a4037b446f9d47\"\n" +
-                "            },\n" +
-                "            {\n" +
-                "              \"title\": \"Blauw\",\n" +
-                "              \"value\": \"true\",\n" +
-                "              \"_id\": \"5766f7a7f8a4037b446f9d46\"\n" +
-                "            },\n" +
-                "            {\n" +
-                "              \"title\": \"Geel\",\n" +
-                "              \"value\": \"true\",\n" +
-                "              \"_id\": \"5766f7a7f8a4037b446f9d45\"\n" +
-                "            }\n" +
-                "          ],\n" +
-                "          \"icon\": \"\"\n" +
-                "        },\n" +
-                "        \"status\": \"pending\",\n" +
-                "        \"parent\": \"5766ffeaf8a4037b446f9d51\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"_id\": \"576702a4f8a4037b446f9d5c\",\n" +
-                "        \"preference\": {\n" +
-                "          \"_id\": \"5766f7d9f8a4037b446f9d49\",\n" +
-                "          \"title\": \"Licht felheid\",\n" +
-                "          \"description\": \"\",\n" +
-                "          \"category\": [\n" +
-                "            \"5766f75ff8a4037b446f9d43\"\n" +
-                "          ],\n" +
-                "          \"type\": \"slider\",\n" +
-                "          \"values\": [\n" +
-                "            {\n" +
-                "              \"title\": \"Uit\",\n" +
-                "              \"value\": \"0\",\n" +
-                "              \"_id\": \"5766f7d9f8a4037b446f9d4d\"\n" +
-                "            },\n" +
-                "            {\n" +
-                "              \"title\": \"Gedimd\",\n" +
-                "              \"value\": \"1\",\n" +
-                "              \"_id\": \"5766f7d9f8a4037b446f9d4c\"\n" +
-                "            },\n" +
-                "            {\n" +
-                "              \"title\": \"Normaal\",\n" +
-                "              \"value\": \"2\",\n" +
-                "              \"_id\": \"5766f7d9f8a4037b446f9d4b\"\n" +
-                "            },\n" +
-                "            {\n" +
-                "              \"title\": \"Fel\",\n" +
-                "              \"value\": \"3\",\n" +
-                "              \"_id\": \"5766f7d9f8a4037b446f9d4a\"\n" +
-                "            }\n" +
-                "          ],\n" +
-                "          \"icon\": \"\"\n" +
-                "        },\n" +
-                "        \"status\": \"pending\",\n" +
-                "        \"parent\": \"5766ffeaf8a4037b446f9d51\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"_id\": \"5766ffa8f8a4037b446f9d4f\",\n" +
-                "        \"category\": {\n" +
-                "          \"title\": \"Hotel\",\n" +
-                "          \"id\": \"5766f553f8a4037b446f9d36\",\n" +
-                "          \"icon\": \"\"\n" +
-                "        },\n" +
-                "        \"request\": \"5766fb5ef8a4037b446f9d4e\",\n" +
-                "        \"children\": [\n" +
-                "          {\"status\": \"pending\", \"_id\": \"5766ffd7f8a4037b446f9d50\"},\n" +
-                "          {\"status\": \"pending\", \"_id\": \"5766ffeaf8a4037b446f9d51\"},\n" +
-                "          {\"status\": \"pending\", \"_id\": \"5767025af8a4037b446f9d59\"},\n" +
-                "          {\"status\": \"pending\", \"_id\": \"57670290f8a4037b446f9d5b\"},\n" +
-                "          {\"status\": \"pending\", \"_id\": \"576702a4f8a4037b446f9d5c\"},\n" +
-                "          {\"status\": \"pending\", \"_id\": \"57670028f8a4037b446f9d52\"},\n" +
-                "          {\"status\": \"pending\", \"_id\": \"57670201f8a4037b446f9d58\"},\n" +
-                "          {\"status\": \"pending\", \"_id\": \"57670271f8a4037b446f9d5a\"}\n" +
-                "        ]\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"_id\": \"5766ffd7f8a4037b446f9d50\",\n" +
-                "        \"category\": {\n" +
-                "          \"title\": \"Slaapvoorkeuren\",\n" +
-                "          \"id\": \"5766f5a0f8a4037b446f9d37\",\n" +
-                "          \"icon\": \"\"\n" +
-                "        },\n" +
-                "        \"parent\": \"5766ffa8f8a4037b446f9d4f\",\n" +
-                "        \"request\": \"5766fb5ef8a4037b446f9d4e\",\n" +
-                "        \"children\": [\n" +
-                "          {\"status\": \"pending\", \"_id\": \"5767025af8a4037b446f9d59\"},\n" +
-                "          {\"status\": \"pending\", \"_id\": \"57670028f8a4037b446f9d52\"},\n" +
-                "          {\"status\": \"pending\", \"_id\": \"57670201f8a4037b446f9d58\"},\n" +
-                "          {\"status\": \"pending\", \"_id\": \"57670271f8a4037b446f9d5a\"}\n" +
-                "        ]\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"_id\": \"5766ffeaf8a4037b446f9d51\",\n" +
-                "        \"category\": {\n" +
-                "          \"title\": \"Verlichting\",\n" +
-                "          \"id\": \"5766f75ff8a4037b446f9d43\",\n" +
-                "          \"icon\": \"\"\n" +
-                "        },\n" +
-                "        \"parent\": \"5766ffa8f8a4037b446f9d4f\",\n" +
-                "        \"request\": \"5766fb5ef8a4037b446f9d4e\",\n" +
-                "        \"children\": [\n" +
-                "          {\"status\": \"pending\", \"_id\": \"57670290f8a4037b446f9d5b\"},\n" +
-                "         {\"status\": \"pending\", \"_id\":  \"576702a4f8a4037b446f9d5c\"}\n" +
-                "        ]\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"_id\": \"57670028f8a4037b446f9d52\",\n" +
-                "        \"category\": {\n" +
-                "          \"title\": \"Bedvoorkeuren\",\n" +
-                "          \"id\": \"5766f5d0f8a4037b446f9d38\",\n" +
-                "          \"icon\": \"\"\n" +
-                "        },\n" +
-                "        \"parent\": \"5766ffd7f8a4037b446f9d50\",\n" +
-                "        \"request\": \"5766fb5ef8a4037b446f9d4e\",\n" +
-                "        \"children\": [\n" +
-                "          {\"status\": \"pending\", \"_id\": \"57670201f8a4037b446f9d58\"},\n" +
-                "          {\"status\": \"pending\", \"_id\": \"57670271f8a4037b446f9d5a\"}\n" +
-                "        ]\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"_id\": \"5767006bf8a4037b446f9d53\",\n" +
-                "        \"status\": \"approved\",\n" +
-                "        \"category\": {\n" +
-                "          \"title\": \"Restaurant\",\n" +
-                "          \"id\": \"57669bd68fe61d3c40d2ae71\",\n" +
-                "          \"icon\": \"\"\n" +
-                "        },\n" +
-                "        \"request\": \"5766fb5ef8a4037b446f9d4e\",\n" +
-                "        \"children\": [\n" +
-                "          {\"status\": \"pending\", \"_id\": \"57670157f8a4037b446f9d55\"},\n" +
-                "          {\"status\": \"pending\", \"_id\": \"57670180f8a4037b446f9d56\"},\n" +
-                "          {\"status\": \"pending\", \"_id\": \"57670081f8a4037b446f9d54\"},\n" +
-                "          {\"status\": \"pending\", \"_id\": \"576701dff8a4037b446f9d57\"}\n" +
-                "        ]\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"_id\": \"57670081f8a4037b446f9d54\",\n" +
-                "        \"category\": {\n" +
-                "          \"title\": \"Eetvoorkeuren\",\n" +
-                "          \"id\": \"57669be08fe61d3c40d2ae72\",\n" +
-                "          \"icon\": \"\"\n" +
-                "        },\n" +
-                "        \"parent\": \"5767006bf8a4037b446f9d53\",\n" +
-                "        \"request\": \"5766fb5ef8a4037b446f9d4e\",\n" +
-                "        \"children\": [\n" +
-                "          {\"status\": \"pending\", \"_id\": \"576701dff8a4037b446f9d57\"}\n" +
-                "        ]\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"_id\": \"57670081f8a4037b446f9d54z\",\n" +
-                "        \"category\": {\n" +
-                "          \"title\": \"Eetvoorkeuren\",\n" +
-                "          \"id\": \"57669be08fe61d3c40d2ae72\",\n" +
-                "          \"icon\": \"\"\n" +
-                "        },\n" +
-                "        \"parent\": \"5767006bf8a4037b446f9d53\",\n" +
-                "        \"request\": \"5766fb5ef8a4037b446f9d4e\",\n" +
-                "        \"children\": [\n" +
-                "          {\"status\": \"pending\", \"_id\": \"576701dff8a4037b446f9d57\"}\n" +
-                "        ]\n" +
-                "      }\n" +
-                "    ],\n" +
-                "    \"organisation\": {\n" +
-                "      \"_id\": \"57669b4b8fe61d3c40d2ae6e\",\n" +
-                "      \"title\": \"CitizenM\",\n" +
-                "      \"icon\": \"http://project.cmi.hro.nl/2015_2016/emedia_mt2b_t4/digipass/images/organisations/citizenm.jpg\"\n" +
-                "    }\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"id\": \"5766bc6a7c32934b42f14f61\",\n" +
-                "    \"status\": \"pending\",\n" +
-                "    \"permissions\": [\n" +
-                "      {\n" +
-                "        \"_id\": \"5766be567c32934b42f14f64\",\n" +
-                "        \"preference\": {\n" +
-                "          \"_id\": \"57669e6ed0bf105540f743d3\",\n" +
-                "          \"title\": \"Vegetarisch\",\n" +
-                "          \"description\": \"\",\n" +
-                "          \"category\": [\n" +
-                "            \"57669bd68fe61d3c40d2ae71\"\n" +
-                "          ],\n" +
-                "          \"type\": \"switch\",\n" +
-                "          \"values\": [\n" +
-                "            {\n" +
-                "              \"title\": \"Vegetarisch\",\n" +
-                "              \"value\": \"false\",\n" +
-                "              \"_id\": \"57669e6ed0bf105540f743d4\"\n" +
-                "            }\n" +
-                "          ],\n" +
-                "          \"icon\": \"\"\n" +
-                "        },\n" +
-                "        \"status\": \"pending\",\n" +
-                "        \"parent\": \"5766bddb7c32934b42f14f63\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"_id\": \"5766be637c32934b42f14f65\",\n" +
-                "        \"preference\": {\n" +
-                "          \"_id\": \"57669e2ed0bf105540f743d0\",\n" +
-                "          \"title\": \"Allergieen\",\n" +
-                "          \"description\": \"\",\n" +
-                "          \"category\": [\n" +
-                "            \"57669bd68fe61d3c40d2ae71\"\n" +
-                "          ],\n" +
-                "          \"type\": \"checkbox\",\n" +
-                "          \"values\": [\n" +
-                "            {\n" +
-                "              \"title\": \"Noten\",\n" +
-                "              \"value\": \"false\",\n" +
-                "              \"_id\": \"57669e2ed0bf105540f743d2\"\n" +
-                "            },\n" +
-                "            {\n" +
-                "              \"title\": \"Gluten\",\n" +
-                "              \"value\": \"false\",\n" +
-                "              \"_id\": \"57669e2ed0bf105540f743d1\"\n" +
-                "            }\n" +
-                "          ],\n" +
-                "          \"icon\": \"\"\n" +
-                "        },\n" +
-                "        \"status\": \"pending\",\n" +
-                "        \"parent\": \"5766bddb7c32934b42f14f63\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"_id\": \"5766be807c32934b42f14f66\",\n" +
-                "        \"preference\": {\n" +
-                "          \"_id\": \"57669f1ad0bf105540f743d8\",\n" +
-                "          \"title\": \"Kinderstoel\",\n" +
-                "          \"description\": \"\",\n" +
-                "          \"category\": [\n" +
-                "            \"57669bd68fe61d3c40d2ae71\"\n" +
-                "          ],\n" +
-                "          \"type\": \"switch\",\n" +
-                "          \"values\": [\n" +
-                "            {\n" +
-                "              \"title\": \"Kinderstoel\",\n" +
-                "              \"value\": \"false\",\n" +
-                "              \"_id\": \"57669f1ad0bf105540f743d9\"\n" +
-                "            }\n" +
-                "          ],\n" +
-                "          \"icon\": \"\"\n" +
-                "        },\n" +
-                "        \"status\": \"pending\",\n" +
-                "        \"parent\": \"5766bdb27c32934b42f14f62\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"_id\": \"5766be807c32934b42f14f66\",\n" +
-                "        \"preference\": {\n" +
-                "          \"_id\": \"57669f1ad0bf105540f743d8\",\n" +
-                "          \"title\": \"Kinderstoel\",\n" +
-                "          \"description\": \"\",\n" +
-                "          \"category\": [\n" +
-                "            \"57669bd68fe61d3c40d2ae71\"\n" +
-                "          ],\n" +
-                "          \"type\": \"switch\",\n" +
-                "          \"values\": [\n" +
-                "            {\n" +
-                "              \"title\": \"Kinderstoel\",\n" +
-                "              \"value\": \"false\",\n" +
-                "              \"_id\": \"57669f1ad0bf105540f743d9\"\n" +
-                "            }\n" +
-                "          ],\n" +
-                "          \"icon\": \"\"\n" +
-                "        },\n" +
-                "        \"status\": \"pending\",\n" +
-                "        \"parent\": \"5766bdb27c32934b42f14f62\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"_id\": \"5766be807c32934b42f14f66\",\n" +
-                "        \"preference\": {\n" +
-                "          \"_id\": \"57669f1ad0bf105540f743d8\",\n" +
-                "          \"title\": \"Kinderstoel\",\n" +
-                "          \"description\": \"\",\n" +
-                "          \"category\": [\n" +
-                "            \"57669bd68fe61d3c40d2ae71\"\n" +
-                "          ],\n" +
-                "          \"type\": \"switch\",\n" +
-                "          \"values\": [\n" +
-                "            {\n" +
-                "              \"title\": \"Kinderstoel\",\n" +
-                "              \"value\": \"false\",\n" +
-                "              \"_id\": \"57669f1ad0bf105540f743d9\"\n" +
-                "            }\n" +
-                "          ],\n" +
-                "          \"icon\": \"\"\n" +
-                "        },\n" +
-                "        \"status\": \"pending\",\n" +
-                "        \"parent\": \"5766bdb27c32934b42f14f62\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"_id\": \"5766bdb27c32934b42f14f62\",\n" +
-                "        \"category\": {\n" +
-                "          \"title\": \"Restaurant\",\n" +
-                "          \"id\": \"57669bd68fe61d3c40d2ae71\",\n" +
-                "          \"icon\": \"\"\n" +
-                "        },\n" +
-                "        \"request\": \"5766bc6a7c32934b42f14f61\",\n" +
-                "        \"children\": [\n" +
-                "          {\"status\": \"pending\", \"_id\": \"5766be807c32934b42f14f66\"},\n" +
-                "          {\"status\": \"pending\", \"_id\": \"5766bddb7c32934b42f14f63\"},\n" +
-                "          {\"status\": \"pending\", \"_id\": \"5766be567c32934b42f14f64\"},\n" +
-                "          {\"status\": \"pending\", \"_id\": \"5766be637c32934b42f14f65\"}\n" +
-                "        ]\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"_id\": \"5766bddb7c32934b42f14f63\",\n" +
-                "        \"category\": {\n" +
-                "          \"title\": \"Eetvoorkeuren\",\n" +
-                "          \"id\": \"57669be08fe61d3c40d2ae72\",\n" +
-                "          \"icon\": \"\"\n" +
-                "        },\n" +
-                "        \"parent\": \"5766bdb27c32934b42f14f62\",\n" +
-                "        \"request\": \"5766bc6a7c32934b42f14f61\",\n" +
-                "        \"children\": [\n" +
-                "          {\"status\": \"pending\", \"_id\": \"5766be567c32934b42f14f64\"},\n" +
-                "          {\"status\": \"pending\", \"_id\": \"5766be637c32934b42f14f65\"}\n" +
-                "        ]\n" +
-                "      }\n" +
-                "    ],\n" +
-                "    \"organisation\": {\n" +
-                "      \"_id\": \"5768f60a0526c1100071d3ba\",\n" +
-                "      \"title\": \"HRO\",\n" +
-                "      \"icon\": \"http://project.cmi.hro.nl/2015_2016/emedia_mt2b_t4/digipass/images/organisations/hro.jpg\"\n" +
-                "    }\n" +
-                "  }\n" +
-                "]";
         Map<String, ArrayList<DefaultListItem>> requests_list = new HashMap<>();
         ArrayList<DefaultListItem> preference_list = new ArrayList<>();
         ArrayList<DefaultListItem> group_list = new ArrayList<>();
@@ -693,12 +145,12 @@ public class Data {
                         }
                     }
 
-                    if ((permission.has("parent") && Objects.equals(permission.getString("parent"), key)) || (!permission.has("parent") && Objects.equals(request.getJSONObject("organisation").getString("_id"), key))) {
+                    if ((permission.has("parent") && permission.getJSONArray("parent").toString().contains("\""+ key +"\"")) || ((!permission.has("parent") || permission.getJSONArray("parent").length() == 0) && Objects.equals(request.getJSONObject("organisation").getString("_id"), key))) {
                         for (int p = 0; p < permissions.length(); p++) {
                             JSONObject _per = (JSONObject) permissions.get(p);
-                            if (_per.has("parent") && Objects.equals(_per.getString("parent"), permission.getString("_id"))) {
+                            if (_per.has("parent") && _per.getJSONArray("parent").toString().contains("\""+ permission.getString("_id") +"\"")) {
                                 JSONObject _v = new JSONObject();
-                                _v.put("title", _per.has("category") ? _per.getJSONObject("category").getString("title") : _per.getJSONObject("preference").getString("title"));
+                                _v.put("title", _per.has("preference") ? _per.getJSONObject("preference").getString("title"): _per.getString("title"));
                                 values.put(_v);
                             }
                         }
@@ -706,7 +158,6 @@ public class Data {
                             JSONObject pref = permission.getJSONObject("preference");
                             preference_list.add(new StatusListItem(permission.getString("_id"), pref.getString("title"), "", values, "preference", "", permission.getString("status"), new JSONArray()));
                         } else {
-                            JSONObject cat = permission.getJSONObject(("category"));
                             JSONArray children = permission.getJSONArray("children");
                             int cat_pending_count = 0;
                             int cat_approved_count = 0;
@@ -735,11 +186,11 @@ public class Data {
                             } else {
                                 cat_status = "indeterminate";
                             }
-                            group_list.add(new StatusListItem(permission.getString("_id"), cat.getString("title"), "", values, "group", cat.getString("icon"), cat_status, children));
+                            group_list.add(new StatusListItem(permission.getString("_id"), permission.getString("title"), "", values, "group", permission.getString("icon"), cat_status, children));
                         }
-                    } else if ((permission.has("parent") && Objects.equals(request.getJSONObject("organisation").getString("_id"), permission.getString("parent"))) || (!permission.has("parent") && Objects.equals(key, "0"))) {
+                    } else if ((permission.has("parent") && permission.getJSONArray("parent").toString().contains("\""+ request.getJSONObject("organisation").getString("_id") +"\"")) || ((!permission.has("parent") || permission.getJSONArray("parent").length() == 0) && Objects.equals(key, "0"))) {
                         JSONObject _v = new JSONObject();
-                        _v.put("title", permission.has("category") ? permission.getJSONObject("category").getString("title") : permission.getJSONObject("preference").getString("title"));
+                        _v.put("title", permission.has("preference") ? permission.getJSONObject("preference").getString("title") : permission.getString("title"));
                         values.put(_v);
                     }
                 }
@@ -796,7 +247,16 @@ public class Data {
         return activities_list;
     }
 
-    public void PrePermissionsPost(ArrayList<String> children, String status) {
-        API.getInstance(context).PostPermissionsTask(children, status);
+    public void PrePermissionsPost(ArrayList<String> children, String status, Activity activity) {
+        PrePermissionsPost(children, status, new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        }, activity);
+    }
+
+    public void PrePermissionsPost(ArrayList<String> children, String status, Runnable runnable, Activity activity) {
+        API.getInstance(context).PostPermissionsTask(children, status, runnable, activity);
     }
 }

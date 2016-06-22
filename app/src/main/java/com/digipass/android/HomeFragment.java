@@ -5,11 +5,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.digipass.android.helpers.ActivityListAdapter;
@@ -19,6 +24,7 @@ import com.digipass.android.helpers.TextListAdapter;
 import com.digipass.android.objects.DefaultListItem;
 import com.digipass.android.objects.StatusListItem;
 import com.digipass.android.objects.TextListItem;
+import com.digipass.android.singletons.API;
 import com.digipass.android.singletons.Data;
 import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
 import com.wdullaer.swipeactionadapter.SwipeDirection;
@@ -37,6 +43,11 @@ public class HomeFragment extends Fragment {
     private Context c;
     private boolean hasReqData = true;
     private boolean hasAcData = true;
+
+    SwipeRefreshLayout refreshLayout;
+    String key = "0";
+
+    ArrayAdapter<DefaultListItem> adapter;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -64,6 +75,7 @@ public class HomeFragment extends Fragment {
             try {
                 data = (Map<String, ArrayList<DefaultListItem>>)bundle.getSerializable("data");
                 if (data != null) {
+                    key = bundle.getString("key");
                     printListRequests(data.get("requests"));
                     printListActivities(data.get("activities"), data.get("requests").size());
                 }
@@ -74,6 +86,18 @@ public class HomeFragment extends Fragment {
 
         titleOnClick(R.id.pending_requests_title_wrapper, 2);
         titleOnClick(R.id.activity_log_title_wrapper, 3);
+
+        refreshLayout = (SwipeRefreshLayout)getActivity().findViewById(R.id.swiperefresh);
+        refreshLayout.setColorSchemeResources(R.color.colorPrimary);
+
+        refreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        refreshList();
+                    }
+                }
+        );
     }
 
     private void titleOnClick(int title, final int menu_item) {
@@ -89,13 +113,11 @@ public class HomeFragment extends Fragment {
 
     private void printListRequests(ArrayList<DefaultListItem> _data) {
         View v = getView();
-        ListView lv;
+        final ListView lv;
         if (v != null) {
             lv = (ListView) v.findViewById(R.id.list_pen_req_list);
             lv.setFadingEdgeLength(0);
             lv.setDividerHeight(0);
-
-            ArrayAdapter<DefaultListItem> adapter;
 
             if (_data.size() == 0 || !hasReqData) {
                 _data = new ArrayList<>();
@@ -141,6 +163,7 @@ public class HomeFragment extends Fragment {
 
                     @Override
                     public void onSwipe(int[] positionList, SwipeDirection[] directionList){
+                        View v = getView();
                         for(int i=0;i<positionList.length;i++) {
                             SwipeDirection direction = directionList[i];
                             final int position = positionList[i];
@@ -149,15 +172,21 @@ public class HomeFragment extends Fragment {
                             switch (direction) {
                                 case DIRECTION_FAR_LEFT:
                                 case DIRECTION_NORMAL_LEFT:
-                                    status = "deny";
+                                    status = "denied";
                                     break;
                                 case DIRECTION_FAR_RIGHT:
                                 case DIRECTION_NORMAL_RIGHT:
-                                    status = "approve";
+                                    status = "approved";
                                     break;
                             }
                             if (!Objects.equals(status, "")) {
-                                Data.GetInstance(getContext()).PrePermissionsPost(organisation.get_children(), status);
+                                ((ImageView)ListUtils.getViewByPosition(position, lv).findViewById(R.id.row_1_status_icon)).setImageDrawable(getResources().getDrawable(R.drawable.ic_loading));
+                                Data.GetInstance(getContext()).PrePermissionsPost(organisation.get_children(), status, new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        refreshList();
+                                    }
+                                }, getActivity());
                             }
                         }
                     }
@@ -214,5 +243,34 @@ public class HomeFragment extends Fragment {
 
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+            // Check if user triggered a refresh:
+            case R.id.menu_refresh:
+                refreshList();
+                return true;
+        }
+
+        // User didn't trigger a refresh, let the superclass handle this action
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void refreshList() {
+        refreshLayout.setRefreshing(true);
+        API.getInstance(c).GetJSONResult(new Runnable() {
+            @Override
+            public void run() {
+                DefaultListItem.RefreshList(adapter, Data.GetInstance(getContext()).GetHomeLists().get("requests"), refreshLayout);
+            }
+        });
     }
 }
