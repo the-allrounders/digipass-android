@@ -102,10 +102,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mEmailRegisterButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent i = new Intent(getApplicationContext(), RegisterActivity.class);
-                    i.putExtra("email", mEmailView.getText().toString());
-                    i.putExtra("password", mPasswordView.getText().toString());
-                    startActivity(i);
+                    if(!verifyFields()){
+                        Intent i = new Intent(getApplicationContext(), RegisterActivity.class);
+                        i.putExtra("email", mEmailView.getText().toString());
+                        i.putExtra("password", mPasswordView.getText().toString());
+                        startActivity(i);
+                    }
                 }
             });
         }
@@ -168,16 +170,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
-    /**
-     * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
-     */
-    private void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
-
+    private Boolean verifyFields() {
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
@@ -211,7 +204,27 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // There was an error; don't attempt login and focus the first
             // form field with an error.
             focusView.requestFocus();
-        } else {
+        }
+        return cancel;
+    }
+
+    /**
+     * Attempts to sign in or register the account specified by the login form.
+     * If there are form errors (invalid email, missing fields, etc.), the
+     * errors are presented and no actual login attempt is made.
+     */
+    private void attemptLogin() {
+        if (mAuthTask != null) {
+            return;
+        }
+
+        Boolean cancel = verifyFields();
+
+        // Store values at the time of the login attempt.
+        String email = mEmailView.getText().toString();
+        String password = mPasswordView.getText().toString();
+
+        if(!cancel) {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
