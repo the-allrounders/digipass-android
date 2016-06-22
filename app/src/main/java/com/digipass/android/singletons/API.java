@@ -175,6 +175,41 @@ public class API extends ContextWrapper {
         queue.add(request);
     }
 
+    /**
+     * Checks the given credentials, and updates the preferences if successful.
+     * @param userData The data to pass along with the register request
+     * @param callback Is called when the register was successful or unsuccessful
+     */
+    public void register(final JSONObject userData, final Runnable callback){
+
+        Log.d("API", "Registering user " + userData.toString());
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.POST,
+                BaseUrl + "/users",
+                userData,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.putString("user", response.toString());
+                        editor.apply();
+                        user = response;
+                        callback.run();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("API", "API error: " + error.toString());
+                        callback.run();
+                    }
+                }
+        );
+
+        queue.add(request);
+    }
+
     public void GetJSONResult() {
         new GetJSONTask(c).execute();
     }
