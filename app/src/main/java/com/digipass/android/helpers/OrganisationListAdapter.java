@@ -7,14 +7,17 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.digipass.android.R;
 import com.digipass.android.objects.DefaultListItem;
+import com.digipass.android.objects.StatusListItem;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class OrganisationListAdapter extends ArrayAdapter<DefaultListItem> {
 
@@ -37,12 +40,14 @@ public class OrganisationListAdapter extends ArrayAdapter<DefaultListItem> {
     private class Holder {
         public TextView title;
         public TextView subtitle;
+        public ImageView status;
         public NetworkImageView thumb;
+        public View status_label;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        final DefaultListItem organisation = this.data.get(position);
+        final StatusListItem organisation = (StatusListItem)this.data.get(position);
         final Holder holder;
 
         if (imageLoader == null)
@@ -52,8 +57,10 @@ public class OrganisationListAdapter extends ArrayAdapter<DefaultListItem> {
             convertView = mInflater.inflate(rowlayout, null);
             holder = new Holder();
             holder.title = (TextView) convertView.findViewById(R.id.row_1_title);
+            holder.status = (ImageView) convertView.findViewById(R.id.row_1_status_icon);
             holder.subtitle = (TextView) convertView.findViewById(R.id.row_1_subtitle);
             holder.thumb = (NetworkImageView) convertView.findViewById(R.id.row_1_thumb_icon);
+            holder.status_label = convertView.findViewById(R.id.status_label);
             convertView.setTag(holder);
         } else {
             holder = (Holder) convertView.getTag();
@@ -62,6 +69,11 @@ public class OrganisationListAdapter extends ArrayAdapter<DefaultListItem> {
         holder.subtitle.setText(organisation.get_values_as_string());
         holder.title.setText(organisation.get_name());
         holder.thumb.setImageUrl(organisation.get_icon_name(), imageLoader);
+        holder.status.setImageDrawable(organisation.get_status_icon(context));
+
+        if (!Objects.equals(organisation.get_status(), "pending")) {
+            holder.status_label.setVisibility(View.GONE);
+        }
 
         Animation animation = AnimationUtils.loadAnimation(context, R.anim.fade_in);
         int d = 50;

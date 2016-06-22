@@ -29,7 +29,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 
-import com.digipass.android.helpers.NetworkReceiver;
+import com.digipass.android.objects.NetworkReceiver;
 import com.digipass.android.singletons.API;
 import com.digipass.android.singletons.Data;
 

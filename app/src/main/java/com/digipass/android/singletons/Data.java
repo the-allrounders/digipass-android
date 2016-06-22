@@ -671,8 +671,27 @@ public class Data {
                 JSONArray permissions = request.getJSONArray("permissions");
                 JSONArray values = new JSONArray();
                 int total_preference_count = 0;
+                int total_pending_count = 0;
+                int total_approved_count = 0;
+                int total_denied_count = 0;
                 for (int i = 0; i < permissions.length(); i++) {
                     JSONObject permission = (JSONObject) permissions.get(i);
+
+                    if (permission.has("preference")) {
+                        total_preference_count++;
+                        String child_status = permission.getString("status");
+                        switch (child_status) {
+                            case "approved":
+                                total_approved_count++;
+                                break;
+                            case "denied":
+                                total_denied_count++;
+                                break;
+                            case "pending":
+                            default:
+                                total_pending_count++;
+                        }
+                    }
 
                     if ((permission.has("parent") && Objects.equals(permission.getString("parent"), key)) || (!permission.has("parent") && Objects.equals(request.getJSONObject("organisation").getString("_id"), key))) {
                         for (int p = 0; p < permissions.length(); p++) {
@@ -683,40 +702,40 @@ public class Data {
                                 values.put(_v);
                             }
                         }
-                        if (permission.has("category")) {
+                        if (permission.has("preference")) {
+                            JSONObject pref = permission.getJSONObject("preference");
+                            preference_list.add(new StatusListItem(permission.getString("_id"), pref.getString("title"), "", values, "preference", "", permission.getString("status"), new JSONArray()));
+                        } else {
                             JSONObject cat = permission.getJSONObject(("category"));
                             JSONArray children = permission.getJSONArray("children");
-                            int pending_count = 0;
-                            int approved_count = 0;
-                            int denied_count = 0;
+                            int cat_pending_count = 0;
+                            int cat_approved_count = 0;
+                            int cat_denied_count = 0;
                             for (int a = 0; a < children.length(); a++) {
                                 String child_status = ((JSONObject)children.get(a)).getString("status");
                                 switch (child_status) {
                                     case "approved":
-                                        approved_count++;
+                                        cat_approved_count++;
                                         break;
                                     case "denied":
-                                        denied_count++;
+                                        cat_denied_count++;
                                         break;
                                     case "pending":
                                     default:
-                                        pending_count++;
+                                        cat_pending_count++;
                                 }
                             }
                             String cat_status;
-                            if (approved_count == children.length()) {
+                            if (cat_approved_count == children.length()) {
                                 cat_status = "approved";
-                            } else if (denied_count == children.length()) {
+                            } else if (cat_denied_count == children.length()) {
                                 cat_status = "denied";
-                            } else if (pending_count == children.length()) {
+                            } else if (cat_pending_count == children.length()) {
                                 cat_status = "pending";
                             } else {
                                 cat_status = "indeterminate";
                             }
                             group_list.add(new StatusListItem(permission.getString("_id"), cat.getString("title"), "", values, "group", cat.getString("icon"), cat_status, children));
-                        } else {
-                            JSONObject pref = permission.getJSONObject("preference");
-                            preference_list.add(new StatusListItem(permission.getString("_id"), pref.getString("title"), "", values, "preference", "", permission.getString("status"), new JSONArray()));
                         }
                     } else if ((permission.has("parent") && Objects.equals(request.getJSONObject("organisation").getString("_id"), permission.getString("parent"))) || (!permission.has("parent") && Objects.equals(key, "0"))) {
                         JSONObject _v = new JSONObject();
@@ -725,8 +744,18 @@ public class Data {
                     }
                 }
                 if (Objects.equals(key, "0")) {
+                    String total_status;
+                    if (total_approved_count == total_preference_count) {
+                        total_status = "approved";
+                    } else if (total_denied_count == total_preference_count) {
+                        total_status = "denied";
+                    } else if (total_pending_count == total_preference_count) {
+                        total_status = "pending";
+                    } else {
+                        total_status = "indeterminate";
+                    }
                     JSONObject org = request.getJSONObject("organisation");
-                    organisation_list.add(new StatusListItem(org.getString("_id"), org.getString("title"), "", values, "organisation", org.getString("icon"), request.getString("status"), new JSONArray()));
+                    organisation_list.add(new StatusListItem(org.getString("_id"), org.getString("title"), "", values, "organisation", org.getString("icon"), total_status, new JSONArray()));
                 }
             }
         } catch (JSONException e) {

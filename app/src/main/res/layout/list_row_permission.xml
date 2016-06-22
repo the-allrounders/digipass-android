@@ -22,13 +22,14 @@
 
         <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/row_1_thumb_icon"
-            android:layout_width="32dp"
+            android:layout_width="0dp"
             android:layout_height="32dp"
             android:contentDescription="@string/thumb_description"
             android:layout_marginStart="0dp"
             android:layout_marginEnd="24dp"
             android:layout_gravity="center_vertical"
             android:src="@drawable/placeholder"
+            android:layout_weight="1"
             />
 
         <LinearLayout
@@ -36,7 +37,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_gravity="center_vertical">
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1">
             <TextView
                 android:id="@+id/row_1_title"
                 android:layout_width="wrap_content"
@@ -65,13 +67,25 @@
                 />
         </LinearLayout>
 
+        <ImageView
+            android:id="@+id/row_1_status_icon"
+            android:layout_width="0dp"
+            android:layout_height="24dp"
+            android:contentDescription="@string/status_icon_description"
+            android:layout_marginEnd="0dp"
+            android:layout_marginStart="24dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            />
+
     </LinearLayout>
 
     <View
         android:layout_width="7dp"
         android:layout_height="match_parent"
-        android:background="@color/pendingColor"
+        android:background="@color/statusLabelColor"
         android:layout_alignParentEnd="true"
+        android:id="@+id/status_label"
         />
 
     <View
