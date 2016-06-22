@@ -103,8 +103,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 @Override
                 public void onClick(View view) {
                     Intent i = new Intent(getApplicationContext(), RegisterActivity.class);
-                    i.putExtra("email", "value");
-                    i.putExtra("password", "value");
+                    i.putExtra("email", mEmailView.getText().toString());
+                    i.putExtra("password", mPasswordView.getText().toString());
                     startActivity(i);
                 }
             });

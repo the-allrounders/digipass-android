@@ -3,6 +3,7 @@ package com.digipass.android;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,6 +20,11 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.digipass.android.singletons.API;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * A login screen that offers login via email/password.
@@ -140,13 +147,11 @@ public class RegisterActivity extends AppCompatActivity{
     }
 
     private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
+        return email.length() > 1;
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() > 4;
+        return password.length() > 1;
     }
 
     /**
@@ -185,6 +190,14 @@ public class RegisterActivity extends AppCompatActivity{
         }
     }
 
+    public class WaitForCallback implements Runnable {
+        public Boolean done = false;
+        @Override
+        public void run() {
+            done = true;
+        }
+    }
+
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
@@ -204,22 +217,37 @@ public class RegisterActivity extends AppCompatActivity{
             // TODO: attempt authentication against a network service.
 
             try {
-                // Simulate network access.
-                Thread.sleep(2000);
+                API api = API.getInstance(getBaseContext());
+
+                WaitForCallback callback = new WaitForCallback();
+
+                Bundle extras = getIntent().getExtras();
+
+                JSONObject name = new JSONObject();
+                name.put("first", mEmail);
+                name.put("last", mPassword);
+
+                JSONObject user = new JSONObject();
+                user.put("username", extras.getString("email"));
+                user.put("password", extras.getString("password"));
+                user.put("name", name);
+
+                api.register(user, callback);
+
+                while(!callback.done){
+                    Thread.sleep(100);
+                }
+
+                Boolean test = api.user != null;
+
+                Log.d("LoginActivity", "Registering succeeded? " + test.toString());
+
+                return test;
+            } catch (JSONException e) {
+                return false;
             } catch (InterruptedException e) {
                 return false;
             }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
-            // TODO: register the new account here.
-            return true;
         }
 
         @Override
@@ -228,6 +256,7 @@ public class RegisterActivity extends AppCompatActivity{
             showProgress(false);
 
             if (success) {
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
