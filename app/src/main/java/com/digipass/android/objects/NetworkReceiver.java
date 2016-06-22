@@ -1,4 +1,4 @@
-package com.digipass.android.helpers;
+package com.digipass.android.objects;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.design.widget.Snackbar;
-import android.util.Log;
 import android.view.View;
 
 import com.digipass.android.MainActivity;
@@ -47,13 +46,13 @@ public class NetworkReceiver extends BroadcastReceiver {
         }
         reshow = false;
         final Snackbar snackbar = Snackbar.make(view, R.string.lost_connection, Snackbar.LENGTH_INDEFINITE);
-        snackbar.setAction(R.string.what_now, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("Digipass", "What now???");
-                reshow = true;
-            }
-        });
+//        snackbar.setAction(R.string.what_now, new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Log.d("Digipass", "What now???");
+//                reshow = true;
+//            }
+//        });
         snackbar.setCallback(new Snackbar.Callback() {
             @Override
             public void onDismissed(Snackbar snackbar, int event) {
