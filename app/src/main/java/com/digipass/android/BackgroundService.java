@@ -15,6 +15,9 @@ import android.widget.Toast;
 import com.digipass.android.singletons.API;
 import com.digipass.android.singletons.BluetoothScanner;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Map;
 
 import no.nordicsemi.android.support.v18.scanner.ScanRecord;
@@ -88,32 +91,37 @@ public class BackgroundService extends Service {
     }
 
     private void onScannerChange(){
-        String fn = API.getInstance(this).user.toString();
-        String firstname = fn != null ? fn : "";
+        JSONObject fn = API.getInstance(this).user;
+        String firstname = "";
+        try {
+            firstname = " " + fn.getJSONObject("User").getJSONObject("name").getString("first");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         if (BTScanner.getState() == BluetoothScanner.STATE_BT_OFF) {
             notification
-                    .setContentText("Hi "+firstname+", your Bluetooth is disabled. Click here to enable.")
+                    .setContentText("Hi"+firstname+", your Bluetooth is disabled. Click here to enable.")
                     .setContentIntent(
                             PendingIntent.getActivity(this, 0, new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), 0)
                     )
                     .setNumber(0);
         } else if(BTScanner.getState() == BluetoothScanner.STATE_NO_PERMISSION_LOC) {
             notification
-                    .setContentText("Hi "+firstname+", we have no permission to scan for Bluetooth devices. Click here to grant permission.")
+                    .setContentText("Hi"+firstname+", we have no permission to scan for Bluetooth devices. Click here to grant permission.")
                     .setContentIntent(
                             pendingMainActivityIntent
                     )
                     .setNumber(0);
         } else {
             // Generate contentText (small text)
-            String contentText = "Hi "+firstname+", your Bluetooth is on but there are no devices found.";
-            if(BTScanner.getDevices().size() == 1){
+            String contentText = "Hi"+firstname+", DigiPass is scanning for organisations!";
+            /*if(BTScanner.getDevices().size() == 1){
                 ScanRecord scanRecord = BTScanner.getDevices().values().iterator().next().getScanRecord();
 
-                contentText = "Hi "+firstname+", click here to connect with " + (scanRecord != null ? scanRecord.getDeviceName() : "the device");
+                contentText = "Hi"+firstname+", click here to connect with " + (scanRecord != null ? scanRecord.getDeviceName() : "the device");
             }
             else if(BTScanner.getDevices().size() > 1){
-                contentText = "Hi "+firstname+", click to connect with a Bluetooth device.";
+                contentText = "Hi"+firstname+", click to connect with a Bluetooth device.";
             }
 
             // Generate bigText (when notification is expanded)
@@ -125,7 +133,7 @@ public class BackgroundService extends Service {
                 }
 
                 notificationStyle.bigText(bigText);
-            }
+            }*/
 
             // Put all info in the notification
             notification.setContentText(contentText)
