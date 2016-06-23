@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -126,8 +125,10 @@ public class PreferencesFragment extends Fragment {
                 adapter_groups = adapter;
             }
             final PreferencesFragment fragment = this;
+            boolean userSelect = false;
             AdapterView.OnItemClickListener onClick = new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> a, View v, int position, long id) {
+
                     DefaultListItem defaultListItem = _data.get(position);
                     if (Objects.equals(defaultListItem.get_row_type(), "preference")) {
                         EditPreferenceDialog dialog = new EditPreferenceDialog();
@@ -169,19 +170,6 @@ public class PreferencesFragment extends Fragment {
 
             lv.setAdapter(adapter);
             lv.setOnItemClickListener(onClick);
-
-            lv.setOnScrollListener(new AbsListView.OnScrollListener() {
-                @Override
-                public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-                }
-
-                @Override
-                public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                    int topRowVerticalPosition = (lv.getChildCount() == 0) ? 0 : lv.getChildAt(0).getTop();
-                    swipeContainer.setEnabled(firstVisibleItem == 0 && topRowVerticalPosition >= 0);
-                }
-            });
 
             ListUtils.setDynamicHeight(lv);
         }

@@ -48,4 +48,5 @@
         completions."
     </string>
     <string name="menu_refresh">Refresh app</string>
+    <string name="title_settings">Settings</string>
 </resources>

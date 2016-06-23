@@ -35,7 +35,7 @@ public class Data {
         String tax_string = context.getSharedPreferences("preference_category_data", Context.MODE_PRIVATE).getString("preference_category_data", "[]");
         try {
             JSONArray taxonomy_tree = new JSONArray(tax_string);
-            preferences_list.put("preferences", getPreferencesList(key, pref_string));
+            preferences_list.put("preferences", getPreferencesList(key, taxonomy_tree, pref_string));
             preferences_list.put("categories", getCategoriesList(key, taxonomy_tree, pref_string));
         } catch (JSONException e) {
             e.printStackTrace();
@@ -44,7 +44,7 @@ public class Data {
         return preferences_list;
     }
 
-    private ArrayList<DefaultListItem> getPreferencesList(String key, String json) {
+    private ArrayList<DefaultListItem> getPreferencesList(String key, JSONArray categories, String json) {
         ArrayList<DefaultListItem> preferences_list = new ArrayList<>();
         JSONArray preferences;
         try {

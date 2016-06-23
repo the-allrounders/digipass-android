@@ -251,7 +251,7 @@ public class API extends ContextWrapper {
                 GetJSONResult(runnable, false, false, true);
                 break;
             case "pref":
-                GetJSONResult(runnable, true, false, false);
+                GetJSONResult(runnable, true, true, false);
                 break;
             case "cat":
                 GetJSONResult(runnable, false, true, false);
