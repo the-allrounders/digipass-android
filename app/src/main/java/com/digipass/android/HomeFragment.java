@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -152,19 +151,6 @@ public class HomeFragment extends Fragment {
                     }
                 };
                 lv.setOnItemClickListener(onClick);
-
-                lv.setOnScrollListener(new AbsListView.OnScrollListener() {
-                    @Override
-                    public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-                    }
-
-                    @Override
-                    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                        int topRowVerticalPosition = (lv.getChildCount() == 0) ? 0 : lv.getChildAt(0).getTop();
-                        swipeContainer.setEnabled(firstVisibleItem == 0 && topRowVerticalPosition >= 0);
-                    }
-                });
 
                 SwipeActionAdapter.SwipeActionListener listener = new SwipeActionAdapter.SwipeActionListener() {
                     @Override

@@ -301,6 +301,8 @@ public class API extends ContextWrapper {
             HttpResponse response;
             try {
                 request.setHeader("Cache-Control", "no-cache");
+                String bearer = user.getString("Bearer");
+                request.setHeader("Authorization", "Bearer " + bearer);
                 response = httpclient.execute(request);
                 HttpEntity entity = response.getEntity();
                 String str = readIt(entity.getContent());
@@ -355,15 +357,16 @@ public class API extends ContextWrapper {
                 HttpClient client = new DefaultHttpClient();
                 HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000); //Timeout Limit
                 JSONObject json = new JSONObject();
-
                 try {
-                    HttpPost post = new HttpPost(getUserEndpoint() + "/preferences");
+                    HttpPost request = new HttpPost(getUserEndpoint() + "/preferences");
                     json.put("values", values);
                     json.put("preference", preference_id);
                     StringEntity se = new StringEntity(json.toString());
                     se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-                    post.setEntity(se);
-                    HttpResponse response = client.execute(post);
+                    request.setEntity(se);
+                    String bearer = user.getString("Bearer");
+                    request.setHeader("Authorization", "Bearer " + bearer);
+                    HttpResponse response = client.execute(request);
                     ResponseHandler<String> handler = new BasicResponseHandler();
                     handler.handleResponse(response);
                     if (response.getStatusLine().getStatusCode() == 200) {

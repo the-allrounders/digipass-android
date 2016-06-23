@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -117,6 +116,8 @@ public class PermissionsFragment extends Fragment {
                     }
                 }
         );
+
+        swipeContainer.setNestedScrollingEnabled(false);
     }
 
     private void printList(int list_id, final ArrayList<DefaultListItem> _data, String adapter_type) {
@@ -180,6 +181,7 @@ public class PermissionsFragment extends Fragment {
 
                 @Override
                 public void onSwipe(int[] positionList, SwipeDirection[] directionList){
+                    swipeContainer.setEnabled(false);
                     for(int i=0;i<positionList.length;i++) {
                         SwipeDirection direction = directionList[i];
                         final int position = positionList[i];
@@ -218,6 +220,7 @@ public class PermissionsFragment extends Fragment {
                             }, getActivity());
                         }
                     }
+                    swipeContainer.setEnabled(true);
                 }
             };
 
@@ -226,19 +229,6 @@ public class PermissionsFragment extends Fragment {
             lv.setAdapter(swipeAdapter);
 
             lv.setOnItemClickListener(onClick);
-
-            lv.setOnScrollListener(new AbsListView.OnScrollListener() {
-                @Override
-                public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-                }
-
-                @Override
-                public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                    int topRowVerticalPosition = (lv.getChildCount() == 0) ? 0 : lv.getChildAt(0).getTop();
-                    swipeContainer.setEnabled(firstVisibleItem == 0 && topRowVerticalPosition >= 0);
-                }
-            });
 
             ListUtils.setDynamicHeight(lv);
         }
