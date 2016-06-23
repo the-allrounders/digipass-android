@@ -9,7 +9,7 @@
         <item
             android:id="@+id/nav_preferences"
             android:icon="@drawable/ic_preferences"
-            android:title="@string/nav_text_preferences" />
+            android:title="@string/nav_text_preferences"/>
         <item
             android:id="@+id/nav_permissions"
             android:icon="@drawable/ic_lock_open"
@@ -17,11 +17,13 @@
         <item
             android:id="@+id/nav_activity_log"
             android:icon="@drawable/ic_activity_log"
-            android:title="@string/nav_text_activity_log" />
+            android:title="@string/nav_text_activity_log"
+            android:enabled="false" />
         <item
             android:id="@+id/nav_contacts"
             android:icon="@drawable/ic_contacts"
-            android:title="@string/nav_text_contacts" />
+            android:title="@string/nav_text_contacts"
+            android:enabled="false" />
     </group>
 
     <group android:id="@+id/menu_footer" android:checkableBehavior="single">
@@ -32,7 +34,8 @@
         <item
             android:id="@+id/nav_help_feedback"
             android:icon="@drawable/ic_help_feedback"
-            android:title="@string/nav_text_help" />
+            android:title="@string/nav_text_help"
+            android:enabled="false" />
     </group>
 
 </menu>
