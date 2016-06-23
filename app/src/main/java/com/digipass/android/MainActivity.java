@@ -118,14 +118,14 @@ public class MainActivity extends AppCompatActivity
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         receiver = new NetworkReceiver(this);
         this.registerReceiver(receiver, filter);
-        JSONObject user;
+
         try {
+            View header = navigationView.getHeaderView(0);
+            JSONObject user;
             user = API.getInstance(this).user.getJSONObject("User");
-            if (findViewById(R.id.drawer_user_name) != null) {
-                JSONObject name = user.getJSONObject("name");
-                ((TextView)findViewById(R.id.drawer_user_name)).setText(name.getString("first") + " " + name.getString("last"));
-                ((TextView)findViewById(R.id.drawer_user_email)).setText(user.getString("username"));
-            }
+            JSONObject name = user.getJSONObject("name");
+            ((TextView)header.findViewById(R.id.drawer_user_name)).setText(name.getString("first") + " " + name.getString("last"));
+            ((TextView)header.findViewById(R.id.drawer_user_email)).setText(user.getString("email"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
