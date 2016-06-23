@@ -1,0 +1,52 @@
+<resources>
+    <string name="app_name">DigiPass</string>
+    <string name="title_activity_login">Login</string>
+    <string name="title_activity_register">Aanmelden</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">E-mail</string>
+    <string name="prompt_password">Wachtwoord</string>
+    <string name="prompt_name_first">Voornaam</string>
+    <string name="prompt_name_last">Achternaam</string>
+    <string name="action_sign_in">Login</string>
+    <string name="action_register">Aanmelden</string>
+    <string name="error_invalid_email">Dit e-mailadres is niet geldig</string>
+    <string name="error_invalid_password">Dit wachtwoord is te kort</string>
+    <string name="error_incorrect_password">Dit wachtwoord is onjuist</string>
+    <string name="error_field_required">Dit veld is verplicht</string>
+    <string name="activity_log">Activiteitenlog</string>
+    <string name="pending_requests">Openstaande verzoeken</string>
+
+    <string name="ok">@android:string/ok</string>
+    <string name="cancel">@android:string/cancel</string>
+    <string name="title_preferences">Voorkeuren</string>
+    <string name="title_home">Digipass</string>
+
+    <string name="navigation_drawer_open">Open navigatie</string>
+    <string name="navigation_drawer_close">Sluit navigatie</string>
+
+    <string name="action_settings">Instellingen</string>
+    <string name="nav_text_settings">Instellingen</string>
+    <string name="nav_text_help"><![CDATA[Help & feedback]]></string>
+    <string name="nav_text_home">Home</string>
+    <string name="nav_text_preferences">Voorkeuren</string>
+    <string name="nav_text_permissions">Permissies</string>
+    <string name="nav_text_activity_log">Activiteitenlog</string>
+    <string name="nav_text_contacts">Contacten</string>
+    <string name="thumb_description">Afbeelding of icoon van list item</string>
+    <string name="preferences">Voorkeuren</string>
+    <string name="categories">Groepen</string>
+    <string name="no_requests">Op dit moment zijn er geen openstaande verzoeken..</string>
+    <string name="no_activities">Er zijn nog geen activiteiten..</string>
+    <string name="io_connected">Verbonden!</string>
+    <string name="lost_connection">Geen actieve connectie gevonden, probeer het opnieuw</string>
+    <string name="what_now">Wat nu?</string>
+    <string name="title_permissions">Permissies</string>
+    <string name="status_icon_description">Icon die de status van een listitem representeerd</string>
+    <string name="action_sign_in_short">Log in</string>
+    <string name="permission_rationale">"Contacten permissies zijn nodig"
+    </string>
+    <string name="menu_refresh">Herlaad app</string>
+    <string name="title_settings">Instellingen</string>
+    <string name="logout">Logout</string>
+</resources>
