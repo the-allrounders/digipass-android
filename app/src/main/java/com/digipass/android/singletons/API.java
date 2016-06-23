@@ -236,6 +236,11 @@ public class API extends ContextWrapper {
         queue.add(request);
     }
 
+    public void Logout() {
+        user = null;
+        preferences.edit().remove("user").apply();
+    }
+
     public void GetJSONResult() {
         GetJSONResult(new Runnable() {
             @Override

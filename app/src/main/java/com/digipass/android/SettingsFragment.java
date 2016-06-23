@@ -1,6 +1,7 @@
 package com.digipass.android;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,6 +9,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.digipass.android.singletons.API;
 
 
 public class SettingsFragment extends Fragment {
@@ -42,6 +45,15 @@ public class SettingsFragment extends Fragment {
         if (bundle != null) {
 
         }
+
+        getActivity().findViewById(R.id.logout_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                API.getInstance(getContext()).Logout();
+                startActivity(new Intent(getContext(), LoginActivity.class));
+                getActivity().finish();
+            }
+        });
     }
 
     @Override

@@ -230,7 +230,6 @@ public class MainActivity extends AppCompatActivity
             default:
             case R.id.nav_activity_log:
             case R.id.nav_contacts:
-            case R.id.nav_settings:
             case R.id.nav_help_feedback:
             case R.id.nav_home:
                 fragmentClass = HomeFragment.class;
@@ -247,6 +246,9 @@ public class MainActivity extends AppCompatActivity
                 bundle.putSerializable("data", (Serializable)Data.GetInstance(this).GetRequestsList("0"));
                 bundle.putString("key", "0");
                 bundle.putString("title", getResources().getString(R.string.title_permissions));
+                break;
+            case R.id.nav_settings:
+                fragmentClass = SettingsFragment.class;
                 break;
         }
 
