@@ -2,6 +2,7 @@ package com.digipass.android.singletons;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 
 import com.digipass.android.objects.DefaultListItem;
 import com.digipass.android.objects.StatusListItem;
@@ -76,6 +77,15 @@ public class Data {
                         if (preference.getJSONArray("category").toString().contains("\"" + category.getString("_id") + "\"")) {
                             JSONObject _v = new JSONObject();
                             _v.put("title", preference.getString("title"));
+                            values.put(_v);
+                        }
+                    }
+                    for (int a = 0; a < categories.length(); a++) {
+                        JSONObject _category = (JSONObject) categories.get(a);
+                        Log.d("avc", _category.toString());
+                        if (_category.has("parent") && _category.getJSONArray("parent").toString().contains("\"" + category.getString("_id") + "\"")) {
+                            JSONObject _v = new JSONObject();
+                            _v.put("title", _category.getString("title"));
                             values.put(_v);
                         }
                     }

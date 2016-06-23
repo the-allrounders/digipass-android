@@ -30,10 +30,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.TextView;
 
 import com.digipass.android.objects.NetworkReceiver;
 import com.digipass.android.singletons.API;
 import com.digipass.android.singletons.Data;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.Serializable;
 
@@ -114,6 +118,17 @@ public class MainActivity extends AppCompatActivity
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         receiver = new NetworkReceiver(this);
         this.registerReceiver(receiver, filter);
+        JSONObject user;
+        try {
+            user = API.getInstance(this).user.getJSONObject("User");
+            if (findViewById(R.id.drawer_user_name) != null) {
+                JSONObject name = user.getJSONObject("name");
+                ((TextView)findViewById(R.id.drawer_user_name)).setText(name.getString("first") + " " + name.getString("last"));
+                ((TextView)findViewById(R.id.drawer_user_email)).setText(user.getString("username"));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
